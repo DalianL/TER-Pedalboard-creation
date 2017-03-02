@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebAudio Pedal test</title>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="webaudio-controls.html">
+    <style type="text/css">
+      canvas {
+        background-color : black;
+      }
+      webaudio-knob {
+        display: inline-block;
+        font-family: sans-serif;
+        font-size: 11px;
+        padding: 0;
+        margin: 0;
+      }
+      #base {
+        background-color : lightgray;
+        position: relative;
+        width: 380px;
+        height: 280px;
+        margin: 30px 40px;
+        padding: 0px;
+      }
+
+    </style>
+    <script type="text/javascript">
+    function Init() { }
+    </script>
+  </head>
+  <body style="background-color:#eee;" onload="Init()">
+
+  <h1>First pedal</h1>
+      <div id="base">
+        <webaudio-knob id="knob1" src="img/LFO.png" value="0" min="-100" max="100" step="5" sprites="100" diameter="80" style="position:absolute;left:50px;top:50px"></webaudio-knob>
+        <webaudio-param link="knob1" style="position:absolute;left:72px;top:20px"></webaudio-param>
+        <webaudio-knob id="knob2" src="img/LFO.png" value="0" min="-100" max="100" step="5" sprites="100" diameter="80" style="position:absolute;left:150px;top:50px"></webaudio-knob>
+        <webaudio-param link="knob2" style="position:absolute;left:172px;top:20px"></webaudio-param>
+        <webaudio-knob id="knob3" src="img/LFO.png" value="0" min="-100" max="100" step="5" sprites="100" diameter="80" style="position:absolute;left:250px;top:50px"></webaudio-knob>
+        <span style="position:absolute;left:130px;top:170px;font-size:20px;font-family:Impact"><b>RANDOM PEDAL</b></span>
+        <webaudio-param link="knob3" style="position:absolute;left:272px;top:20px"></webaudio-param>
+      </div>
+      
+      <br/>  
+  </body>
+</html>
