@@ -1,0 +1,31 @@
+#pedalboard {
+  height:500px;
+  width:500;
+  background-color:lightgreen;
+}
+
+.draggable {
+  padding:20px;
+  text-align:center;
+  background-color:pink;
+  border:2px dashed;
+  position:absolute;
+}
+
+.input, .output {
+  background-color: black;
+  width:15px;
+  height:15px;
+  border-radius: 15px;
+  position:absolute;
+}
+
+#draggableDiv1 {
+  top:20px;
+  left:30px;
+}
+
+#draggableDiv2 {
+  top:100px;
+  left:50px;
+}
