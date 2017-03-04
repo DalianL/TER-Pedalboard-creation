@@ -1,0 +1,22 @@
+#pedalBoard {
+  height:300px;
+  width:500px;
+  background-color:lightgreen;
+}
+
+.draggable {
+  padding:20px;
+  text-align:center;
+  background-color:pink;
+  border:2px dashed;
+  position:absolute;
+}
+
+#base {
+ background-color:pink;
+ top:140px;
+ left:80px;
+ width:350px;
+ height:200px;
+}
+
