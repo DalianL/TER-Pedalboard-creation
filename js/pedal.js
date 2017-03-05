@@ -6,10 +6,11 @@ class Pedal {
     this.w = w;
     this.h = h;
     // relative position of input and output
-    this.inputOffsetX = -7.5;
-    this.inputOffsetY = 15;
-    this.outputOffsetX = 34;
-    this.outputOffsetY = 15;
+    this.IOsize = 15;
+    this.inputOffsetX = -this.IOsize/2;
+    this.inputOffsetY = this.IOsize;
+    this.outputOffsetX = 2*this.IOsize+4;
+    this.outputOffsetY = this.IOsize;
     
     
     this.elem = document.createElement("div");
@@ -31,7 +32,7 @@ class Pedal {
     this.output = document.createElement("div");;
     this.output.classList.add("input");
     this.output.style.left = this.w+this.outputOffsetX+"px"; // relative to parent
-    this.output.style.top = "15px";
+    this.output.style.top = this.inputOffsetY + "px";
     
     // add input and output to the body
     this.elem.appendChild(this.input);
@@ -74,16 +75,15 @@ class Pedal {
 
   getInputPos() {
     return {
-      x: this.x + this.inputOffsetX,
-      y: this.y + this.inputOffsetY
+      x: this.x +  this.IOsize/2 + this.inputOffsetX,
+      y: this.y + this.IOsize/2 + this.inputOffsetY
     }
   }
   
   getOutputPos() {
     return {
-      x: this.x + this.w + this.outputOffsetX,
-      y: this.y + this.outputOffsetY
+      x: this.x + this.IOsize/2 + this.w + this.outputOffsetX,
+      y: this.y + this.IOsize/2 +  this.outputOffsetY
     }
   }
 }
-

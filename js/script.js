@@ -1,16 +1,25 @@
 window.onload = init;
+var p1, p2, p3;
 
-function init() {
-  pedalboard.elem = document.querySelector("#pedalboard");
-  var p1 = new Pedal("pedal1", 20, 30, 30, 50);
-  var p2 = new Pedal("pedal2", 100, 150, 50, 50);
-  var p3 = new Pedal("pedal3", 10, 200, 50, 50);
+function init() {  
+   pedalboard.elem = document.querySelector("#pedalboard");
+   p1 = new Pedal("pedal1", 20, 30, 30, 50);
+   p2 = new Pedal("pedal2", 130, 150, 50, 50);
+   p3 = new Pedal("pedal3", 300, 200, 50, 50);
 
-  pedalboard.add(p1);
-  pedalboard.add(p2);
-  pedalboard.add(p3);
+   pedalboard.add(p1);
+   pedalboard.add(p2);
+   pedalboard.add(p3);
   
-  addDraggableListeners();
+   createJack("cable1", p1, p2, "black");
+   createJack("cable2", p2, p3, "black");
+  
+   // if we resize the pedalboard we must resize the
+   // svg canvas inside it.
+   pedalboard.elem.addEventListener('resize', resizePedalBoard);
+
+   // For pedals to be draggable
+   addDraggableListeners();
 }
 
 function addDraggableListeners() {
