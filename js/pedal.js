@@ -1,10 +1,13 @@
 class Pedal {
+
   constructor(id, x, y, w, h) {
     this.id = id;
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
+    this.inputJacks = [];
+    this.outputJacks = [];
     // relative position of input and output
     this.IOsize = 15;
     this.inputOffsetX = -this.IOsize/2;
@@ -39,6 +42,14 @@ class Pedal {
     this.elem.appendChild(this.output);
   }
   
+  addJackAtInput(jack) {
+    this.inputJacks.push(jack);
+  }
+  
+  addJackAtOutput(jack) {
+    this.outputJacks.push(jack);
+  }
+  
   set pedalboard(p) {
     // set the pedalboard.elem as the HTML
     // parent of this pedal
@@ -53,6 +64,14 @@ class Pedal {
     this.elem.style.top = y + "px";
     this.x = x;
     this.y = y;
+    
+    // Update jacks
+    this.inputJacks.forEach(function(j) {
+      j.update();
+    });
+    this.outputJacks.forEach(function(j) {
+      j.update();
+    });
   }
   
   highLightInput(flag) {
@@ -87,3 +106,4 @@ class Pedal {
     }
   }
 }
+

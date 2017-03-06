@@ -1,7 +1,8 @@
-var beforeDragPosX, beforeDragPosY;
-var oldMousePosX, oldMousePosY
-var draggableElementClicked;
-var currentDraggablePedal;
+// A mettre dans drag.js
+let beforeDragPosX, beforeDragPosY;
+let oldMousePosX, oldMousePosY
+let draggableElementClicked;
+let currentDraggablePedal;
 
 function mouseUpDraggable() {
     window.removeEventListener('mousemove', mouseMoveDraggable, true);
@@ -27,8 +28,8 @@ function mouseDownDraggable(e){
 
 function mouseMoveDraggable(e){
     // deplacement souris incrémental
-    var dx = (e.clientX - oldMousePosX);
-    var dy = (e.clientY - oldMousePosY);
+    let dx = (e.clientX - oldMousePosX);
+    let dy = (e.clientY - oldMousePosY);
     
   // test obligatoire car on pourrait cliquer
   // sur les input ou output ou boutons rotatifs etc.

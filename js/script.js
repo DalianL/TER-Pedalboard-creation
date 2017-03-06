@@ -1,22 +1,32 @@
 window.onload = init;
-var p1, p2, p3;
 
 function init() {  
-   pedalboard.elem = document.querySelector("#pedalboard");
-   p1 = new Pedal("pedal1", 20, 30, 30, 50);
-   p2 = new Pedal("pedal2", 130, 150, 50, 50);
-   p3 = new Pedal("pedal3", 300, 200, 50, 50);
+   pedalboard.init(); 
+   var p1 = new Pedal("pedal1", 20, 30, 30, 50);
+   var p2 = new Pedal("pedal2", 100, 150, 50, 50);
+   var p3 = new Pedal("pedal3", 10, 200, 50, 50);
+   var p4 = new Pedal("pedal4", 250, 300, 50, 50);
+   var p5 = new Pedal("pedal5", 150, 250, 50, 50);
 
-   pedalboard.add(p1);
-   pedalboard.add(p2);
-   pedalboard.add(p3);
+   pedalboard.addPedal(p1);
+   pedalboard.addPedal(p2);
+   pedalboard.addPedal(p3);
+   pedalboard.addPedal(p4);
+  pedalboard.addPedal(p5);
   
-   createJack("cable1", p1, p2, "black");
-   createJack("cable2", p2, p3, "black");
+   //var j1 = new Jack("cable1", p1, p2, "black");
+   //var j2 = new Jack("cable2", p2, p3, "black");
+   pedalboard.connect(p1, p2);
+   pedalboard.connect(p2, p3);
+   pedalboard.connect(p3, p4);
+   pedalboard.connect(p1, p3);
+     pedalboard.connect(p3, p5);
+
+   
   
    // if we resize the pedalboard we must resize the
    // svg canvas inside it.
-   pedalboard.elem.addEventListener('resize', resizePedalBoard);
+   window.addEventListener('resize', resizePedalBoard);
 
    // For pedals to be draggable
    addDraggableListeners();
@@ -24,7 +34,7 @@ function init() {
 
 function addDraggableListeners() {
     // Add a mousedown listener to all draggable elements
-    var listOfDraggable = document.querySelectorAll(".draggable");
+    let listOfDraggable = document.querySelectorAll(".draggable");
     listOfDraggable.forEach(function(e) {
        e.addEventListener('mousedown', mouseDownDraggable, false);
     });

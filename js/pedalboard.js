@@ -1,9 +1,51 @@
-var pedalboard ={
+function resizePedalBoard(evt) {
+  let svg = document.getElementById("svg-canvas");
+  svg.setAttribute('width', pedalboard.elem.clientWidth);
+  svg.setAttribute('height', pedalboard.elem.clientHeight);
+  console.log("resize");
+}
+
+function createSVGcanvas(parent) {
+  let svg = document.getElementById("svg-canvas");
+  if (null == svg) {
+    svg = document.createElementNS("http://www.w3.org/2000/svg", 
+                                   "svg");
+    svg.setAttribute('id', 'svg-canvas');
+    svg.setAttribute('style', 'position:absolute;top:0px;left:0px');
+    // Should use here pedalboard
+    svg.setAttribute('width', parent.clientWidth);
+    svg.setAttribute('height', parent.clientHeight);
+    svg.setAttributeNS("http://www.w3.org/2000/xmlns/", 
+                       "xmlns:xlink", 
+                       "http://www.w3.org/1999/xlink");
+    // Important to use prepend here instead of appendChild
+    // Otherwise cables/jacks will be in front of pedals
+    // trashing the GUI + complicating the click
+    // and drag implementations (svg will get
+    // the mousedown event, not the body of the pedal)
+    parent.prepend(svg);
+  }
+  return svg;
+} 
+let pedalboard ={
   elem:undefined,
   pedals:[],
-  add:function(p) {
+  // the svgcanvas
+  svgcanvas: undefined,
+  
+  init: function() {
+    this.elem = document.querySelector("#pedalboard");
+    svgcanvas = createSVGcanvas(this.elem);
+  },
+  
+  addPedal:function(p) {
     this.pedals.push(p);
     p.pedalboard = this;
+  },
+  connect: function(p1, p2) {
+    var jack = new Jack(p1, p2);
+    p1.addJackAtOutput(jack);
+    p2.addJackAtInput(jack);
   },
   
   getPedalFromHtmlElem: function(elem) {
