@@ -1,7 +1,28 @@
 #pedalboard {
-  height:500px;
-  width:500;
+  height:400px;
+  width:500px;
   background-color:lightgreen;
+  border: 5px solid grey;
+}
+
+#pedals {
+  height:100px;
+  width:500px;
+  background-color:lightGrey;
+  border: 5px solid grey;
+  margin-top:5px;
+  display: flex;
+  flex-direction: row; 
+  height: 100%;
+}
+
+.pedal {
+  width:50px;
+  height:80px;
+  background-color:red;
+  margin:5px;
+  font-size:10px;
+  text-align:center;
 }
 
 .draggable {
@@ -12,20 +33,21 @@
   position:absolute;
 }
 
-.input, .output {
+.input,.output {
   background-color: black;
   width:15px;
   height:15px;
-  border-radius: 15px;
+  border-radius:15px;
+  top:100px;
   position:absolute;
 }
 
-#draggableDiv1 {
-  top:20px;
-  left:30px;
+/*
+.input {
+  content:url(http://img4.hostingpics.net/pics/543552leftJack.png);
 }
 
-#draggableDiv2 {
-  top:100px;
-  left:50px;
+.output {
+  content:url(http://img4.hostingpics.net/pics/146380rightJack.png);
 }
+*/

@@ -12,9 +12,8 @@ class Pedal {
     this.IOsize = 15;
     this.inputOffsetX = -this.IOsize/2;
     this.inputOffsetY = this.IOsize;
-    this.outputOffsetX = 2*this.IOsize+4;
-    this.outputOffsetY = this.IOsize;
-    
+    this.outputOffsetX = this.w+2*this.IOsize+4;
+    this.outputOffsetY = this.IOsize; 
     
     this.elem = document.createElement("div");
     this.elem.classList.add("draggable");
@@ -31,10 +30,9 @@ class Pedal {
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + "px";
 
-    
     this.output = document.createElement("div");;
-    this.output.classList.add("input");
-    this.output.style.left = this.w+this.outputOffsetX+"px"; // relative to parent
+    this.output.classList.add("output");
+    this.output.style.left = this.outputOffsetX+"px"; // relative to parent
     this.output.style.top = this.inputOffsetY + "px";
     
     // add input and output to the body
@@ -78,7 +76,7 @@ class Pedal {
     if(flag)
        this.input.style.backgroundColor = "red";
     else
-      this.input.style.backgroundColor = "black";
+      this.input.style.backgroundColor = null;
     
     this.inputHighlighted = flag;
   }
@@ -87,7 +85,7 @@ class Pedal {
     if(flag)
        this.output.style.backgroundColor = "red";
     else
-      this.output.style.backgroundColor = "black";
+      this.output.style.backgroundColor = null;
     
     this.outputHighlighted = flag;
   }
@@ -101,9 +99,23 @@ class Pedal {
   
   getOutputPos() {
     return {
-      x: this.x + this.IOsize/2 + this.w + this.outputOffsetX,
+      x: this.x + this.IOsize/2 +  this.outputOffsetX,
       y: this.y + this.IOsize/2 +  this.outputOffsetY
     }
   }
 }
 
+function pedalDragStart(event) {
+  console.log("pedal drag start");
+  event.dataTransfer.setData("pedalId", event.target.id);
+}
+
+function dropPedalHandler(event) {
+  var id = event.dataTransfer.getData("pedalId");
+  console.log("pedal dropped id = " + 
+             id + "x = " + event.clientX);
+  // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
+  // de la même pédale
+  let p = new Pedal(id, event.clientX-30, event.clientY-50, 30, 50);
+  pedalboard.addPedal(p)
+}

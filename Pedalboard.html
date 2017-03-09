@@ -13,6 +13,13 @@
   <script src="js/utils.js"></script>
 </head>
 <body>
-<div id="pedalboard" ></div>
+<div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);">
+</div>
+  <div id="pedals">
+    <div id="disto1" class="pedal" 
+         draggable="true">Disto1</div>
+    <div id="flanger1" class="pedal" 
+         draggable="true">Flanger1</div>
+  </div>
 </body>
 </html>

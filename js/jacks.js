@@ -5,17 +5,7 @@ function highlightInputsOutputs(e) {
   let closest = pedalboard.findClosestIO(mouseX, mouseY);
  }
 
-class Jack {
-  constructor(pedal1, pedal2) {
-    this.p1 = pedal1;
-    this.p2 = pedal2;
-    
-    // Compute the svg for this jack
-    let oPos = pedal1.getOutputPos();
-    let x1 = oPos.x, y1 = oPos.y;
-    let iPos = pedal2.getInputPos();
-    let x2 = iPos.x, y2 = iPos.y;
-    
+function createBezierSVGJack(id, x1, y1, x2, y2) {
     let svg = createSVGcanvas();
     let shape1 = document.createElementNS("http://www.w3.org/2000/svg", 
                                          "path");
@@ -45,8 +35,8 @@ class Jack {
     shape1.setAttributeNS(null, "stroke", "#471221");
     shape1.setAttributeNS(null, "stroke-width",10);
     shape1.setAttributeNS(null, "class", "wire");
+    shape1.setAttributeNS(null, "id", id+"_1");
     svg.appendChild(shape1);
-    this.elem1 = shape1;
     
     // Main colored mid wire
     shape2.setAttributeNS(null, "d", path);
@@ -54,8 +44,9 @@ class Jack {
     shape2.setAttributeNS(null, "stroke", "#8e457d");
     shape2.setAttributeNS(null, "stroke-width",6);
     shape2.setAttributeNS(null, "class", "wire");
+    shape2.setAttributeNS(null, "id", id+"_2");
+
     svg.appendChild(shape2);
-    this.elem2 = shape2;
 
     // Specular color in the middle
     shape3.setAttributeNS(null, "d", path);
@@ -63,19 +54,21 @@ class Jack {
     shape3.setAttributeNS(null, "stroke", "#b87595");
     shape3.setAttributeNS(null, "stroke-width",2);
     shape3.setAttributeNS(null, "class", "wire");
-    svg.appendChild(shape3);
-    this.elem3 = shape3;
-  }
-  
-  update() {
-      let oPos = this.p1.getOutputPos();
-      let x1 = oPos.x, y1 = oPos.y;
-      let iPos = this.p2.getInputPos();
-      let x2 = iPos.x, y2 = iPos.y;
+    shape3.setAttributeNS(null, "id", id+"_3");
 
-      let jack1 = this.elem1;
-      let jack2 = this.elem2;
-      let jack3 = this.elem3;
+    svg.appendChild(shape3);
+  
+    return {
+      elem1: shape1,
+      elem2: shape2,
+      elem3: shape3
+    }
+}
+
+function updateSVGJack(jack, x1, y1, x2, y2) {
+      let jack1 = jack.elem1;
+      let jack2 = jack.elem2;
+      let jack3 = jack.elem3;
 
       let d = jack1.getAttribute("d");
       let tension = 1;
@@ -95,5 +88,33 @@ class Jack {
       jack1.setAttribute("d", path);
       jack2.setAttribute("d", path);
       jack3.setAttribute("d", path);
+  
+      return jack;
+}
+
+class Jack {
+  constructor(pedal1, pedal2) {
+    this.p1 = pedal1;
+    this.p2 = pedal2;
+    
+    // Compute the svg for this jack
+    let oPos = pedal1.getOutputPos();
+    let x1 = oPos.x, y1 = oPos.y;
+    let iPos = pedal2.getInputPos();
+    let x2 = iPos.x, y2 = iPos.y;
+    
+    this.jackSVG = createBezierSVGJack("jack" + 
+                                       pedal1.elem.id + 
+                                       pedal2.elem.id,
+                                       x1, y1, x2, y2);
+  }
+  
+  update() {
+      let oPos = this.p1.getOutputPos();
+      let x1 = oPos.x, y1 = oPos.y;
+      let iPos = this.p2.getInputPos();
+      let x2 = iPos.x, y2 = iPos.y;
+
+      updateSVGJack(this.jackSVG, x1, y1, x2, y2);
   }
 }
