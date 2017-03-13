@@ -61,13 +61,34 @@ let pedalboard ={
   },
   
   findClosestIO: function(x, y) {
+      let self = this;
+
       this.pedals.forEach(function(p) {
+        // be careful here this is not the pedalboard,
+        // we're in a forEach callback, remind the trap
+        // I talked into the course !!!! This is why we use
+        // self = this just before !
         let iPos = p.getInputPos();
         let oPos = p.getOutputPos();
-        let distInput = distance(x, y, iPos.x, iPos.y);
-        let distOutput = distance(x, y, oPos.x, oPos.y);
+        
+        let distInput;
+        let distMinToInputForHighlight = 20;
+        if(self.currentState === "drawingNewJack") {
+          // We must highlight the pedal input taking
+          // into account the length of the jack ending
+          // (an image of 100px width)
+          distInput = distance(x, y, iPos.x-50, iPos.y);
+          distMinToInputForHighlight = 50;
+        } else {
+          // regular case, we're just pointing the mouse around
+          distInput = distance(x, y, iPos.x, iPos.y);
 
-        if(distInput < 20) {
+        }
+        
+        let distOutput= distance(x, y, oPos.x, oPos.y);
+
+        // It depends if we're trying to plug a jack or not
+        if(distInput < distMinToInputForHighlight) {
           if(!p.inputHighlighted) {
              p.highLightInput(true);
           }
