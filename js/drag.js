@@ -18,6 +18,20 @@ function mouseUpDraggable() {
         }
         delete pedalboard.currentDraggableJack;
       break;
+    case "removingJack":
+      let pp;
+      if((pp = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
+        let currentJack = pp.inputJacks[0];
+        let sourcePedal = currentJack.p1;
+        //pp.removeJackAtInput();
+        //sourcePedal.removeJackAtOutput();
+        for(var i=1; i <= 4; i++) {
+          var elem = document.getElementById("jack"+sourcePedal.id+pp.id+"_"+i);
+          console.log("jack"+sourcePedal.id+pp.id+"_"+i)
+          elem.parentNode.removeChild(elem);
+        }
+      }
+      break;
     case "draggingPedal":
       break;
     }
@@ -46,7 +60,10 @@ function mouseDownDraggable(e){
     pedalboard.currentDraggableJack.x1 = x1;
     pedalboard.currentDraggableJack.y1 = y1;
 
-  } else {
+  } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
+    console.log("removing jack");
+    pedalboard.currentState = "removingJack";
+  }  else {
     // dragging a pedal
     pedalboard.currentState = "draggingPedal";
 
