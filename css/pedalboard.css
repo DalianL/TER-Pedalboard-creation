@@ -1,8 +1,17 @@
+#main {
+  /* if pedalboard scaled, will make
+  it scrollable */
+  overflow: scroll;
+}
+
 #pedalboard {
   height:400px;
   width:500px;
   background-color:lightgreen;
   border: 5px solid grey;
+  user-select: none;
+  //transform:scale(2,2);
+
 }
 
 #pedals {
@@ -14,6 +23,7 @@
   display: flex;
   flex-direction: row; 
   height: 100%;
+  user-select: none;
 }
 
 .pedal {
@@ -23,6 +33,7 @@
   margin:5px;
   font-size:10px;
   text-align:center;
+  user-select: none;
 }
 
 .draggable {
@@ -34,9 +45,9 @@
 }
 
 .input,.output {
-  background-color: black;
   width:15px;
   height:15px;
+  background-color:black;
   border-radius:15px;
   top:100px;
   position:absolute;

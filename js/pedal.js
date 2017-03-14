@@ -13,11 +13,16 @@ class Pedal {
     this.inputOffsetX = -this.IOsize/2;
     this.inputOffsetY = this.IOsize;
     this.outputOffsetX = this.w+2*this.IOsize+4;
-    this.outputOffsetY = this.IOsize; 
+    this.outputOffsetY = this.IOsize;
+    
     
     this.elem = document.createElement("div");
     this.elem.classList.add("draggable");
     this.elem.id = this.id;
+    // makes labels not selectable
+    // otherwise makes dran'n'drop and clone
+    // possible by default
+    this.elem.style.userSelect = "none";
     this.elem.style.left = this.x + "px";
     this.elem.style.top = this.y + "px";
     this.elem.style.width = this.w + "px";
@@ -30,6 +35,7 @@ class Pedal {
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + "px";
 
+    
     this.output = document.createElement("div");;
     this.output.classList.add("output");
     this.output.style.left = this.outputOffsetX+"px"; // relative to parent
@@ -105,6 +111,7 @@ class Pedal {
   }
 }
 
+// DRAG N DROP de pedales
 function pedalDragStart(event) {
   console.log("pedal drag start");
   event.dataTransfer.setData("pedalId", event.target.id);

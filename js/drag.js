@@ -2,27 +2,28 @@ let oldMousePosX, oldMousePosY
 
 function mouseUpDraggable() {
     window.removeEventListener('mousemove', mouseMoveDraggable, true);
-
     switch(pedalboard.currentState) {
       case "drawingNewJack":
         // Remove current tmp jack
-        for(var i=1; i <= 3; i++) {
+        for(var i=1; i <= 4; i++) {
           var elem = document.querySelector("#tmpJack_"+i);
           elem.parentNode.removeChild(elem);
         }
 
-        var p;
+        let p;
         if((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
           // we are dragging a new Jack and we have the mouse pointer
           // close to a pedal input: let's connect the Jack !
           pedalboard.connect(pedalboard.currentDraggableJack.sourcePedal, p);
         }
         delete pedalboard.currentDraggableJack;
-        
       break;
     case "draggingPedal":
       break;
     }
+    // set back pedalboard state to "none", we finished a drag
+    pedalboard.currentState = "none";
+
 }
 
 function mouseDownDraggable(e){
@@ -66,6 +67,7 @@ function mouseDownDraggable(e){
 }
 
 function mouseMoveDraggable(e){
+
   switch(pedalboard.currentState) {
     case "drawingNewJack":
       let jackWeAreDragging = pedalboard.currentDraggableJack;
@@ -82,6 +84,7 @@ function mouseMoveDraggable(e){
           let p = pedalboard.currentDraggablePedal;
           p.move(p.beforeDragPosX + dx, p.beforeDragPosY + dy)
         }
+
       break;
   }
 }

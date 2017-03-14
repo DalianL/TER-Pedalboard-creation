@@ -123,5 +123,9 @@ let pedalboard ={
       let p = this.pedals[i];
       if(p.inputHighlighted) return p;
     }
+  },
+  
+  rescale(s) {
+    this.elem.style = 'transform(' + s + ',' + s + ')';
   }
 };

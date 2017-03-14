@@ -4,6 +4,18 @@ function highlightInputsOutputs(e) {
   let mouseY = e.y - rect.top;
   let closest = pedalboard.findClosestIO(mouseX, mouseY);
  }
+ 
+function makeSVG(tag, attrs) {
+    var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (var k in attrs){
+        if(k=="xlink:href") {
+            el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+        } else {
+             el.setAttribute(k, attrs[k]);
+         }
+     }
+     return el;
+}
 
 function createBezierSVGJack(id, x1, y1, x2, y2) {
     let svg = createSVGcanvas();
@@ -58,10 +70,24 @@ function createBezierSVGJack(id, x1, y1, x2, y2) {
 
     svg.appendChild(shape3);
   
+    // Jack ends are images  
+    let end = makeSVG( 
+          'image', 
+          { 
+            class:'map-tile', 
+            'xlink:href':'http://img4.hostingpics.net/pics/146380rightJack.png', 
+            width:'100px', height: '20px',
+            x:x2, y:y2,
+            id: id+"_4"
+          }
+    );
+    svg.appendChild(end);
+
     return {
       elem1: shape1,
       elem2: shape2,
-      elem3: shape3
+      elem3: shape3,
+      end: end
     }
 }
 
@@ -69,6 +95,7 @@ function updateSVGJack(jack, x1, y1, x2, y2) {
       let jack1 = jack.elem1;
       let jack2 = jack.elem2;
       let jack3 = jack.elem3;
+      let end = jack.end;
 
       let d = jack1.getAttribute("d");
       let tension = 1;
@@ -88,6 +115,9 @@ function updateSVGJack(jack, x1, y1, x2, y2) {
       jack1.setAttribute("d", path);
       jack2.setAttribute("d", path);
       jack3.setAttribute("d", path);
+  
+      end.setAttribute("x", x2-7);
+      end.setAttribute("y", y2-10);
   
       return jack;
 }
