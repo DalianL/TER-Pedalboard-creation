@@ -55,26 +55,16 @@
 {
 	background-image:url("../img/minirightJack.png");
 	background-repeat:no-repeat;
-	width:80px;
+	width:60px;
 	height:20px;
 	background-position:center center;
 }
 
 .input
 {
-	background-image:url("../img/rightInput.png");
+	background-image:url("../img/leftInput.png");
 	background-repeat:no-repeat;
 	width:30px;
 	height:20px;
 	background-position:center center;
 }
-
-/*
-.input {
-  content:url(http://img4.hostingpics.net/pics/543552leftJack.png);
-}
-
-.output {
-  content:url(http://img4.hostingpics.net/pics/146380rightJack.png);
-}
-*/
