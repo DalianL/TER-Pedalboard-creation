@@ -13,16 +13,11 @@ class Pedal {
     this.inputOffsetX = -this.IOsize/2;
     this.inputOffsetY = this.IOsize;
     this.outputOffsetX = this.w+2*this.IOsize+4;
-    this.outputOffsetY = this.IOsize;
-    
+    this.outputOffsetY = this.IOsize; 
     
     this.elem = document.createElement("div");
     this.elem.classList.add("draggable");
     this.elem.id = this.id;
-    // makes labels not selectable
-    // otherwise makes dran'n'drop and clone
-    // possible by default
-    this.elem.style.userSelect = "none";
     this.elem.style.left = this.x + "px";
     this.elem.style.top = this.y + "px";
     this.elem.style.width = this.w + "px";
@@ -32,16 +27,23 @@ class Pedal {
     // input and output
     this.input = document.createElement("div");;
     this.input.classList.add("input");
+	//this.input.innerHTML="<img src='img/rightInput.png' style='width:20px; height:20px;margin-left-100px;' />";
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + "px";
 
-    
-    this.output = document.createElement("div");;
+    this.output = document.createElement("div");
     this.output.classList.add("output");
     this.output.style.left = this.outputOffsetX+"px"; // relative to parent
     this.output.style.top = this.inputOffsetY + "px";
+	
+	this.output.out = document.createElement("span");
+	this.output.out.classList.add("out");
+	//this.output.out.innerHTML="<img src='img/rightJack.png' style='width:70px; height:20px;margin-left:60px;padding-top:-80px' />";
+	this.output.out.style.left = this.outputOffsetX+"px"; // relative to parent
+    this.output.out.style.top = this.inputOffsetY + "px";
     
     // add input and output to the body
+	this.elem.appendChild(this.output.out);
     this.elem.appendChild(this.input);
     this.elem.appendChild(this.output);
   }
@@ -54,14 +56,6 @@ class Pedal {
     this.outputJacks.push(jack);
   }
   
-  removeJackAtInput() {
-    this.inputJacks.pop();
-  }
-
-  removeJackAtOutput() {
-    this.outputJacks.pop();
-  }
-
   set pedalboard(p) {
     // set the pedalboard.elem as the HTML
     // parent of this pedal
@@ -119,7 +113,6 @@ class Pedal {
   }
 }
 
-// DRAG N DROP de pedales
 function pedalDragStart(event) {
   console.log("pedal drag start");
   event.dataTransfer.setData("pedalId", event.target.id);
