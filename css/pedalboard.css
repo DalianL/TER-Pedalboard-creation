@@ -51,20 +51,18 @@
   position:absolute;
   
 }
-.output
-{
+.output {
 	background-image:url("../img/minirightJack.png");
 	background-repeat:no-repeat;
-	width:60px;
-	height:20px;
+	width:65px;
+	height:10px;
 	background-position:center center;
 }
 
-.input
-{
+.input {
 	background-image:url("../img/leftInput.png");
 	background-repeat:no-repeat;
 	width:30px;
-	height:20px;
+	height:10px;
 	background-position:center center;
 }
