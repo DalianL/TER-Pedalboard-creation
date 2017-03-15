@@ -45,24 +45,21 @@
 }
 
 .input,.output {
-  width:15px;
-  height:15px;
-  top:100px;
   position:absolute;
-  
 }
+
 .output {
 	background-image:url("../img/minirightJack.png");
 	background-repeat:no-repeat;
 	width:65px;
-	height:10px;
+	height:12px;
 	background-position:center center;
 }
 
 .input {
 	background-image:url("../img/leftInput.png");
 	background-repeat:no-repeat;
-	width:30px;
+	width:20px;
 	height:10px;
-	background-position:center center;
+	background-position:left center;
 }

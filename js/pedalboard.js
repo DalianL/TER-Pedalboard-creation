@@ -98,7 +98,7 @@ let pedalboard ={
           }
         }
         
-        if(distOutput < 20) {
+        if(distOutput < 30) {
           if(!p.outputHighlighted) {
              p.highLightOutput(true);
           }
