@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>WebAudio Pedal test</title>
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="js/menu.js"></script>
+    <link rel="import" href="bower_components/polymer/polymer.html">
+    <link rel="import" href="webaudio-controls.html">
+    <style type="text/css">
+      webaudio-knob {
+        display: inline-block;
+        font-family: sans-serif;
+        font-size: 11px;
+        padding: 0;
+        margin: 0;
+      }
+    </style>
+    <link rel="stylesheet" href="css/draggable.css">
+    <script src="js/draggable.js"></script>
+  </head>
+  <body style="background-color:#eee;">
+
+  <h1>Pedal menu</h1>
+  <div id="pedalBoard">
+    <div id="base" class="draggable">
+      <div id="input1" class="input"></div>
+      <div id="output1" class="output"></div>
+      <webaudio-knob id="knob2" src="img/LFO.png" value="0" min="-100" max="100" step="5" sprites="100" diameter="80" style="position:absolute;left:150px;top:50px"></webaudio-knob>
+      <webaudio-param link="knob2" style="position:absolute;left:172px;top:20px"></webaudio-param>
+      <span style="position:absolute;left:130px;top:170px;font-size:20px;font-family:Impact"><b>RANDOM PEDAL</b></span>
+    </div>
+  </div>
+  <br/>  
+  </body>
+</html>

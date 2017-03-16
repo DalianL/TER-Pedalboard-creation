@@ -25,341 +25,489 @@
 -->
 
 <dom-module id="webaudio-knob">
-	<template>
-		<div class="wac-body" id="wac-body" touch-action="none">
-			<div id="wac-knob" touch-action="none"></div>
-			<div id="wac-valuetip-row"><span id="wac-valuetip" touch-action="none">{{valuestr}}</span></div>
-			<div id="wac-tooltip-box"><span id="wac-tooltip-text">{{tooltip}}</span></div>
-		</div>
-		<style>
-			:host {
-				user-select: none;
-				display: inline-block;
-				font-family: sans-serif;
-				font-size: 11px;
-				padding:0;
-				margin:0;
-			}
-			#wac-body {
-				position: relative;
-				display: inline-block;
-				margin:0;
-				padding:0;
-				width: 100%;
-				height: 100%;
-			}
-			#wac-knob {
-				display: inline-block;
-				cursor: pointer;
-				margin:0;
-				padding:0;
-				width: 100%;
-				height: 100%;
-				border: attr(b-t)
-				background-repeat: no-repeat;
-				background-position: 0px 0px;
-			}
-			#wac-valuetip-row{
-				display:block;
-				z-index: 10;
-				width:100%;
-				user-select: none;
-				position: absolute;
-				top: -20px;
-				height:20px;
-				text-align: center;
-			}
-			#wac-valuetip {
-				text-align: center;
-				z-index: 10;
-				display: none;
-				opacity: 0;
-				border: solid 1px #666;
-				background-color: #fff;
-				color: #000;
-				border-radius: 4px;
-				padding: 3px 8px;
-				transition: opacity 0.3s;
-			}
-			#wac-tooltip-box {
-				position: absolute;
-				bottom: -24px;
-				left: 20px;
-				z-index: 10;
-				display: none;
-				opacity: 0;
-				width: 200px;
-				transition: opacity 0.5s;
-			}
-			#wac-tooltip-text {
-				display: inline-block;
-				border: solid 0px #666;
-				background-color: #fff;
-				color: #000;
-				border-radius: 5px;
-				padding: 5px;
-			}
-		</style>
-	</template>
+  <template>
+    <div class="wac-body" id="wac-body" touch-action="none">
+      <div id="wac-knob" touch-action="none"></div>
+      <div id="wac-valuetip-row"><span id="wac-valuetip" touch-action="none">{{valuestr}}</span></div>
+      <div id="wac-tooltip-box"><span id="wac-tooltip-text">{{tooltip}}</span></div>
+    </div>
+    <div>
+      <nav id="context-menuKnob" class="context-menu">
+        <ul class="context-menu__items">
+          <li class="context-menu__item" id="context-menu-learn" data-action="Learn" on-click="toggleMenuOff">
+           Jack 1
+          </li>
+          <li class="context-menu__item" data-action="Clear" on-click="toggleMenuOff">
+           Jack 2
+          </li>
+          <li class="context-menu__item" data-action="Close" on-click="toggleMenuOff">
+           Jack 3
+          </li>
+        </ul>
+      </nav>
+    </div>
+    <style>
+	:host {
+		user-select: none;
+		display: inline-block;
+		font-family: sans-serif;
+		font-size: 11px;
+		padding:0;
+		margin:0;
+	}
+	#wac-body {
+		position: relative;
+		display: inline-block;
+		margin:0;
+		padding:0;
+		width: 100%;
+		height: 100%;
+	}
+	#wac-knob {
+		display: inline-block;
+		cursor: pointer;
+		margin:0;
+		padding:0;
+		width: 100%;
+		height: 100%;
+		border: attr(b-t)
+		background-repeat: no-repeat;
+		background-position: 0px 0px;
+	}
+	#wac-valuetip-row{
+		display:block;
+		z-index: 10;
+		width:100%;
+		user-select: none;
+		position: absolute;
+		top: -20px;
+		height:20px;
+		text-align: center;
+	}
+	#wac-valuetip {
+		text-align: center;
+		z-index: 10;
+		display: none;
+		opacity: 0;
+		border: solid 1px #666;
+		background-color: #fff;
+		color: #000;
+		border-radius: 4px;
+		padding: 3px 8px;
+		transition: opacity 0.3s;
+	}
+	#wac-tooltip-box {
+		position: absolute;
+		bottom: -24px;
+		left: 20px;
+		z-index: 10;
+		display: none;
+		opacity: 0;
+		width: 200px;
+		transition: opacity 0.5s;
+	}
+	#wac-tooltip-text {
+		display: inline-block;
+		border: solid 0px #666;
+		background-color: #fff;
+		color: #000;
+		border-radius: 5px;
+		padding: 5px;
+	}
+	</style>
+</template>
+  	<script>
+    Polymer({
+      is:"webaudio-knob",
+      properties:{
+        src:		{type:String, value:null, observer:'setupImage'},
+        bgsrc:		{type:String, value:null, observer:'setupImage'},
+        value:      {type:Number, value:0, observer:'updateValue'},
+        defvalue:   {type:Number, value:0},
+        min:        {type:Number, value:-30},
+        max:        {type:Number, value:30},
+        step:       {type:Number, value:1},
+		//log:      {type:Number, value:0},
+        units:      {type:String,value:null},
+        width:      {type:Number, value:64, observer:'layout'},
+        height:     {type:Number, value:64, observer:'layout'},
+        diameter:   {type:Number, value:null, observer:'layout'},
+        sprites:    {type:Number, value:0},
+        sensitivity:{type:Number, value:1},
+        valuetip:   {type:Number, value:1},
+        tootip:		{type:String, value:null},
+        colors:		{type:String, value:'#e00;#000;#000', observer:'setupImage'},
+        enable:		{type:Number, value:1},
+        fconv:		{type:String, value:null},
+        // for midi learn
+        midiMode:       {type:String,value:"not"},
+        midiControllers  :{type:Array, value:[]},
+        /* menu learn  */
+        menu :      {type:String,value:null},
+        taskItemClassName: {type:String,value: "knob"},
+        contextMenuLinkClassName: {type:String,value:"context-menu__link"},
+        contextMenuActive: {type:String,value:"context-menu--active"},
+        menuState: {type:Number,value:0},
+        menuWidth: {type:Number,value:null},
+        menuHeight: {type:Number,value:null},
+        windowWidth: {type:Number,value:null},
+        //windowHeigth: {type:Number,value:null},
+        webAudioControllerWithMenu: {type:String,value:null},
+        clickCoords: {type:Number,value:null},
+        clickCoordsX: {type:Number,value:null},
+        clickCoordsY: {type:Number,value:null},
+      },
 
-	<script>
-		Polymer({
-			is:"webaudio-knob",
-			properties:{
-				src:				{type:String, value:null, observer:'setupImage'},
-				bgsrc:			{type:String, value:null, observer:'setupImage'},
-				value:      {type:Number, value:0, observer:'updateValue'},
-				defvalue:   {type:Number, value:0},
-				min:        {type:Number, value:0},
-				max:        {type:Number, value:100},
-				step:       {type:Number, value:1},
-//				log:        {type:Number, value:0},
-				units:      {type:String,value:null},
-				width:      {type:Number, value:64, observer:'layout'},
-				height:     {type:Number, value:64, observer:'layout'},
-				diameter:   {type:Number, value:null, observer:'layout'},
-				sprites:    {type:Number, value:0},
-				sensitivity:{type:Number, value:1},
-				valuetip:   {type:Number, value:1},
-				tootip:			{type:String, value:null},
-				colors:			{type:String, value:'#e00;#000;#000', observer:'setupImage'},
-				enable:			{type:Number, value:1},
-				fconv:			{type:String, value:null},
-			},
-			ready:function(){
-				function log2(num) {
-					var log=Math.log(num) / Math.LN2;
-					return log;
-				}
-				if(this.defvalue === null)
-					this.defvalue = this.value;
-				this.digits=0;
-				var body = this.$['wac-body'];
-				var knb = this.$['wac-knob'];
-				knb.addEventListener('DOMMouseScroll',this.wheel.bind(this),false);
-				knb.addEventListener('mousewheel',this.wheel.bind(this),false);
-				knb.addEventListener('mousedown',this.pointerdown.bind(this),false);
-				knb.addEventListener('touchstart',this.pointerdown.bind(this),false);
-				knb.addEventListener('mouseover',this.pointerover.bind(this),false);
-				knb.addEventListener('mouseout',this.pointerout.bind(this),false);
-				this.setupImage();
-				knb.style.backgroundSize = '100% '+((this.sprites+1)*100)+'%';
-				if(this.step && this.step < 1) {
-					for(var n = this.step ; n < 1; n *= 10)
-						++this.digits;
-				}
-				this.minval = this.min;
-				this.maxval = this.max;
-				if (this.log) {
-					if (this.minval == 0)
-						this.minval = 0.001;
-					this.min = log2(this.minval);
-					this.max = log2(this.maxval);
-					this.setValue(log2(this.value));
-					this.ctlStep = 0.0001;
-				} else{
-					this.ctlStep=this.step;
-				}
-/*
-				if(this.fconv)
-					this.computedValue=this.fconv(this.value);
-				else
-					this.computedValue=this.value;
-				this.valuestr=this.computedValue+(this.units?this.units:"");
-				this.redraw();
-//				this.fire('change');
-*/
-				this.updateValue();
-			},
-			setupImage: function(){
-				var body = this.$['wac-body'];
-				var knb = this.$['wac-knob'];
-				if(this.colors)
-					this.coltab=this.colors.split(";");
-				else
-					this.coltab=["#e00","#000","#000"];
-				switch(this.coltab.length){
-				case 1: this.coltab[1]=this.coltab[2]="#000"; break;
-				case 2: this.coltab[2]=this.coltab[1]; break;
-				}
-				if(this.bgsrc)
-					body.style.background = 'url('+this.bgsrc+')';
-				if(this.src)
-					knb.style.background = 'url('+this.src+')';
-				else {
-					knb.style.background = 'url(data:image/svg+xml,%3csvg%20xmlns%3d%22http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%22%20version%3d%221%2e1%22%20viewBox%3d%220%200%2010%2010%22%20preserveAspectRatio%3d%22none%22%3e%0d%0a%3cline%20x1%3d%225%22%20y1%3d%22%2e5%22%20x2%3d%225%22%20y2%3d%224%22%20stroke%3d%22'+encodeURIComponent(this.coltab[0])+'%22%20stroke%2dwidth%3d%22%2e8%22%20stroke%2dlinecap%3d%22round%22%2f%3e%0d%0a%3c%2fsvg%3e)';
-					body.style.background = 'url(data:image/svg+xml,%3csvg%20xmlns%3d%22http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%22%20version%3d%221%2e1%22%20viewBox%3d%220%200%2010%2010%22%20preserveAspectRatio%3d%22none%22%3e%0d%0a%3cradialGradient%20id%3d%22g0%22%20fx%3d%22%2e3%22%20fy%3d%22%2e3%22%3e%3cstop%20offset%3d%220%22%20stop%2dcolor%3d%22'+encodeURIComponent(this.coltab[2])+'%22%2f%3e%3cstop%20offset%3d%22%2e75%22%20stop%2dcolor%3d%22'+encodeURIComponent(this.coltab[1])+'%22%2f%3e%3c%2fradialGradient%3e%0d%0a%3ccircle%20cx%3d%225%22%20cy%3d%225%22%20r%3d%225%22%20fill%3d%22url%28%23g0%29%22%2f%3e%0d%0a%3c%2fsvg%3e)';
-					this.sprites = 0;
-				}
-			},
-			preventScroll: function(e){
-				e.preventDefault();
-			},
-			pointerdown: function(e) {
-				if(!this.enable)
-					return;
-				if(e.touches)
-					e = e.touches[0];
-				this.boundPointermove = this.pointermove.bind(this);
-				this.boundCancel = this.cancel.bind(this);
-				if(e.ctrlKey || e.metaKey) {
-					this.setValue(parseFloat(this.defvalue));
-				}
-				else {
-					this.startPosX = e.pageX;
-					this.startPosY = e.pageY;
-					this.startVal = this.value;
-					window.addEventListener('mousemove', this.boundPointermove, true);
-					window.addEventListener('touchmove', this.boundPointermove, true);
-				}
-				window.addEventListener('mouseup', this.boundCancel, true);
-				window.addEventListener('touchend', this.boundCancel, true);
-				window.addEventListener('touchcancel', this.boundCancel, true);
-				document.body.addEventListener('touchstart',this.preventScroll);
-				this.press = this.vtflag = 1;
-				this.ttflag = 0;
-				this.showtip();
-				e.preventDefault();
-				e.stopPropagation();
-				return false;
-			},
-			pointermove: function(e) {
-				if(e.touches)
-					e = e.touches[0];
-				if(this.lastShift !== e.shiftKey) {
-					this.lastShift = e.shiftKey;
-					this.startPosX = e.pageX;
-					this.startPosY = e.pageY;
-					this.startVal = this.value;
-				}
-				var offset = (this.startPosY - e.pageY - this.startPosX + e.pageX) * this.sensitivity;
-				this.value = this.min + ((((this.startVal + (this.max - this.min) * offset / ((e.shiftKey ? 4:1) * 128)) - this.min) / this.ctlStep)|0) * this.ctlStep;
-				e.preventDefault();
-				e.stopPropagation();
-				return false;
-			},
-			cancel: function(e) {
-				this.press = this.vtflag = 0;
-				this.showtip();
-				this.startPosX = this.startPosY = null;
-				window.removeEventListener('mousemove', this.boundPointermove, true);
-				window.removeEventListener('touchmove', this.boundPointermove, true);
-				window.removeEventListener('mouseup', this.boundCancel, true);
-				window.removeEventListener('touchend', this.boundCancel, true);
-				window.removeEventListener('touchcancel', this.boundCancel, true);
-				document.body.removeEventListener('touchstart',this.preventScroll,false);
-			},
-			pointerover: function(e) {
-				if(typeof(e.buttons)!="undefined")
-					var btn = e.buttons;
-				else
-					var btn = e.which;
-				if(btn==0)
-					this.ttflag = 1;
-				setTimeout(this.showtip.bind(this),700);
-			},
-			pointerout: function(e) {
-				this.ttflag = 0;
-				if(this.press==0)
-					this.vtflag = 0;
-				this.showtip();
-			},
-			showtip: function() {
-				var vs=this.$['wac-valuetip'].style;
-				var ts=this.$['wac-tooltip-box'].style;
-				if(this.valuetip && this.vtflag) {
-					if(this.vtim) {
-						clearTimeout(this.vtim);
-						this.vtim = null;
-					}
-					vs.display="inline-block";
-					setTimeout(function(){this.opacity=0.9;}.bind(vs),50);
-				}
-				else if(vs.opacity) {
-					vs.opacity = 0;
-					this.vtim=setTimeout(function(){if(this.vtflag==0) this.$['wac-valuetip'].style.display="none";}.bind(this),500);
-				}
-				if(this.tooltip && this.ttflag) {
-					ts.display="block";
-					setTimeout(function(){this.opacity=0.8;}.bind(ts),100);
-				}
-				else if(ts.opacity) {
-					ts.opacity = 0;
-					setTimeout(function(){this.display="none";}.bind(ts),500);
-				}
-			},
-			wheel: function(e) {
-				var delta = 0;
-				if(!e)
-					e = window.event;
-				if(e.wheelDelta)
-					delta = e.wheelDelta/120;
-				else if(e.detail)
-					delta = -e.detail/3;
-				if(e.shiftKey)
-					delta *= 0.2;
-				delta *= (this.max - this.min) * 0.05;
-				if(Math.abs(delta) < this.step)
-					delta = (delta>0)?this.step:-this.step;
-				this.value += delta;
-				this.ttflag = 0;
-				this.vtflag = 1;
-				this.showtip();
-				e.preventDefault();
-			},
-			setValue: function(value,fire){
-				if(!fire)
-					this.valueold = value;
-				this.value = value;
-			},
-			updateValue: function() {
-				var value = parseFloat(this.value);
-				if(!isNaN(value)) {
-					this.value = value < this.min ? this.min : value > this.max ? this.max : value;
-					this.computedValue = (this.fconv ? eval("("+this.fconv+")")(this.value) : this.value);
-					if(typeof(this.computedValue)=="number"){
-						var valueNumber = (this.log) ? Math.pow(2,this.computedValue) : this.computedValue;
-						this.valuestr = valueNumber.toFixed(this.digits) + (this.units?this.units:"");
-						if ((this.digits==0)&&(valueNumber>1000)) {
-							valueNumber = valueNumber/1000;
-							this.valuestr = valueNumber.toFixed((valueNumber<10)?2:1) + "k" + (this.units?this.units:"");
-						}
-					}
-					else {
-						this.valuestr = this.computedValue + (this.units?this.units:"");
-					}
-				}
-				this.redraw();
-				if(this.value != this.valueold) {
-					this.valueold = this.value;
-					this.fire('change');
-				}
-			},
-			layout: function(){
-				var knobstyle = this.$['wac-knob'].style;
-				var bodystyle = this.$['wac-body'].style;
-				if(this.diameter)
-					this.width = this.height = this.diameter;
-				if(this.width)
-					bodystyle.width = knobstyle.width = this.width+"px";
-				if(this.height)
-					bodystyle.height = knobstyle.height = this.height+"px";
-			},
-			redraw: function() {
-				var range = this.max - this.min;
-				var style = this.$['wac-knob'].style;
-				if(this.sprites) {
-					var offset = ((this.sprites * (this.value - this.min) / range)|0) * this.height;
-					style.backgroundPosition= "0px -" + offset + "px";
-					style.transform = 'rotate(0deg)';
-				}
-				else {
-					var deg = 270*((this.value-this.min)/range-0.5);
-					style.transform = 'rotate('+deg+'deg)';
+    ready:function(){
+        function log2(num) {
+          var log=Math.log(num) / Math.LN2;
+          return log;
+        }
+        if(this.defvalue === null)
+          this.defvalue = this.value;
+        this.digits=0;
+        var body = this.$['wac-body'];
+        var knb = this.$['wac-knob'];
+        knb.addEventListener('DOMMouseScroll',this.wheel.bind(this),false);
+        knb.addEventListener('mousewheel',this.wheel.bind(this),false);
+        knb.addEventListener('mousedown',this.pointerdown.bind(this),false);
+        knb.addEventListener('touchstart',this.pointerdown.bind(this),false);
+        knb.addEventListener('mouseover',this.pointerover.bind(this),false);
+        knb.addEventListener('mouseout',this.pointerout.bind(this),false);
+        this.setupImage();
+        knb.style.backgroundSize = '100% '+((this.sprites+1)*100)+'%';
+        if(this.step && this.step < 1) {
+          for(var n = this.step ; n < 1; n *= 10)
+            ++this.digits;
+        }
+        this.minval = this.min;
+        this.maxval = this.max;
+        if (this.log) {
+          if (this.minval == 0)
+            this.minval = 0.001;
+          this.min = log2(this.minval);
+          this.max = log2(this.maxval);
+          this.setValue(log2(this.value));
+          this.ctlStep = 0.0001;
+        } else{
+          this.ctlStep=this.step;
+        }
+
+        this.updateValue();
+
+        // context menu
+        this.menu = document.querySelector("#context-menuKnob");
+        // adding context menu listener
+        this.contextListener();
+        this.resizeListener();
+        // add menu item listeners
+        //this.clickListener();
+    },
+
+	setupImage: function(){
+		var body = this.$['wac-body'];
+		var knb = this.$['wac-knob'];
+		if(this.colors)
+			this.coltab=this.colors.split(";");
+		else
+			this.coltab=["#e00","#000","#000"];
+		switch(this.coltab.length){
+			case 1: this.coltab[1]=this.coltab[2]="#000"; break;
+			case 2: this.coltab[2]=this.coltab[1]; break;
+		}
+		if(this.bgsrc)
+			body.style.background = 'url('+this.bgsrc+')';
+		if(this.src)
+			knb.style.background = 'url('+this.src+')';
+		else {
+			knb.style.background = 'url(data:image/svg+xml,%3csvg%20xmlns%3d%22http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%22%20version%3d%221%2e1%22%20viewBox%3d%220%200%2010%2010%22%20preserveAspectRatio%3d%22none%22%3e%0d%0a%3cline%20x1%3d%225%22%20y1%3d%22%2e5%22%20x2%3d%225%22%20y2%3d%224%22%20stroke%3d%22'+encodeURIComponent(this.coltab[0])+'%22%20stroke%2dwidth%3d%22%2e8%22%20stroke%2dlinecap%3d%22round%22%2f%3e%0d%0a%3c%2fsvg%3e)';
+			body.style.background = 'url(data:image/svg+xml,%3csvg%20xmlns%3d%22http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%22%20version%3d%221%2e1%22%20viewBox%3d%220%200%2010%2010%22%20preserveAspectRatio%3d%22none%22%3e%0d%0a%3cradialGradient%20id%3d%22g0%22%20fx%3d%22%2e3%22%20fy%3d%22%2e3%22%3e%3cstop%20offset%3d%220%22%20stop%2dcolor%3d%22'+encodeURIComponent(this.coltab[2])+'%22%2f%3e%3cstop%20offset%3d%22%2e75%22%20stop%2dcolor%3d%22'+encodeURIComponent(this.coltab[1])+'%22%2f%3e%3c%2fradialGradient%3e%0d%0a%3ccircle%20cx%3d%225%22%20cy%3d%225%22%20r%3d%225%22%20fill%3d%22url%28%23g0%29%22%2f%3e%0d%0a%3c%2fsvg%3e)';
+			this.sprites = 0;
+		}
+	},
+
+	pointerdown: function(e) {
+		if(!this.enable)
+		  return;
+		if(e.touches)
+		  e = e.touches[0];
+		this.boundPointermove = this.pointermove.bind(this);
+		this.boundCancel = this.cancel.bind(this);
+		if(e.ctrlKey || e.metaKey) {
+		  this.setValue(parseFloat(this.defvalue));
+		}
+		else {
+		  this.startPosX = e.pageX;
+		  this.startPosY = e.pageY;
+		  this.startVal = this.value;
+		  window.addEventListener('mousemove', this.boundPointermove, true);
+		  window.addEventListener('touchmove', this.boundPointermove, true);
+		}
+		window.addEventListener('mouseup', this.boundCancel, true);
+		window.addEventListener('touchend', this.boundCancel, true);
+		window.addEventListener('touchcancel', this.boundCancel, true);
+		document.body.addEventListener('touchstart',this.preventScroll);
+		this.press = this.vtflag = 1;
+		this.ttflag = 0;
+		this.showtip();
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	},
+
+	pointermove: function(e) {
+		if(e.touches)
+		  e = e.touches[0];
+		if(this.lastShift !== e.shiftKey) {
+		  this.lastShift = e.shiftKey;
+		  this.startPosX = e.pageX;
+		  this.startPosY = e.pageY;
+		  this.startVal = this.value;
+		}
+		var offset = (this.startPosY - e.pageY - this.startPosX + e.pageX) * this.sensitivity;
+		this.value = this.min + ((((this.startVal + (this.max - this.min) * offset / ((e.shiftKey ? 4:1) * 128)) - this.min) / this.ctlStep)|0) * this.ctlStep;
+		e.preventDefault();
+		e.stopPropagation();
+		return false;
+	},
+
+	preventScroll: function(e){
+		e.preventDefault();
+	},
+
+	cancel: function(e) {
+		this.press = this.vtflag = 0;
+		this.showtip();
+		this.startPosX = this.startPosY = null;
+		window.removeEventListener('mousemove', this.boundPointermove, true);
+		window.removeEventListener('touchmove', this.boundPointermove, true);
+		window.removeEventListener('mouseup', this.boundCancel, true);
+		window.removeEventListener('touchend', this.boundCancel, true);
+		window.removeEventListener('touchcancel', this.boundCancel, true);
+		document.body.removeEventListener('touchstart',this.preventScroll,false);
+	},
+
+	pointerover: function(e) {
+		if(typeof(e.buttons)!="undefined")
+			var btn = e.buttons;
+		else
+			var btn = e.which;
+		if(btn==0)
+			this.ttflag = 1;
+		setTimeout(this.showtip.bind(this),700);
+	},
+
+	pointerout: function(e) {
+		this.ttflag = 0;
+		if(this.press==0)
+			this.vtflag = 0;
+		this.showtip();
+	},
+
+	showtip: function() {
+		var vs=this.$['wac-valuetip'].style;
+		var ts=this.$['wac-tooltip-box'].style;
+		if(this.valuetip && this.vtflag) {
+			if(this.vtim) {
+				clearTimeout(this.vtim);
+				this.vtim = null;
+			}
+			vs.display="inline-block";
+			setTimeout(function(){this.opacity=0.9;}.bind(vs),50);
+		}
+		else if(vs.opacity) {
+			vs.opacity = 0;
+			this.vtim=setTimeout(function(){if(this.vtflag==0) this.$['wac-valuetip'].style.display="none";}.bind(this),500);
+		}
+		if(this.tooltip && this.ttflag) {
+			ts.display="block";
+			setTimeout(function(){this.opacity=0.8;}.bind(ts),100);
+		}
+		else if(ts.opacity) {
+			ts.opacity = 0;
+			setTimeout(function(){this.display="none";}.bind(ts),500);
+		}
+	},
+	wheel: function(e) {
+		var delta = 0;
+		if(!e)
+			e = window.event;
+		if(e.wheelDelta)
+			delta = e.wheelDelta/120;
+		else if(e.detail)
+			delta = -e.detail/3;
+		if(e.shiftKey)
+			delta *= 0.2;
+		delta *= (this.max - this.min) * 0.05;
+		if(Math.abs(delta) < this.step)
+			delta = (delta>0)?this.step:-this.step;
+		this.value += delta;
+		this.ttflag = 0;
+		this.vtflag = 1;
+		this.showtip();
+		e.preventDefault();
+	},
+	setValue: function(value,fire){
+		if(!fire)
+			this.valueold = value;
+		this.value = value;
+	},
+	updateValue: function() {
+		var value = parseFloat(this.value);
+		if(!isNaN(value)) {
+			this.value = value < this.min ? this.min : value > this.max ? this.max : value;
+			this.computedValue = (this.fconv ? eval("("+this.fconv+")")(this.value) : this.value);
+			if(typeof(this.computedValue)=="number"){
+				var valueNumber = (this.log) ? Math.pow(2,this.computedValue) : this.computedValue;
+				this.valuestr = valueNumber.toFixed(this.digits) + (this.units?this.units:"");
+				if ((this.digits==0)&&(valueNumber>1000)) {
+					valueNumber = valueNumber/1000;
+					this.valuestr = valueNumber.toFixed((valueNumber<10)?2:1) + "k" + (this.units?this.units:"");
 				}
 			}
+			else {
+				this.valuestr = this.computedValue + (this.units?this.units:"");
+			}
+		}
+		this.redraw();
+		if(this.value != this.valueold) {
+			this.valueold = this.value;
+			this.fire('change');
+		}
+	},
+	layout: function(){
+		var knobstyle = this.$['wac-knob'].style;
+		var bodystyle = this.$['wac-body'].style;
+		if(this.diameter)
+			this.width = this.height = this.diameter;
+		if(this.width)
+			bodystyle.width = knobstyle.width = this.width+"px";
+		if(this.height)
+			bodystyle.height = knobstyle.height = this.height+"px";
+	},
+	redraw: function() {
+		var range = this.max - this.min;
+		var style = this.$['wac-knob'].style;
+		if(this.sprites) {
+			var offset = ((this.sprites * (this.value - this.min) / range)|0) * this.height;
+			style.backgroundPosition= "0px -" + offset + "px";
+			style.transform = 'rotate(0deg)';
+		}
+		else {
+			var deg = 270*((this.value-this.min)/range-0.5);
+			style.transform = 'rotate('+deg+'deg)';
+		}
+	},
+
+
+	contextListener : function () {
+		this.addEventListener( "contextmenu", function(e) {
+			e.preventDefault();
+			this.toggleMenuOn();
+			this.positionMenu(e);
+		});
+	},
+
+	contextMenuItemListener : function(e) {
+		console.log("menu choisi : " + e.target.dataset.action);
+		switch(e.target.dataset.action) {
+			case 'Learn':
+			// Change label to "listening"
+			e.target.innerHTML = "Listening...";
+			this.midiMode = 'learn';
+			break;
+			case 'Clear':
+			this.toggleMenuOff();
+			this.midiControllers = [];
+			break;
+			default:
+			console.log('Unknown menu entry');
+			break;  
+		}
+	},
+
+	resizeListener: function () {
+		window.onresize = function(e) {
+		  // Hide menu if the window is resized
+		  this.toggleMenuOff();
+		}.bind(this);
+	},
+
+	toggleMenuOn: function() {
+		if ( this.menuState !== 1 ) {
+		this.menuState = 1;
+		this.menu.classList.add(this.contextMenuActive);
+		}
+	},
+
+	toggleMenuOff: function () {
+		if ( this.menuState !== 0 ) {
+		this.menuState = 0;
+		this.menu.classList.remove(this.contextMenuActive);
+		}
+	},
+
+	getPosition:  function (e) {
+		var rect = e.target.getBoundingClientRect();
+		var posx =  e.clientX - rect.left;
+		var posy =  e.clientY - rect.top;
+		/*
+		if (!e) var e = window.event;
+
+		if (e.pageX || e.pageY) {
+		posx = e.pageX;
+		posy = e.pageY;
+		} else if (e.clientX || e.clientY) {
+		posx = e.clientX + document.body.scrollLeft +
+		document.documentElement.scrollLeft;
+		posy = e.clientY + document.body.scrollTop +
+		document.documentElement.scrollTop;
+		}
+		*/
+		return {
+			x: posx,
+			y: posy
+		}
+	},
+
+	positionMenu: function (e) {
+		this.clickCoords = this.getPosition(e);
+		this.clickCoordsX = this.clickCoords.x;
+		this.clickCoordsY = this.clickCoords.y;
+
+		this.menuWidth = this.menu.offsetWidth + 1;
+		this.menuHeight = this.menu.offsetHeight + 1;
+
+		this.windowWidth = window.innerWidth;
+		windowHeight = window.innerHeight;
+
+		if ((this.windowWidth - this.clickCoordsX) < this.menuWidth) {
+			this.menu.style.left = this.windowWidth - this.menuWidth + "px";
+		} else {
+			this.menu.style.left = this.clickCoordsX + "px";
+		}
+
+		if ((windowHeight - this.clickCoordsY) < this.menuHeight) {
+			this.menu.style.top = windowHeight - this.menuHeight + "px";
+		} else {
+			this.menu.style.top = this.clickCoordsY + "px";
+		}
+	},
+
+	menuItemListener :  function ( link ) {
+		console.log(webAudioControllerWithMenu.getAttribute("id"));
+		//document.querySelector("#"+webAudioControllerWithMenu.getAttribute("data-id")).midiMessage(link);
+		this.midiMessage(link);
+		// activeBoutton2(link,webAudioControllerWithMenu.getAttribute("data-id"));
+		console.log( "Task ID - " +
+		  webAudioControllerWithMenu.getAttribute("id") +
+		  ", Task action - " + link.getAttribute("data-action"));
+		document.querySelector("#"+webAudioControllerWithMenu.getAttribute("id")).toggleMenuOff();
+		this.toggleMenuOff();
+	}
+
 	});
-	</script>
+</script>
 </dom-module>
 
 <dom-module id="webaudio-slider">
