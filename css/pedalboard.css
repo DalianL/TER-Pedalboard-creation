@@ -56,6 +56,15 @@
 	background-position:center center;
 }
 
+
+.output:Hover {
+	background-image:url("../img/minirightJackMini.png");
+	background-repeat:no-repeat;
+	width:65px;
+	height:12px;
+	background-position:center center;
+}
+
 .input {
 	background-image:url("../img/leftInput.png");
 	background-repeat:no-repeat;
@@ -63,3 +72,12 @@
 	height:10px;
 	background-position:left center;
 }
+
+.input {
+  background-image:url("../img/leftInputHover.png");
+  background-repeat:no-repeat;
+  width:20px;
+  height:10px;
+  background-position:left center;
+}
+

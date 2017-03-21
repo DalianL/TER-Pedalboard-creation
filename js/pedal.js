@@ -81,20 +81,10 @@ class Pedal {
   }
   
   highLightInput(flag) {
-    if(flag)
-       this.input.style.backgroundColor = "red";
-    else
-      this.input.style.backgroundColor = null;
-    
     this.inputHighlighted = flag;
   }
 
   highLightOutput(flag) {
-    if(flag)
-       this.output.style.backgroundColor = "red";
-    else
-      this.output.style.backgroundColor = null;
-    
     this.outputHighlighted = flag;
   }
 
