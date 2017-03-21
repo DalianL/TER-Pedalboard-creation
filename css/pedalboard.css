@@ -73,7 +73,7 @@
 	background-position:left center;
 }
 
-.input {
+.input:Hover {
   background-image:url("../img/leftInputHover.png");
   background-repeat:no-repeat;
   width:20px;

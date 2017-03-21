@@ -23,42 +23,51 @@
 }
 
 .context-menu {
-	display: none;
-	position: absolute;
-	z-index: 10;
-	padding: 12px 0;
-	width: 240px;
-	background-color: #fff;
-	border: solid 1px #dfdfdf;
-	box-shadow: 1px 1px 2px #cfcfcf;
+  display: none;
+  position: absolute;
+  z-index: 10;
+  padding: 12px 0;
+  width: 240px;
+  background-color: #fff;
+  border: solid 1px #dfdfdf;
+  box-shadow: 1px 1px 2px #cfcfcf;
 }
 
 .context-menu--active {
-  	display: block;
+  display: block;
 }
 
 .context-menu__items {
-	list-style: none;
-	margin: 0;
-	padding: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .context-menu__item {
-	display: block;
-	margin-bottom: 4px;
-	padding: 4px 12px;
-	color: #0066aa;
-	text-decoration: none;
+  display: block;
+  margin-bottom: 4px;
+  padding: 4px 12px;
+  color: #0066aa;
+  text-decoration: none;
 }
 
 .context-menu__item:last-child {
-  	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
-
 .context-menu__item:hover {
-	color: #fff;
-	background-color: #0066aa;
+  color: #fff;
+  background-color: #0066aa;
+}
+
+#div1 {
+  background-color:red;
+  height:200px;
+}
+
+#div2 {
+  background-color:green;
+  height:200px;
 }
 
 .input {
@@ -66,16 +75,16 @@
 	width:40px;
 	height:40px;
 	border-radius: 20px;
-	position:relative;
-	right:41px;
+	position:absolute;
+	left:-20px;
 }
 
 .output {
 	background-color: black;
 	width:40px;
 	height:40px;
-	border-radius: 20px;
-	position:relative;
-	left:352px;
-	top:-40px;
+	border-radius:20px;
+	position:absolute;
+	right:-20px;
+	top:20px;
 }
