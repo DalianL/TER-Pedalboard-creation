@@ -60,10 +60,12 @@ function mouseDownDraggable(e){
     pedalboard.currentDraggableJack.y1 = y1;
 
   } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
-    //console.log(typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0)
-    if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
-      pedalboard.currentState = "removingJack";
-      console.log("not empty")
+    // if the mouse left click button is pressed
+    if (detectLeftButton(e)) {
+      // and if the array of input jacks contains at least one element
+      if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
+        pedalboard.currentState = "removingJack";
+      }
     }
   }  else {
     // dragging a pedal
@@ -86,7 +88,6 @@ function mouseDownDraggable(e){
 }
 
 function mouseMoveDraggable(e){
-
   switch(pedalboard.currentState) {
     case "drawingNewJack":
       let jackWeAreDragging = pedalboard.currentDraggableJack;
@@ -106,4 +107,14 @@ function mouseMoveDraggable(e){
 
       break;
   }
+
+}
+
+function detectLeftButton(evt) {
+  evt = evt || window.event;
+  if ("buttons" in evt) {
+    return evt.buttons == 1;
+  }
+  var button = evt.which || evt.button;
+  return button == 1;
 }
