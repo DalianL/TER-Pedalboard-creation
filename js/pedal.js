@@ -56,6 +56,14 @@ class Pedal {
     this.outputJacks.push(jack);
   }
   
+  removeJackAtInput() {
+    this.inputJacks.splice(-1,1);
+  }
+
+  removeJackAtOutput() {
+    this.outputJacks.splice(-1,1);
+  }
+
   set pedalboard(p) {
     // set the pedalboard.elem as the HTML
     // parent of this pedal

@@ -1,13 +1,15 @@
 window.onload = addListeners;
 
 function addListeners() {
-    // Add a mousedown listener to all draggable elements
-    var listOfDraggable = document.querySelectorAll(".draggable");
-    listOfDraggable.forEach(function(e) {
-       e.addEventListener('mousedown', mouseDownDraggable, false);
-    });
-  
-    window.addEventListener('mouseup', mouseUpDraggable, false);
+  // Add a mousedown listener to all draggable elements
+  var listOfDraggable = document.querySelectorAll(".draggable");
+  listOfDraggable.forEach(function(e) {
+     e.addEventListener('mousedown', mouseDownDraggable, false);
+  });
+
+  window.addEventListener('mouseup', mouseUpDraggable, false);
+
+  addMenuListerners();
 }
 
 function mouseUpDraggable() {

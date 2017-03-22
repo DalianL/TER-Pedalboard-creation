@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width">
   <title>Minimal draggable example</title>
   <link rel="stylesheet" href="css/pedalboard.css">
+  <script src="js/menu.js"></script>
   <script src="js/script.js"></script>
   <script src="js/drag.js"></script>
   <script src="js/jacks.js"></script>
@@ -20,6 +21,21 @@
          draggable="true">Disto1</div>
     <div id="flanger1" class="pedal" 
          draggable="true">Flanger1</div>
+  </div>
+  <div>
+  <nav id="context-menuKnob" class="context-menu">
+    <ul class="context-menu__items">
+      <li class="context-menu__item" id="context-menu-learn" data-action="Learn" on-click="contextMenuItemListener">
+        Learn
+      </li>
+      <li class="context-menu__item" data-action="Clear" on-click="contextMenuItemListener">
+        Clear
+      </li>
+      <li class="context-menu__item" data-action="Close" on-click="toggleMenuOff">
+        Close
+      </li>
+    </ul>
+  </nav>
   </div>
 </body>
 </html>

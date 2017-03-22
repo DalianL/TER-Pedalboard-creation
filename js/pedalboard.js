@@ -82,7 +82,6 @@ let pedalboard ={
         } else {
           // regular case, we're just pointing the mouse around
           distInput = distance(x, y, iPos.x, iPos.y);
-
         }
         
         let distOutput= distance(x, y, oPos.x, oPos.y);

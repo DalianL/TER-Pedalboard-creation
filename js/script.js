@@ -27,6 +27,9 @@ function init() {
   
    // For pedals to be draggable
    addDraggableListeners();
+
+   // For the jack menu to appear
+   addMenuListerners();
 }
 
 function addNewPedalListeners() {
