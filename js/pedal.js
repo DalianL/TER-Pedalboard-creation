@@ -89,6 +89,11 @@ class Pedal {
   }
   
   highLightInput(flag) {
+    if(flag)
+       this.input.style.backgroundImage = "url('img/leftInputHover.png')";
+    else
+      this.input.style.backgroundImage = "url('img/leftInput.png')";
+
     this.inputHighlighted = flag;
   }
 
