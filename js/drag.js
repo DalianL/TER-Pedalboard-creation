@@ -66,6 +66,7 @@ function mouseDownDraggable(e){
       if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
         pedalboard.currentState = "removingJack";
       }
+      toggleMenuOff();
     }
   }  else {
     // dragging a pedal
