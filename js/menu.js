@@ -2,22 +2,19 @@ var menu;
 var menuState;
 var divs;
 
-function addMenuListerners() {
-  menu = document.querySelector("#context-menuKnob"); 
-  divs = document.querySelectorAll(".input");
-  menuState = 0;
-
-  divs.forEach(function(d) {
-    ajouteMenu(d);
-    resizeListener(d);
-  })
-}
-
-function ajouteMenu(elem) {
-  elem.addEventListener( "contextmenu", function(e) {
-      e.preventDefault();
+function handleJackMenu(elem) {
+  elem.addEventListener( "click", function(e) {
+    e.preventDefault();
+    let p = pedalboard.findPedalWhoseInputIsHighlighted();
+    if (p.inputJacks.length > 1) {
       toggleMenuOn();
       positionMenu(e);
+    } else {
+      if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
+        pedalboard.currentState = "removingJack";
+        mouseUpDraggable();
+      }
+    }
   });
 }
 

@@ -27,7 +27,7 @@ function mouseUpDraggable() {
         sourcePedal.removeJackAtOutput();
         for(var i=1; i <= 4; i++) {
           var elem = document.getElementById("jack"+sourcePedal.id+pp.id+"_"+i);
-          //console.log("jack"+sourcePedal.id+pp.id+"_"+i)
+          // console.log("jack"+sourcePedal.id+pp.id+"_"+i)
           if (elem != null) elem.parentNode.removeChild(elem);
         }
       }
@@ -49,7 +49,6 @@ function mouseDownDraggable(e){
   if((p = pedalboard.findPedalWhoseOutputIsHighlighted()) !== undefined) {
     // an output of a pedal is selected, if we drag the mouse
     // we're in the process of dragging a new cable/jack
-    console.log("drawing new jack");
     pedalboard.currentState = "drawingNewJack";
     let x1 = p.getOutputPos().x;
     let y1 = p.getOutputPos().y;
@@ -61,13 +60,11 @@ function mouseDownDraggable(e){
 
   } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
     // if the mouse left click button is pressed
-    if (detectLeftButton(e)) {
       // and if the array of input jacks contains at least one element
       if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
-        pedalboard.currentState = "removingJack";
+        //pedalboard.currentState = "removingJack";
       }
       toggleMenuOff();
-    }
   }  else {
     // dragging a pedal
     pedalboard.currentState = "draggingPedal";
@@ -108,7 +105,6 @@ function mouseMoveDraggable(e){
 
       break;
   }
-
 }
 
 function detectLeftButton(evt) {

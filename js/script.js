@@ -48,3 +48,14 @@ function addDraggableListeners() {
     // inputs et outputs des pédales
     pedalboard.elem.addEventListener('mousemove', highlightInputsOutputs);
 }
+
+function addMenuListerners() {
+  menu = document.querySelector("#context-menuKnob"); 
+  divs = document.querySelectorAll(".input");
+  menuState = 0;
+
+  divs.forEach(function(d) {
+    handleJackMenu(d);
+    resizeListener(d);
+  })
+}
