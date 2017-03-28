@@ -50,7 +50,7 @@ function addDraggableListeners() {
 }
 
 function addMenuListerners() {
-  menu = document.querySelector("#context-menuKnob"); 
+  menu = document.querySelector("#context-menuJack"); 
   divs = document.querySelectorAll(".input");
   menuState = 0;
 

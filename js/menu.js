@@ -7,6 +7,7 @@ function handleJackMenu(elem) {
     e.preventDefault();
     let p = pedalboard.findPedalWhoseInputIsHighlighted();
     if (p.inputJacks.length > 1) {
+      createMenuItems(p.inputJacks);
       toggleMenuOn();
       positionMenu(e);
     } else {
@@ -16,6 +17,17 @@ function handleJackMenu(elem) {
       }
     }
   });
+}
+
+function createMenuItems(jacks) {
+  document.getElementById("menu-container").innerHTML = "";
+  jacks.forEach(function(j) {
+    var ul = document.getElementById("menu-container");
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode("Jack " + j.p1.id.substring(5,6)));
+    li.classList.add("context-menu__item");
+    ul.appendChild(li);
+  })
 }
 
 function toggleMenuOn() {

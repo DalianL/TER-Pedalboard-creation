@@ -40,6 +40,7 @@ function mouseUpDraggable() {
 }
 
 function mouseDownDraggable(e){
+  toggleMenuOff();
   // Quand on clique on mémorise : 1) l'ancienne position
   // de l'objet qu'on draggue et 2) l'ancienne position de
   // la souris (la position cliquee) et 3) on ajoute un 
@@ -61,10 +62,9 @@ function mouseDownDraggable(e){
   } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
     // if the mouse left click button is pressed
       // and if the array of input jacks contains at least one element
-      if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
+      //if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
         //pedalboard.currentState = "removingJack";
-      }
-      toggleMenuOff();
+      //}
   }  else {
     // dragging a pedal
     pedalboard.currentState = "draggingPedal";
