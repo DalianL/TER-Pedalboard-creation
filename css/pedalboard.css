@@ -104,10 +104,13 @@
 
 .context-menu__item {
   display: block;
-  margin-bottom: 4px;
+  margin-left: 5px;
+  margin-bottom: 2px; 
   padding: 4px 12px;
-  color: #000000;
-  text-decoration: none;
+  width: 40px;
+  height: 5px;
+  background-image:url("../img/minirightJack.png");
+  background-repeat: no-repeat;
 }
 
 .context-menu__item:last-child {
@@ -116,5 +119,6 @@
 
 .context-menu__item:hover {
   color: #fff;
-  background-color: #0066aa;
+  margin-left: -1px; 
+  /* background-color: #0066aa; */
 }

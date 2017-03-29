@@ -24,7 +24,7 @@ function createMenuItems(jacks) {
   jacks.forEach(function(j) {
     var ul = document.getElementById("menu-container");
     var li = document.createElement("li");
-    li.appendChild(document.createTextNode("Jack " + j.p1.id.substring(5,6)));
+    li.appendChild(document.createTextNode(""));//"Jack " + j.p1.id.substring(5,6)));
     li.classList.add("context-menu__item");
     ul.appendChild(li);
   })
