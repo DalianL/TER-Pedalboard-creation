@@ -5,8 +5,8 @@
 }
 
 #pedalboard {
-  height:400px;
-  width:500px;
+  height:600px;
+  width:800px;
   background-color:lightgreen;
   border: 5px solid grey;
   user-select: none;
@@ -16,7 +16,7 @@
 
 #pedals {
   height:100px;
-  width:500px;
+  width:800px;
   background-color:lightGrey;
   border: 5px solid grey;
   margin-top:5px;
@@ -86,8 +86,8 @@
   position: absolute;
   z-index: 10;
   padding: 12px 0;
-  width: 240px;
-  background-color: #fff;
+  width: 70px;
+  background: rgba(0,0,0,0.3);
   border: solid 1px #dfdfdf;
   box-shadow: 1px 1px 2px #cfcfcf;
 }
@@ -106,7 +106,7 @@
   display: block;
   margin-bottom: 4px;
   padding: 4px 12px;
-  color: #0066aa;
+  color: #000000;
   text-decoration: none;
 }
 

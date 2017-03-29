@@ -1,6 +1,7 @@
 let oldMousePosX, oldMousePosY
 
 function mouseUpDraggable() {
+    let p;
     window.removeEventListener('mousemove', mouseMoveDraggable, true);
     switch(pedalboard.currentState) {
       case "drawingNewJack":
@@ -9,27 +10,24 @@ function mouseUpDraggable() {
           var elem = document.querySelector("#tmpJack_"+i);
           elem.parentNode.removeChild(elem);
         }
-
-        let p;
         if((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
           // we are dragging a new Jack and we have the mouse pointer
           // close to a pedal input: let's connect the Jack !
-          pedalboard.connect(pedalboard.currentDraggableJack.sourcePedal, p);
+          let alreadyAdded = false;
+          for (var i = 0; i < p.inputJacks.length; i++) {
+            // checks if the jack is already plugged in by checking if the source 
+            // pedal already is in the inputJack list of the destination pedal
+            if (p.inputJacks[i].p1 == pedalboard.currentDraggableJack.sourcePedal) {
+              alreadyAdded = true;
+            }
+          }
+          if (!alreadyAdded) pedalboard.connect(pedalboard.currentDraggableJack.sourcePedal, p);
         }
         delete pedalboard.currentDraggableJack;
       break;
     case "removingJack":
-      let pp;
-      if((pp = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
-        let currentJack = pp.inputJacks[0];
-        let sourcePedal = currentJack.p1;
-        pp.removeJackAtInput();
-        sourcePedal.removeJackAtOutput();
-        for(var i=1; i <= 4; i++) {
-          var elem = document.getElementById("jack"+sourcePedal.id+pp.id+"_"+i);
-          // console.log("jack"+sourcePedal.id+pp.id+"_"+i)
-          if (elem != null) elem.parentNode.removeChild(elem);
-        }
+      if((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
+        pedalboard.disconnect(p.inputJacks[0].p1, p);
       }
       break;
     case "draggingPedal":

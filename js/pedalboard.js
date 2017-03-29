@@ -44,10 +44,22 @@ let pedalboard ={
     this.pedals.push(p);
     p.pedalboard = this;
   },
+
   connect: function(p1, p2) {
     var jack = new Jack(p1, p2);
     p1.addJackAtOutput(jack);
     p2.addJackAtInput(jack);
+  },
+
+  disconnect : function(p1, p2) {
+    p1.removeJackAtOutput();
+    p2.removeJackAtInput();
+    // removes all components of the SVG Jack, 
+    // here 3 drawings on top of each other
+    for(var i=1; i <= 4; i++) {
+      var elem = document.getElementById("jack"+p1.id+p2.id+"_"+i);
+      if (elem != null) elem.parentNode.removeChild(elem);
+    }
   },
   
   getPedalFromHtmlElem: function(elem) {
