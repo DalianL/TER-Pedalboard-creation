@@ -6,7 +6,7 @@
 
 #pedalboard {
   height:600px;
-  width:800px;
+  width:1500px;
   background-color:lightgreen;
   border: 5px solid grey;
   user-select: none;
@@ -16,7 +16,7 @@
 
 #pedals {
   height:100px;
-  width:800px;
+  width:1500px;
   background-color:lightGrey;
   border: 5px solid grey;
   margin-top:5px;
@@ -105,11 +105,9 @@
 .context-menu__item {
   display: block;
   margin-left: 5px;
-  margin-bottom: 2px; 
-  padding: 4px 12px;
-  width: 40px;
-  height: 5px;
-  background-image:url("../img/minirightJack.png");
+  padding: 0px 12px;
+  width: 45px;
+  height: 14px;
   background-repeat: no-repeat;
 }
 
@@ -119,6 +117,7 @@
 
 .context-menu__item:hover {
   color: #fff;
-  margin-left: -1px; 
-  /* background-color: #0066aa; */
+  margin-left: 0px; 
+  background-color: #0066aa;
+  /*background-image:url("../img/minirightJack.png");*/
 }

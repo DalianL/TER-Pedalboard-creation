@@ -122,6 +122,16 @@ function updateSVGJack(jack, x1, y1, x2, y2) {
       return jack;
 }
 
+function repositionJack(j, offsetY) {
+  let posPedal1 = j.p1.getOutputPos();
+  let posPedal2 = j.p2.getInputPos();
+  let element = document.getElementById('context-menuJack'),
+  style = window.getComputedStyle(element),
+  wid = style.getPropertyValue('width');
+  let offestX = -parseInt(wid, 10);
+  updateSVGJack(j.jackSVG, posPedal1.x, posPedal1.y, posPedal2.x + offestX, posPedal2.y + offsetY);
+}
+
 class Jack {
   constructor(pedal1, pedal2) {
     this.p1 = pedal1;
