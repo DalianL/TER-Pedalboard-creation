@@ -118,6 +118,6 @@
 .context-menu__item:hover {
   color: #fff;
   margin-left: 0px; 
-  background-color: #0066aa;
-  /*background-image:url("../img/minirightJack.png");*/
+  
+  background-image:url("../img/RightJackHover.png");
 }
