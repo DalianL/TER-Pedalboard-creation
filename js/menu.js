@@ -11,11 +11,6 @@ function handleJackMenu(elem) {
       createMenuItems(pedalMenu.inputJacks);
       toggleMenuOn();
       positionMenu(e,pedalMenu);
-    } else {
-      if (typeof pedalMenu.inputJacks != "undefined" && pedalMenu.inputJacks != null && pedalMenu.inputJacks.length > 0) {
-        pedalboard.currentState = "removingJack";
-        mouseUpDraggable();
-      }
     }
   });
 }

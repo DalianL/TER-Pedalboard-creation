@@ -52,8 +52,17 @@ let pedalboard ={
   },
 
   disconnect : function(p1, p2) {
-    p1.removeJackAtOutput();
-    p2.removeJackAtInput();
+    for (j in p1.outputJacks) {
+      if (p1.outputJacks[j].p2 == p2) {
+        p1.removeJackAtOutput(p1.outputJacks[j]);
+      }
+    }
+    for (j in p2.inputJacks) {
+      if (p2.inputJacks[j].p1 == p1) {
+        p2.removeJackAtInput(p2.inputJacks[j]);
+      }
+    }
+
     // removes all components of the SVG Jack, 
     // here 3 drawings on top of each other
     for(var i=1; i <= 4; i++) {

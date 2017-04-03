@@ -25,11 +25,6 @@ function mouseUpDraggable() {
         }
         delete pedalboard.currentDraggableJack;
       break;
-    case "removingJack":
-      if((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
-        pedalboard.disconnect(p.inputJacks[0].p1, p);
-      }
-      break;
     case "draggingPedal":
       break;
     }
@@ -58,11 +53,21 @@ function mouseDownDraggable(e){
     pedalboard.currentDraggableJack.y1 = y1;
 
   } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
-    // if the mouse left click button is pressed
-      // and if the array of input jacks contains at least one element
-      //if (typeof p.inputJacks != "undefined" && p.inputJacks != null && p.inputJacks.length > 0) {
-        //pedalboard.currentState = "removingJack";
-      //}
+    if (p.inputJacks.length == 1) {
+      let sourcePedal = p.inputJacks[0].p1;
+      // first we disconnect the jack before immediatly creating
+      // a new one to drag
+      pedalboard.disconnect(sourcePedal, p);
+      pedalboard.currentState = "drawingNewJack";
+      let x1 = sourcePedal.getOutputPos().x;
+      let y1 = sourcePedal.getOutputPos().y;
+
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
+      pedalboard.currentDraggableJack.sourcePedal = sourcePedal;
+      pedalboard.currentDraggableJack.x1 = x1;
+      pedalboard.currentDraggableJack.y1 = y1;
+    }
+
   }  else {
     // dragging a pedal
     pedalboard.currentState = "draggingPedal";

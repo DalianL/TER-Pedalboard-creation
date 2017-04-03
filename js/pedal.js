@@ -56,12 +56,24 @@ class Pedal {
     this.outputJacks.push(jack);
   }
   
-  removeJackAtInput() {
-    this.inputJacks.splice(-1,1);
+  removeJackAtInput(jack) {
+    let index = -1;
+    for (j in this.inputJacks) {
+      if (this.inputJacks[j].p1 == jack.p1) {
+        index = j;
+      }
+    }
+    this.inputJacks.splice(index,1);
   }
 
-  removeJackAtOutput() {
-    this.outputJacks.splice(-1,1);
+  removeJackAtOutput(jack) {
+    let index = -1;
+    for (j in this.outputJacks) {
+      if (this.outputJacks[j].p2 == jack.p2) {
+        index = j;
+      }
+    }
+    this.outputJacks.splice(index,1);
   }
 
   set pedalboard(p) {
