@@ -29,11 +29,36 @@ function createMenuItems(jacks) {
     li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
     li.classList.add("context-menu__item");
     ul.appendChild(li);
+    li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
 
     // Repositions the current jack so that it feels like it's unplugged 
     // while in the opened menu
     repositionJack(j, offsetY);
     offsetY += 14;
+
+    li.addEventListener( "mousedown", function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      // first we disconnect the jack before immediatly creating
+      // a new one to drag
+      pedalboard.disconnect(j.p1, j.p2);
+      pedalboard.currentState = "drawingNewJack";
+      let x1 = j.p1.getOutputPos().x;
+      let y1 = j.p1.getOutputPos().y;
+      let x2 = j.p2.getInputPos().x;
+      let y2 = j.p2.getInputPos().y;
+
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
+      pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
+      pedalboard.currentDraggableJack.sourcePedal = j.p1;
+      pedalboard.currentDraggableJack.x1 = x1;
+      pedalboard.currentDraggableJack.y1 = y1;
+      toggleMenuOff();
+      // we update the position of the jack because the default toggle
+      // moved the jack back to the menu
+      window.addEventListener('mousemove', mouseMoveDraggable, true);
+    })
   })
 }
 

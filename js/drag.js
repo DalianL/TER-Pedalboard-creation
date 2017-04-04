@@ -1,4 +1,4 @@
-let oldMousePosX, oldMousePosY
+let oldMousePosX, oldMousePosY;
 
 function mouseUpDraggable() {
     let p;
@@ -32,7 +32,7 @@ function mouseUpDraggable() {
     pedalboard.currentState = "none";
 }
 
-function mouseDownDraggable(e){
+function mouseDownDraggable(e) {
   toggleMenuOff();
   // Quand on clique on mémorise : 1) l'ancienne position
   // de l'objet qu'on draggue et 2) l'ancienne position de
@@ -88,7 +88,7 @@ function mouseDownDraggable(e){
 
 }
 
-function mouseMoveDraggable(e){
+function mouseMoveDraggable(e) {
   switch(pedalboard.currentState) {
     case "drawingNewJack":
       let jackWeAreDragging = pedalboard.currentDraggableJack;
