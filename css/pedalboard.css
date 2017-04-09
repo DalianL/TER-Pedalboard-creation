@@ -12,11 +12,6 @@
   user-select: none;
 }
 
-#pedalboard.zoom {
-  height:800px;
-  width:1600px;
-}
-
 #pedals {
   height:100px;
   width:1500px;
