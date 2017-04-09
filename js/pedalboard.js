@@ -149,3 +149,20 @@ let pedalboard ={
     this.elem.style = 'transform(' + s + ',' + s + ')';
   }
 };
+
+function mouseWheelHandler(e) {
+  var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+  
+  var board = document.querySelector('#pedalboard');
+
+  if(delta == 1) {
+    board.style.transform = 'scale(2,2)';
+    board.style.transformOrigin = 'left top';
+  } 
+
+  if (delta == -1) {
+    board.style.transform = '';
+    board.style.transformOrigin = '';
+  }
+
+}

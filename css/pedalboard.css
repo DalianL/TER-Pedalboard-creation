@@ -10,8 +10,11 @@
   background-color:lightgreen;
   border: 5px solid grey;
   user-select: none;
-  //transform:scale(2,2);
+}
 
+#pedalboard.zoom {
+  height:800px;
+  width:1600px;
 }
 
 #pedals {

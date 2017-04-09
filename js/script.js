@@ -30,6 +30,9 @@ function init() {
 
    // For the jack menu to appear
    addMenuListerners();
+
+   // For mouse zooming 
+   addZoomListener();
 }
 
 function addNewPedalListeners() {
@@ -58,4 +61,11 @@ function addMenuListerners() {
     handleJackMenu(d);
     resizeListener(d);
   })
+}
+
+function addZoomListener() {
+  // IE9, Chrome, Safari, Opera
+  window.addEventListener("mousewheel", mouseWheelHandler, false);
+  // Firefox
+  window.addEventListener("DOMMouseScroll", mouseWheelHandler, false);
 }
