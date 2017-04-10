@@ -14,8 +14,6 @@ function init() {
    pedalboard.addPedal(p4);
    pedalboard.addPedal(p5);
   
-   //var j1 = new Jack("cable1", p1, p2, "black");
-   //var j2 = new Jack("cable2", p2, p3, "black");
    pedalboard.connect(p1, p2);
    pedalboard.connect(p2, p3);
    pedalboard.connect(p3, p4);

@@ -43,6 +43,8 @@ let pedalboard ={
   addPedal:function(p) {
     this.pedals.push(p);
     p.pedalboard = this;
+    handleJackMenu(p.input);
+    resizeListener(p.input);
   },
 
   connect: function(p1, p2) {
@@ -186,7 +188,7 @@ function mouseWheelHandler(e) {
     // board.style.transform = 'scale(1,1)';
     // board.style.transition = '0.5s ease';
     board.style.transform = '';
-    board.style.transition = '';
+    board.style.transition = 'transform 0.5s ease-in';
   }
 
 }

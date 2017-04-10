@@ -49,6 +49,8 @@ function mouseDownDraggable(e) {
 
     pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
     pedalboard.currentDraggableJack.sourcePedal = p;
+    pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
+    pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
     pedalboard.currentDraggableJack.x1 = x1;
     pedalboard.currentDraggableJack.y1 = y1;
 
@@ -64,6 +66,8 @@ function mouseDownDraggable(e) {
 
       pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
       pedalboard.currentDraggableJack.sourcePedal = sourcePedal;
+      pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
     }

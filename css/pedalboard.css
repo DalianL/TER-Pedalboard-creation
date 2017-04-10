@@ -49,16 +49,15 @@
 	background-image:url("../img/minirightJack.png");
 	background-repeat:no-repeat;
 	width:65px;
-	height:12px;
+	height:10px;
 	background-position:center center;
 }
-
 
 .output:Hover {
 	background-image:url("../img/minirightJackMini.png");
 	background-repeat:no-repeat;
 	width:65px;
-	height:12px;
+	height:10px;
 	background-position:center center;
 }
 

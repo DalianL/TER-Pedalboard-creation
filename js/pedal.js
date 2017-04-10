@@ -25,7 +25,7 @@ class Pedal {
     this.elem.innerHTML = this.id;
     
     // input and output
-    this.input = document.createElement("div");;
+    this.input = document.createElement("div");
     this.input.classList.add("input");
 	  //this.input.innerHTML="<img src='img/rightInput.png' style='width:20px; height:20px;margin-left-100px;' />";
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
