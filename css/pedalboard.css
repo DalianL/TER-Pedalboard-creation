@@ -1,6 +1,5 @@
 #main {
-  /* if pedalboard scaled, will make
-  it scrollable */
+  /* if pedalboard scaled, will make it scrollable */
   overflow: scroll;
 }
 

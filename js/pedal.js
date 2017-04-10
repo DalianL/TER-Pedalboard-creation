@@ -129,16 +129,15 @@ class Pedal {
 }
 
 function pedalDragStart(event) {
-  console.log("pedal drag start");
+  // console.log("pedal drag start");
   event.dataTransfer.setData("pedalId", event.target.id);
 }
 
 function dropPedalHandler(event) {
   var id = event.dataTransfer.getData("pedalId");
-  console.log("pedal dropped id = " + 
-             id + "x = " + event.clientX);
+  //console.log("pedal dropped id = " + id + "x = " + event.clientX);
   // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
   // de la même pédale
-  let p = new Pedal(id, event.clientX-30, event.clientY-50, 30, 50);
+  let p = new Pedal(id, event.clientX-30, event.clientY-50, 50, 50);
   pedalboard.addPedal(p)
 }

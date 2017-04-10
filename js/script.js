@@ -2,7 +2,7 @@ window.onload = init;
 
 function init() {  
    pedalboard.init(); 
-   let p1 = new Pedal("pedal1", 120, 130, 30, 50);
+   let p1 = new Pedal("pedal1", 120, 130, 50, 50);
    let p2 = new Pedal("pedal2", 280, 180, 50, 50);
    let p3 = new Pedal("pedal3", 170, 270, 50, 50);
    let p4 = new Pedal("pedal4", 350, 400, 50, 50);

@@ -151,18 +151,42 @@ let pedalboard ={
 };
 
 function mouseWheelHandler(e) {
+  e.preventDefault();
+
   var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
   
   var board = document.querySelector('#pedalboard');
+  let thirdWidth = parseInt(window.getComputedStyle(board).width, 10) / 3;
+  let halfHeight = parseInt(window.getComputedStyle(board).height, 10) / 2;
 
   if(delta == 1) {
     board.style.transform = 'scale(2,2)';
-    board.style.transformOrigin = 'left top';
+
+    if (e.clientY < halfHeight) {
+      if (e.clientX < thirdWidth) {
+        board.style.transformOrigin = 'left top';
+      } else if (e.clientX < 2 * thirdWidth) {
+        board.style.transformOrigin = 'center top';
+      } else {
+        board.style.transformOrigin = 'right top';
+      }
+    } else {
+      if (e.clientX < thirdWidth) {
+        board.style.transformOrigin = 'left 50%';
+      } else if (e.clientX < 2 * thirdWidth) {
+        board.style.transformOrigin = 'center 50%';
+      } else {
+        board.style.transformOrigin = 'right 50%';
+      }
+    }
+    board.style.transition = "transform 0.5s ease-in";
   } 
 
   if (delta == -1) {
+    // board.style.transform = 'scale(1,1)';
+    // board.style.transition = '0.5s ease';
     board.style.transform = '';
-    board.style.transformOrigin = '';
+    board.style.transition = '';
   }
 
 }
