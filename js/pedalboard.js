@@ -1,3 +1,6 @@
+// To know when the zoom is enabled
+var zoom = 0;
+
 function resizePedalBoard(evt) {
   let svg = document.getElementById("svg-canvas");
   svg.setAttribute('width', pedalboard.elem.clientWidth);
@@ -112,21 +115,22 @@ let pedalboard ={
         // It depends if we're trying to plug a jack or not
         if(distInput < distMinToInputForHighlight) {
           if(!p.inputHighlighted) {
-             p.highLightInput(true);
+            p.highLightInput(true);
           }
         } else {
           if(p.inputHighlighted) {
-             p.highLightInput(false);
+            p.highLightInput(false);
           }
         }
         
         if(distOutput < 30) {
           if(!p.outputHighlighted) {
-             p.highLightOutput(true);
+            p.highLightOutput(true);
+             
           }
         } else {
           if(p.outputHighlighted) {
-             p.highLightOutput(false);
+            p.highLightOutput(false);
           }
         }
 
@@ -162,6 +166,7 @@ function mouseWheelHandler(e) {
   let halfHeight = parseInt(window.getComputedStyle(board).height, 10) / 2;
 
   if(delta == 1) {
+    zoom = 1;
     board.style.transform = 'scale(2,2)';
 
     if (e.clientY < halfHeight) {
@@ -185,6 +190,7 @@ function mouseWheelHandler(e) {
   } 
 
   if (delta == -1) {
+    zoom = 0;
     // board.style.transform = 'scale(1,1)';
     // board.style.transition = '0.5s ease';
     board.style.transform = '';

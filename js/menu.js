@@ -6,7 +6,6 @@ var pedalMenu;
 function handleJackMenu(elem) {
   elem.addEventListener( "click", function(e) {
     e.preventDefault();
-    pedalMenu = pedalboard.findPedalWhoseInputIsHighlighted();
     if (pedalMenu.inputJacks.length > 1) {
       createMenuItems(pedalMenu.inputJacks);
       toggleMenuOn();

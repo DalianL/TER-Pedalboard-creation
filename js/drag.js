@@ -55,6 +55,7 @@ function mouseDownDraggable(e) {
     pedalboard.currentDraggableJack.y1 = y1;
 
   } else if ((p = pedalboard.findPedalWhoseInputIsHighlighted()) !== undefined) {
+    pedalMenu = p;
     if (p.inputJacks.length == 1) {
       let sourcePedal = p.inputJacks[0].p1;
       // first we disconnect the jack before immediatly creating
