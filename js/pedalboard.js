@@ -89,6 +89,9 @@ let pedalboard ={
   findClosestIO: function(x, y) {
       let self = this;
 
+      x = x / (zoom + 1);
+      y = y / (zoom + 1);
+
       this.pedals.forEach(function(p) {
         // be careful here this is not the pedalboard,
         // we're in a forEach callback, remind the trap

@@ -33,6 +33,9 @@ function mouseUpDraggable() {
 }
 
 function mouseDownDraggable(e) {
+  // Computes the location of the mouse in the SVG canvas
+  var loc = cursorPoint(e);
+
   toggleMenuOff();
   // Quand on clique on mémorise : 1) l'ancienne position
   // de l'objet qu'on draggue et 2) l'ancienne position de
@@ -47,10 +50,10 @@ function mouseDownDraggable(e) {
     let x1 = p.getOutputPos().x;
     let y1 = p.getOutputPos().y;
 
-    pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
+    pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
     pedalboard.currentDraggableJack.sourcePedal = p;
-    pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
-    pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
+    pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
+    pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
     pedalboard.currentDraggableJack.x1 = x1;
     pedalboard.currentDraggableJack.y1 = y1;
 
@@ -65,10 +68,10 @@ function mouseDownDraggable(e) {
       let x1 = sourcePedal.getOutputPos().x;
       let y1 = sourcePedal.getOutputPos().y;
 
-      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
       pedalboard.currentDraggableJack.sourcePedal = sourcePedal;
-      pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
-      pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
+      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
     }
@@ -88,21 +91,24 @@ function mouseDownDraggable(e) {
   
   }
   // Keep track of mouse clicked pos (source position)
-  oldMousePosX = e.clientX;
-  oldMousePosY = e.clientY;
+  oldMousePosX = loc.x / (zoom + 1);
+  oldMousePosY = loc.y / (zoom + 1);
 
 }
 
 function mouseMoveDraggable(e) {
+  // Computes the location of the mouse in the SVG canvas
+  var loc = cursorPoint(e);
+
   switch(pedalboard.currentState) {
     case "drawingNewJack":
       let jackWeAreDragging = pedalboard.currentDraggableJack;
-      updateSVGJack(jackWeAreDragging, jackWeAreDragging.x1, jackWeAreDragging.y1, e.clientX, e.clientY)
+      updateSVGJack(jackWeAreDragging, jackWeAreDragging.x1, jackWeAreDragging.y1, loc.x / (zoom + 1), loc.y / (zoom + 1))
       break;
     case "draggingPedal":
         // deplacement souris incrémental
-        let dx = (e.clientX - oldMousePosX);
-        let dy = (e.clientY - oldMousePosY);
+        let dx = (loc.x / (zoom + 1) - oldMousePosX);
+        let dy = (loc.y / (zoom + 1) - oldMousePosY);
     
         // test obligatoire car on pourrait cliquer
         // sur les input ou output ou boutons rotatifs etc.
@@ -122,4 +128,12 @@ function detectLeftButton(evt) {
   }
   var button = evt.which || evt.button;
   return button == 1;
+}
+
+function cursorPoint(evt){
+  let svg = document.querySelector('#svg-canvas');
+  let pt = svg.createSVGPoint();
+  pt.x = evt.clientX; 
+  pt.y = evt.clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
 }

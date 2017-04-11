@@ -36,6 +36,9 @@ function createMenuItems(jacks) {
     offsetY += 14;
 
     li.addEventListener( "mousedown", function(e) {
+      // Computes the location of the mouse in the SVG canvas
+      var loc = cursorPoint(e);
+
       e.preventDefault();
       e.stopPropagation();
       // first we disconnect the jack before immediatly creating
@@ -47,9 +50,9 @@ function createMenuItems(jacks) {
       let x2 = j.p2.getInputPos().x;
       let y2 = j.p2.getInputPos().y;
 
-      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, e.clientX, e.clientY);
-      pedalboard.currentDraggableJack.end.setAttribute("x", e.clientX - 7);
-      pedalboard.currentDraggableJack.end.setAttribute("y", e.clientY - 10);
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
+      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
       pedalboard.currentDraggableJack.sourcePedal = j.p1;
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
@@ -87,9 +90,12 @@ function resetJackPosition(jacks) {
 
 // Get mouse pointer position
 function getPosition(e) {
+  // Computes the location of the mouse in the SVG canvas
+  var loc = cursorPoint(e);
+  
   var rect = e.target.getBoundingClientRect();
-  var posx = e.clientX;// - rect.left;
-  var posy = e.clientY;// - rect.top;
+  var posx = loc.x / (zoom + 1);// - rect.left;
+  var posy = loc.y / (zoom + 1);// - rect.top;
   return {
     x: posx,
     y: posy
@@ -115,7 +121,7 @@ function positionMenu(e,p) {
   if ((windowHeight - inputCoordsY) < menuHeight) {
     menu.style.top = windowHeight - menuHeight + "px";
   } else {
-   menu.style.top = inputCoordsY - menuHeight/2 + "px";
+    menu.style.top = inputCoordsY - menuHeight/2 + "px";
   }
 }
 
