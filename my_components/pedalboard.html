@@ -1,0 +1,583 @@
+<!-- Imports polymer -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<!-- Defines element markup -->
+<dom-module id="my-pedalboard">
+  <style>
+    :host::content .pedal_container,
+
+    .pedal_container  {
+      background-color: #f4efef;
+      font-family: 'Raleway', sans-serif;
+      display: inline-block;
+    }
+
+    button{
+      background-color: #822020;
+      border: none;
+      box-shadow: none;
+      margin: 3px;
+      padding: 3px;
+      color: white;
+      font-family: 'Raleway','Sans-Serif';
+      cursor: pointer;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+
+    button:hover{
+      background-color: #d84141;
+      color: #f4efef;
+    }
+
+    #pedalPicker{
+      text-align: left;
+    }
+    #effects{
+      position: relative;
+      display: inline-block;
+    }
+    #player{
+      margin: 3px;
+      padding: 3px;
+      background: #822020;
+      cursor: pointer;
+    }
+    #menu{
+      overflow-y: scroll;
+      height: 100%;
+      position: absolute;
+      top:0;
+      left: 0;
+      width: 20%;
+      background-color: #d84141;
+      overflow-y: auto;
+      border-right: 3px solid #442525;
+      padding: 10px;
+    }
+
+    #pedal_list{
+      position: absolute;
+      left: 25%;
+    }
+
+    .modal h2{
+      color: white;
+    }
+
+    .modal input{
+      border: 1px solid #442525;
+    }
+
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+      background-color: #442525;
+      margin: 15% auto; /* 15% from the top and centered */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%; /* Could be more or less, depending on screen size */
+      color: white;
+    }
+
+    /* The Close Button */
+    #closeModal {
+      color: #442525;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    #closeModal:hover,
+    #closeModal:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+  </style>
+    <template>
+
+      <div id="modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span id="closeModal">&times;</span>
+                <h2>Choose name:</h2>
+                <input type="text" id="pedalBoardName" placeholder="Enter Name">
+                <button id="saveBoard">Save Pedalboard</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div id="menu">
+        <select id="change_sound_file_select"> <option value="none" >Choose ...</option></select>
+        <button id="player">
+          Play
+        </button>
+        <audio src="../audio/acoustic.m4a" id="audioplayer" loop></audio>
+        <div>
+          <button id="pedalboard_file_input">File input</button><button id="pedalboard_stream_input">Stream input</button>
+        </div>
+        <hr/>
+        <div>
+          <h2>Import Pedalboard : </h2><select id="import_pedalboard_select"> <option value="none" >Choose ...</option></select>
+        </div>
+        <hr/>
+        <div id="pedalPicker">
+          <h2>Choose an effect : </h2>
+          <select id="effects"><option value="none" >Choose ...</option></select>
+          <button id="clean_pedalBoard">Clean Pedalboard</button>
+        </div>
+        <hr/>
+        <button id="showSavePopup">Save</button>
+      </div>
+      <div id="pedal_list"></div>
+
+      <!-- <button id="play">Play</button>
+      <button id="pause">Pause</button> -->
+
+    </template>
+</dom-module>
+
+<!-- Registers custom element -->
+<script>
+Polymer({
+    is: 'my-pedalboard',
+    src:  {}, //the global sound node in input, an AudioNode
+    fileSrc :  {},  //the global file input node, a MediaElementAudioSourceNode
+    streamSrc:  {},  //the global stream input node,a MediaStreamAudioSourceNode
+    user: {}, //the connected user, informations about him are retrieved on launch via api.whoAmI()
+    sounds : ["./audio/acoustic.m4a","./audio/cavaquinho.mp3"], //the different sounds available
+
+    /** Called when component finished loading
+      * Connect the nodes to the file output to be able to play sounds,
+      * retrieved the available pedals, fills the select for the choice of the
+      * sound file to read from, add listeners to the main buttons and selects,
+      * retrives the informations about the user (id and pseudo),
+      * retrieves the pedalboards saved on the server by the user
+    */
+    ready : function() {
+      this.changeInputToFile();
+      this.src.connect(Pizzicato.context.destination);
+
+
+
+      this.getFileSounds();
+      this.addButtonListeners();
+
+      var t = this;
+      this.api = new ServerAPI();
+      this.getEffects();
+      this.api.whoAmI(function (user) {
+        var parsed =JSON.parse(user);
+        t.user.id = parsed._id;
+        t.user.pseudo = parsed.username;
+        t.loadUserData();
+
+      });
+
+
+    },
+
+    playTrack: function(){
+        if(document.getElementById('audioplayer').paused){
+            document.getElementById('audioplayer').play();
+            document.getElementById('player').innerHTML = 'Pause';
+        }else{
+            document.getElementById('audioplayer').pause();
+            document.getElementById('player').innerHTML = 'Play';
+
+        }
+    }
+    ,
+    /** Retrieves the available effects and fills the corresponding select
+      Adds links in the head tag to import the elements
+    **/
+    getEffects: function () {
+      var effects = document.getElementById('effects');
+      var head = document.getElementsByTagName("head")[0];
+
+      var callback = function (pedals) {
+        var pedals2 = JSON.parse(pedals);
+        for (var i=0;i<pedals2.length;i++) {
+          // console.log(pedals2[i].path);
+           head.innerHTML += "<link rel='import' href='"+pedals2[i].path+"'>";
+          effects.innerHTML += "<option value='"+pedals2[i].name+"'>"+pedals2[i].name+"</option>";
+        }
+      }
+       this.api.getAllPedals(callback);
+
+      //We also add some statics pedals, the import links are  already in the index page
+      //These should be saved in the database, but to simplify they are here
+      effects.innerHTML += "<option value='PedalDelay' >Delay</option>"+
+                                                      "<option value='PedalQuadrafuzz' >Quadrafuzz</option>"+
+                                                      "<option value='PedalLowpass' >Lowpass</option>"+
+                                                      "<option value='PedalFlanger' >Flanger</option>";
+    },
+    /** Retrieves the available sound and fills the corresponding select **/
+    getFileSounds: function () {
+      var change_sound_file_select = document.getElementById('change_sound_file_select');
+      for (var i =0;i<this.sounds.length;i++) {
+        change_sound_file_select.innerHTML += "<option value='"+this.sounds[i]+"'>"+this.sounds[i].split("/")[2]+"</option>";
+      }
+    },
+    /** Creates a new pedal
+     * @param type : the type of the pedal
+     * @param options : the default values of the knobs
+     * @param isOn : a Boolean indicating if the pedal mus be on or off upon creation
+     * @return pedal : the created pedal
+    **/
+    createPedal: function(type,options,isOn) {
+       var str = "var pedal = new "+type+"("+options+","+isOn+")";
+       eval(str);
+       pedal.setAttribute("class","pedal");
+       pedal.setAttribute("data-type",type);
+       return pedal;
+    },
+    /**
+      Append a created pedal to the pedalboard
+      Also adds a remove button, sets the listeners for the drag and drop
+    **/
+    appendPedalToBoard: function(pedal) {
+      //creation of the button allowing to remove the pedal
+      var del = document.createElement('button');
+      del.innerHTML = "Remove Effect";
+      var t = this;
+      del.addEventListener('click', function () {
+        t.removePedalFromBoard(pedal);}
+      );
+
+      // creation of a div to encapsulate the pedal and the remove button
+      var div = document.createElement("div");
+      div.setAttribute('class','pedal_container');
+
+      //drag and drop handling
+      div.setAttribute("draggable","true");
+      var t =this;
+      var dragStartHandler = function(event) {
+        //storing in the clipboard the index of the pedal selected
+        event.dataTransfer.setData("index",t.getPedalIndex(pedal));
+      }
+      div.ondragstart = dragStartHandler;
+
+      div.ondragover = function () {return false;}
+
+      div.ondrop = function(event) {
+        //insert the pedal i before the pedal j only if i!=j , and i!=j-1 because in this
+        //case the pedal i is already before the pedal j so we don't have to move it
+        var i = event.dataTransfer.getData("index"), j = t.getPedalIndex(pedal);
+        if (i!=j && i!=j-1)
+          t.putPedalBefore(i,j);
+      }
+
+      div.appendChild(pedal);
+      div.appendChild(del);
+
+       var pedals = this.getElementsByClassName('pedal');
+
+       //handles the audionodes connections when a new pedal is appended
+       if (pedals.length == 0) {
+          this.src.disconnect();
+          pedal.connect(this.src,Pizzicato.context.destination);
+        }
+       else {
+         var lastPedal = pedals[pedals.length-1];
+         lastPedal.disconnectOut();
+         lastPedal.connectOut(pedal.getNodeIn());
+         pedal.connect(lastPedal.getNodeOut(),Pizzicato.context.destination);
+       }
+
+       //finally adds the pedal to the board
+       document.getElementById("pedal_list").appendChild(div);
+
+    }
+    ,
+    /**
+     * Disconnect and remove a pedal currently on the board
+     @param pedal: the pedal to be removed
+    **/
+    removePedalFromBoard: function(pedal) {
+      var list = document.getElementById('pedal_list');
+      this.disconnectPedalFromBoard(pedal);
+      list.removeChild(pedal.parentNode); //removing the whole container (pedal+remove button)
+    },
+    /** Disconnect a pedal from the current board without removing it
+     * Reconnects the others pedal accordingly to have a working pedalboard
+     @param pedal : the pedal to be disconnected
+    **/
+    disconnectPedalFromBoard: function (pedal) {
+      pedal.disconnectIn();
+      pedal.disconnectOut();
+      pedal.src.connect(pedal.destination);
+
+      var index = this.getPedalIndex(pedal);
+      var pedals =this.getElementsByClassName("pedal");
+
+      //if there is one pedal before, we need to define its new destination
+      if (index != 0)
+        pedals[index-1].connectOut(pedal.destination);
+
+      //if there is one pedal after, we need to define its src
+      if (pedals[index+1])
+        pedals[index+1].connectIn(pedal.src);
+    }
+    ,
+    /** Retrieves the pedals currently on the pedalboard,
+     * with their knobs values, names, and if they are on or off
+     * @return an array containing the pedals
+     **/
+    getCurrentPedals: function() {
+      var pedals_to_send = [];
+      var pedals = this.getElementsByClassName("pedal");
+      var i, l = pedals.length;
+      for (i = 0; i< l; i++) {
+        var pedal = {};
+        pedal["name"] = pedals[i].dataset.type;
+        pedal["values"] = JSON.stringify(pedals[i].getCurrentKnobsValues());
+        pedal["isOn"] = pedals[i].isOn;
+        pedals_to_send.push(pedal);
+      }
+      return pedals_to_send;
+    }
+    ,
+    /**
+      Retrieves the current pedalboard
+      @return the pedalboard, containing a name and a list of pedals
+    **/
+    getCurrentPedalBoard: function(name) {
+      var pedalboard = {};
+      pedalboard["name"] = name;
+      pedalboard["components"] = this.getCurrentPedals();
+
+      return pedalboard;
+    },
+    /**
+      Saves the current pedalboard on the server
+    **/
+    savePedalBoardOnServer(name,callback,error) {
+      this.api.savePedalBoard(this.getCurrentPedalBoard(name),callback,error);
+    },
+    /**
+      Import a pedalboard and replace the current one upon acceptation from the user
+      @param pedalboard : the pedalboard to import
+    **/
+    importPedalboard: function (pedalboard) {
+      var cleaned = this.cleanPedalBoard();
+      if (!cleaned)
+        return;
+      var pedals = pedalboard.components;
+      for (var i=0; i<pedals.length;i++) {
+        var p = this.createPedal(pedals[i].name,pedals[i].values,pedals[i].isOn);
+        this.appendPedalToBoard(p);
+      }
+    },
+    /**
+      Imports a pedal from the server
+      @param pedalboard_name : the name of the pedalboard to import
+    **/
+    importPedalboardFromServer(pedalboard_name) {
+      var t = this;
+        this.api.getPedalBoardByName(pedalboard_name,function (pedalboard) {
+          t.importPedalboard(JSON.parse(pedalboard));
+        });
+    }
+    ,
+    /**
+    Get the index of the given pedal in the pedalboard
+    @param the pedal with unknow index
+    @return the index of the pedal
+    **/
+    getPedalIndex: function(pedal) {
+      var pedals = this.getElementsByClassName("pedal");
+      for (var i=0; i<pedals.length;i++)
+        if (pedals[i] == pedal)
+          return i;
+      return -1;
+    },
+    /** Connects the global src either to the destination, or
+     to the first pedal from the pedalboard
+    **/
+    connectSrc: function() {
+      var pedals = this.getElementsByClassName("pedal");
+      if (pedals.length == 0)
+        this.src.connect(Pizzicato.context.destination);
+      else
+        pedals[0].connectIn(this.src);
+    },
+    /**
+      Changes the input signal to the MediaElementAudioSourceNode, created with the audio tag
+    **/
+    changeInputToFile: function() {
+      if (this.src.disconnect)
+        this.src.disconnect();
+      if (Object.keys(this.fileSrc).length === 0 && this.fileSrc.constructor === Object)
+        this.fileSrc = Pizzicato.context.createMediaElementSource(this.getElementsByTagName("audio")[0]);
+      this.src = this.fileSrc;
+      this.connectSrc();
+    },
+    /**
+      Changes the input signal to the MediaStreamAudioSourceNode, created with the navigator capabilities
+      The stream is choosed by the user
+    **/
+    changeInputToStream: function() {
+      navigator.getUserMedia = navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia;
+
+      if (!navigator.getUserMedia) {
+        console.warn("navigator.getUserMedia is not defined!");
+        return;
+      }
+
+      var t = this;
+      var switchAudio = function(stream) {
+        if (t.src.disconnect)
+          t.src.disconnect();
+        if (Object.keys(t.streamSrc).length === 0 && t.streamSrc.constructor === Object)
+          t.streamSrc = Pizzicato.context.createMediaStreamSource(stream);
+        t.src = t.streamSrc;
+        t.connectSrc();
+      }
+
+      navigator.getUserMedia(
+        {audio:true},
+        switchAudio,
+        function(e){fire('No live audio input ' + e);}
+      );
+
+    },
+    /**
+      Erase the entire pedalboard : list of pedals and connections
+      Answer the user if he is sure about that beforehand
+      @return a Boolean indicating if the pedalboard has been successfully cleaned
+    **/
+    cleanPedalBoard: function() {
+      var pedals = this.getElementsByClassName("pedal");
+      if (pedals.length == 0)
+        return true;
+      else {
+        if (window.confirm("The current pedalboard will be erased and any unsaved changes will be lost. Are you sure "+
+          "to continue?") ) {
+            var lastPedal = pedals[pedals.length-1];
+            this.src.disconnect();
+            lastPedal.disconnectOut();
+            this.src.connect(Pizzicato.context.destination);
+            var l =document.getElementById("pedal_list");
+            l.innerHTML = "";
+            return true;
+          }
+      }
+      return false;
+    },
+    /**
+     Set the listeners from the main buttons of the pedalboard
+    **/
+    addButtonListeners: function() {
+      var t = this;
+      document.getElementById("clean_pedalBoard").onclick = function () { t.cleanPedalBoard();}
+      document.getElementById("pedalboard_file_input").onclick = function() { t.changeInputToFile();}
+      document.getElementById("pedalboard_stream_input").onclick = function() { t.changeInputToStream();}
+        document.getElementById("player").onclick = function() { t.playTrack() };
+        document.getElementById("effects").addEventListener('change', function () {
+        var p = t.createPedal(this.value);
+        t.appendPedalToBoard(p);
+        this.value="none"
+      });
+      document.getElementById("import_pedalboard_select").onchange = function() {
+        t.importPedalboardFromServer(this.value);
+        this.value ="none";
+      }
+      document.getElementById("change_sound_file_select").onchange = function() {
+         t.getElementsByTagName("audio")[0].src = this.value;
+          t.playTrack();
+          this.value ="none";
+       }
+
+       document.getElementById("showSavePopup").onclick = function(){
+          document.getElementById('modal').style.display = "block";
+       }
+
+       document.getElementById("closeModal").onclick = function(){
+           document.getElementById('modal').style.display = "none";
+       }
+
+       document.getElementById("saveBoard").onclick = function(){
+           if(document.getElementById('pedalBoardName').value != ''){
+               t.savePedalBoardOnServer(document.getElementById('pedalBoardName').value);
+               document.getElementById('modal').style.display = "none";
+                alert("Pedalboard sauvegardé !");
+           }else{
+               alert("Entrez un nom pour votre pedalboard !");
+           }
+       }
+    }
+    ,
+    /**
+      Retrieves the list of the user's saved pedalboards
+      @param callback : the function to be called with the array of retrieved pedalboards names
+    **/
+    getSavedPedalboardsOnServer: function (callback){
+      if (!this.user.id)
+        callback([]);
+      this.api.getPedalBoardListByUser(this.user.id,function (pedalboards) {
+        var pedalboards2 = JSON.parse(pedalboards);
+        var names = [];
+        for (var i=0;i<pedalboards2.length;i++) {
+          names.push(pedalboards2[i].name);
+        }
+        callback(names);
+      });
+    },
+    /**
+      Retrieves the saved pedalboards from the user and fills the corresponding select
+    **/
+    loadUserData: function () {
+      this.getSavedPedalboardsOnServer(function(names) {
+        var select = document.getElementById('import_pedalboard_select');
+        for (var i=0;i<names.length;i++)
+          select.innerHTML+= "<option>"+names[i]+"</option>";
+      });
+    },
+    /**
+      Insert a pedal before another one
+      @param indexOfPedalToMove : the index of the pedal to be moved
+      @param indexOfTarget : the index of the target pedal (the static one)
+    **/
+    putPedalBefore: function(indexOfPedalToMove,indexOfTarget) {
+      var pedals= this.getElementsByClassName("pedal");
+      var p1 = pedals[indexOfPedalToMove];
+      var  p2 = pedals[indexOfTarget];
+
+      var l = document.getElementById("pedal_list");
+
+      this.disconnectPedalFromBoard(p1);
+
+      p2.disconnectIn();
+      p1.connectIn(p2.src);
+      p1.connectOut(p2.getNodeIn());
+      p2.connectIn( p1.getNodeOut());
+      //if p1 is inserted between two pedals, we must connect the one on the left
+      if (indexOfTarget != 0)
+        pedals[indexOfTarget-1].connectOut(p1.getNodeIn());
+
+      //we insert the container with the remove button
+      l.insertBefore(p1.parentNode,p2.parentNode);
+    }
+
+});
+</script>

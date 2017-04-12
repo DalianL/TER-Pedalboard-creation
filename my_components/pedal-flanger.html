@@ -1,0 +1,154 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/webaudio-controls/webaudio-controls.html">
+
+
+<dom-module name="pedal-flanger">
+    <style>
+        :host{
+            display: block;
+            background-color: #f02cff;
+            width: 265px;
+            height: 300px;
+            border-radius: 10px;
+            box-shadow: inset -3px -3px 3px 5px rgba(0, 0, 0, 0.6), inset 3px 3px 3px 5px rgba( 255, 255, 255, 0.5);
+            position: relative;
+        }
+        .knob, .switch{
+            position: absolute;
+        }
+        #knob1{
+            top: 10px;
+            left: 10px;
+        }
+        #knob2{
+            top: 10px;
+            left: 100px;
+        }
+        #knob3{
+            top: 10px;
+            left: 190px;
+        }
+        #knob4{
+            top: 100px;
+            left: 60px;
+        }
+        #knob5{
+            top: 100px;
+            left: 150px;
+        }
+        #switch1{
+            top: 175px;
+            left: 68px;
+        }
+        .pedalLabel{
+            position: absolute;
+            top: 225px;
+            font-size: 25px;
+            font-family: Lemon\/Milk;
+            text-align: center;
+            line-height: 30px;
+            width: 265px;
+            color: white;
+        }
+        .knob-label{
+            position: absolute;
+            font-size: 12px;
+            line-height: 12px;
+            width:64px;
+            max-width:64px;
+            overflow: hidden;
+            text-align: center;
+            font-family: Lemon\/Milk;
+            color: white;
+        }
+        #knob1-label{
+            top: 64px;
+            left: 10px;
+        }
+        #knob2-label{
+            top: 64px;
+            left: 100px;
+        }
+        #knob3-label{
+            top: 64px;
+            left: 190px;
+        }
+        #knob4-label{
+            top: 150px;
+            left: 60px;
+        }
+        #knob5-label{
+            top: 150px;
+            left: 150px;
+        }
+
+    </style>
+    <template>
+
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1"></webaudio-knob>
+        <p class="knob-label" id="knob1-label" contenteditable="true">TIME</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2"></webaudio-knob>
+        <p class="knob-label" id="knob2-label" contenteditable="true">SPEED</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3"></webaudio-knob>
+        <p class="knob-label" id="knob3-label" contenteditable="true">DEPTH</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4"></webaudio-knob>
+        <p class="knob-label" id="knob4-label" contenteditable="true">FEEDBACK</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob5"></webaudio-knob>
+        <p class="knob-label" id="knob5-label" contenteditable="true">MIX</p>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="128"></webaudio-switch>
+        <p class="pedalLabel" contenteditable="true">FLANGER</p>
+    </template>
+    <script>
+        PedalFlanger = Polymer({
+            is: 'pedal-flanger',
+            behaviors: [PedalBehavior],
+            factoryImpl: function(options,isOn) {
+              this.createAllInternNodes();
+              this.connectInternNodes();
+              this.resetKnobs();
+              this.setRolesToKnobs();
+              this.setKnobsListeners();
+              this.setValuesToKnobs(options);
+              this.setPedalActive(isOn);
+              this.setSwitchListener();
+            },
+            createAllInternNodes: function () {
+              //custom sound modification, here a Pizzicato delay
+              this.effect = new Pizzicato.Effects.Flanger();
+            },
+            setKnobsListeners: function() {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              var t = this;
+              knobs[0].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
+              knobs[1].addEventListener('change', function (e) { t.effect.speed = e.target.value/100;});
+              knobs[2].addEventListener('change', function (e) { t.effect.depth = e.target.value/100;});
+              knobs[3].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
+              knobs[4].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
+            }
+            ,
+            setRolesToKnobs:function () {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              knobs[0].setAttribute("data-role","time");
+              knobs[1].setAttribute("data-role","speed");
+              knobs[2].setAttribute("data-role","depth");
+              knobs[3].setAttribute("data-role","feedback");
+              knobs[4].setAttribute("data-role","mix");
+            }
+            ,
+            getDefaultButtonsValues: function() {
+              return { time : 45 , speed : 20 , depth: 10 ,feedback: 10, mix : 50};
+            },
+            bypass: function() {
+              this.effect.bypass();
+            },
+            reactivate: function() {
+              this.effect.reactivate();
+            }
+            ,
+            connectInternNodes:function ()  {
+              this.soundNodeIn.connect(this.effect);
+              this.effect.connect(this.soundNodeOut);
+            }
+        });
+    </script>
+</dom-module>

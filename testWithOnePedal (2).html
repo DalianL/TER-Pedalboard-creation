@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+
+    <!-- Imports polyfill -->
+    <script src="./bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <!-- import pizzicato -->
+    <script src="./js/Pizzicato_2.js"></script>
+    <!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzicato/0.5.1/Pizzicato.js"></script>
+  -->
+
+
+
+    <!-- Imports custom element -->
+  <script src="my_components/pedal-behavior.js"></script>
+  <link rel="import" href="./my_components/pedal-delay.html">
+  <link rel="import" href="./my_components/pedal-quadrafuzz.html">
+  <link rel="import" href="./my_components/pedal-lowpass.html">
+  <link rel="import" href="./my_components/pedal-flanger.html">
+
+  <style>
+     .pedal {
+        margin:5px;
+     }
+  </style>
+</head>
+<body>
+
+    <!-- Runs custom element -->
+
+
+  <pedal-delay class="pedal"></pedal-delay> 
+  <pedal-quadrafuzz class="pedal"></pedal-quadrafuzz> 
+  <pedal-lowpass class="pedal"></pedal-lowpass> 
+  <pedal-flanger class="pedal"></pedal-flanger>
+
+
+</body>
+</html>

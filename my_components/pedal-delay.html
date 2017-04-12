@@ -1,0 +1,130 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/webaudio-controls/webaudio-controls.html">
+
+
+<dom-module name="pedal-delay">
+    <style>
+        :host{
+            display: block;
+            background-color: #5aaa60;
+            width: 175px;
+            height: 300px;
+            border-radius: 20px;
+            box-shadow: inset -3px -3px 3px 5px rgba(0, 0, 0, 0.6), inset 3px 3px 3px 5px rgba( 255, 255, 255, 0.5);
+            position: relative;
+        }
+        .knob, .switch{
+            position: absolute;
+        }
+        #knob1{
+            top: 10px;
+            left: 10px;
+        }
+        #knob2{
+            top: 10px;
+            left: 100px;
+        }
+        #knob3{
+            top: 75px;
+            left: 56px;
+        }
+        #switch1{
+            top: 150px;
+            left: 22px;
+        }
+        .pedalLabel{
+            position: absolute;
+            top: 200px;
+            font-size: 30px;
+            font-family: Mistral;
+            text-align: center;
+            line-height: 30px;
+            width: 175px;
+        }
+        .knob-label{
+            position: absolute;
+            font-size: 12px;
+            line-height: 12px;
+            width:64px;
+            max-width:64px;
+            overflow: hidden;
+            text-align: center;
+            font-family: Mistral;
+        }
+        #knob1-label{
+            top: 64px;
+            left: 10px;
+        }
+        #knob2-label{
+            top: 64px;
+            left: 100px;
+        }
+        #knob3-label{
+            top: 125px;
+            left: 56px;
+        }
+
+    </style>
+    <template>
+      <div>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob1"></webaudio-knob>
+        <p class="knob-label" id="knob1-label" contenteditable="true">FEEDBACK</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob2"></webaudio-knob>
+        <p class="knob-label" id="knob2-label" contenteditable="true">TIME</p>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob3"></webaudio-knob>
+        <p class="knob-label" id="knob3-label" contenteditable="true">MIX</p>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="128"></webaudio-switch>
+        <p class="pedalLabel">DELAY</p>
+      </div>
+    </template>
+    <script>
+        PedalDelay = Polymer({
+            is: 'pedal-delay',
+            behaviors: [PedalBehavior],
+            factoryImpl: function(options,isOn) {
+              this.createAllInternNodes();
+              this.connectInternNodes();
+              this.resetKnobs();
+              this.setRolesToKnobs();
+              this.setKnobsListeners();
+              this.setValuesToKnobs(options);
+              this.setPedalActive(isOn);
+              this.setSwitchListener();
+            },
+            createAllInternNodes: function () {
+              //custom sound modification, here a Pizzicato delay
+              this.effect = new Pizzicato.Effects.Delay();
+            },
+            setKnobsListeners: function() {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              var t = this;
+              knobs[0].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
+              knobs[1].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
+              knobs[2].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
+
+            },
+            setRolesToKnobs:function () {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              knobs[0].setAttribute("data-role","feedback");
+              knobs[1].setAttribute("data-role","time");
+              knobs[2].setAttribute("data-role","mix");
+            }
+            ,
+            getDefaultButtonsValues: function() {
+              return { feedback : 50 , time : 30 , mix: 50};
+            }
+            ,
+              bypass: function() {
+                this.effect.bypass();
+              },
+              reactivate: function() {
+                this.effect.reactivate();
+              },
+              connectInternNodes:function () {
+                this.soundNodeIn.connect(this.effect);
+                this.effect.connect(this.soundNodeOut);
+              }
+
+        });
+    </script>
+</dom-module>

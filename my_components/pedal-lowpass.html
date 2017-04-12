@@ -1,0 +1,114 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/webaudio-controls/webaudio-controls.html">
+
+
+<dom-module name="pedal-lowpass">
+    <style>
+        :host{
+            display: block;
+            background-color: #fff600;
+            width: 150px;
+            height: 300px;
+            border-radius: 20px;
+            box-shadow: inset -3px -3px 3px 5px rgba(0, 0, 0, 0.6), inset 3px 3px 3px 5px rgba( 255, 255, 255, 0.5);
+            position: relative;
+        }
+        .knob, .switch{
+            position: absolute;
+        }
+        #knob1{
+            top: 30px;
+            left: 43px;
+        }
+        #switch1{
+            top: 150px;
+            left: 11px;
+        }
+        .pedalLabel{
+            position: absolute;
+            top: 225px;
+            font-size: 25px;
+            font-family: Lemon\/Milk;
+            text-align: center;
+            line-height: 30px;
+            width: 150px;
+            color: white;
+        }
+        .knob-label{
+            position: absolute;
+            font-size: 12px;
+            line-height: 12px;
+            width:64px;
+            max-width:64px;
+            overflow: hidden;
+            text-align: center;
+            font-family: Lemon\/Milk;
+            color: white;
+        }
+        #knob1-label{
+            top: 84px;
+            left: 43px;
+        }
+
+    </style>
+    <template>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_white_black_stripe.png" class="knob" id="knob1"></webaudio-knob>
+        <p class="knob-label" id="knob1-label" contenteditable="true">FREQ</p>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="128"></webaudio-switch>
+        <p class="pedalLabel" contenteditable="true">LOW PASS</p>
+    </template>
+    <script>
+        PedalLowpass = Polymer({
+            is: 'pedal-lowpass',
+            behaviors: [PedalBehavior],
+            factoryImpl: function(options,isOn) {
+              this.createAllInternNodes();
+              this.connectInternNodes();
+              this.resetKnobs();
+              this.setRolesToKnobs();
+              this.setKnobsListeners();
+              this.setValuesToKnobs(options);
+              this.setPedalActive(isOn);
+              this.setSwitchListener();
+            },
+            createAllInternNodes: function () {
+              this.lowPassFilter = Pizzicato.context.createBiquadFilter();
+              this.lowPassFilter.type = "lowshelf";
+              this.lowPassFilter.gain.value = 25;
+              this.dryGainNode = Pizzicato.context.createGain();
+              this.wetGainNode = Pizzicato.context.createGain();
+            },
+            setKnobsListeners: function() {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              var t = this;
+              knobs[0].addEventListener('change', function (e) { t.lowPassFilter.frequency.value = 440+((e.target.value)*50);});
+            }
+            ,
+            setRolesToKnobs:function () {
+              var knobs = this.getElementsByTagName("webaudio-knob");
+              knobs[0].setAttribute("data-role","frequency");
+            }
+            ,
+            getDefaultButtonsValues: function() {
+              return { frequency : 10 };
+            },
+            bypass: function() {
+              this.wetGainNode.gain.value = 0;
+      				this.dryGainNode.gain.value = 1;
+            },
+            reactivate: function() {
+              this.wetGainNode.gain.value = 1;
+      				this.dryGainNode.gain.value = 0;
+            }
+            ,
+            connectInternNodes:function ()  {
+              this.soundNodeIn.connect(this.wetGainNode);
+              this.wetGainNode.connect(this.lowPassFilter)
+              this.lowPassFilter.connect(this.soundNodeOut);
+
+              this.soundNodeIn.connect(this.dryGainNode);
+              this.dryGainNode.connect(this.soundNodeOut);
+            }
+        });
+    </script>
+</dom-module>

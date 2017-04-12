@@ -1,0 +1,148 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module name="server-api">
+    <style>
+    </style>
+    <template>
+    </template>
+    <script>
+        ServerAPI = Polymer({
+            is: 'server-api',
+            serverURL : {
+              type:String,
+              value: "http://localhost:8085"
+            }
+            ,
+            /**
+              A classic GET request with pure Javascript
+              @param url : the URL to reach
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            sendGet(url,callback,error) {
+              var xmlHttp = new XMLHttpRequest();
+              xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                  if (callback)
+                    callback(xmlHttp.responseText);
+                  }
+                  else if (xmlHttp.status == 400) {
+                    if (error)
+                      error(xmlHttp.responseText);
+                  }
+              }
+              xmlHttp.open("GET", url, true);
+              xmlHttp.setRequestHeader("Content-type", "application/json; charset=utf-8");
+              xmlHttp.withCredentials = true;
+              xmlHttp.send(null);
+            }
+            ,
+            /**
+              A classic POST request with pure Javascript
+              @param url : the URL to reach
+              @param data : the data to send
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            sendPost(url,data,callback,error) {
+              var http = new XMLHttpRequest();
+
+              http.open("POST", url, true);
+              http.setRequestHeader("Content-type", "application/json; charset=utf-8");
+              http.withCredentials = true;
+
+              http.onreadystatechange = function () {
+                  if (http.readyState == 4 && http.status == 200) {
+                    if (callback)
+                      callback(http.responseText);
+                  }else if (http.status == 400){
+                    if (error)
+                      error(http.responseText);
+                  }
+              };
+              http.send(data);
+            },
+            /**
+              Get the informations about the current user
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            whoAmI(callback,error) {
+              this.sendGet(this.serverURL.value+"/user/me",callback,error);
+            },
+            /**
+              Log an user to the server
+              @param username : the pseudo of the user to login
+              @param password : the password of the user to login
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            login : function(username,password,callback,error) {
+              var path = "/login";
+              var params = JSON.stringify({
+                  password: password,
+                  username: username
+              });
+              this.sendPost(this.serverURL.value+path,params,callback,error);
+            },
+            /**
+              Create a new user in the server's database
+              @param username : the pseudo of the user to create
+              @param password : the password of the user to create
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            createUser : function(username,password,callback,error) {
+
+              var path = "/user";
+              var params = JSON.stringify({
+                  password: password,
+                  username: username
+              });
+              this.sendPost(this.serverURL.value+path,params,callback,error);
+
+            }
+            ,
+            /**
+              Save a pedalboard on the server's database
+              @param pedalboard : the pedalboard to save, must have a name and a list of pedal options
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            savePedalBoard: function (pedalboard,callback,error) {
+              var path = "/pedalboard";
+              var params = JSON.stringify(pedalboard);
+              this.sendPost(this.serverURL.value+path,params,callback,error);
+            }
+            ,
+            /**
+              Retrieves all the pedalboard saved by a given user
+              @param user : the id of the user
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            getPedalBoardListByUser(user,callback,error){
+              this.sendGet(this.serverURL.value+"/pedalboard/user/"+user,callback,error);
+            },
+            /**
+              Retrieves a pedalboard by its name
+              @param name : the name of the pedalboard
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            getPedalBoardByName(name,callback,error){
+              this.sendGet(this.serverURL.value+"/pedalboard/name/"+name,callback,error);
+            },
+            /**
+              Retrieves all the effects available on the server
+              @param name : the name of the pedalboard
+              @param callback : the function executed on success
+              @param error : the function executed on error
+            **/
+            getAllPedals(callback,error) {
+              this.sendGet(this.serverURL.value+"/pedale",callback,error);
+            }
+
+        });
+    </script>
+</dom-module>
