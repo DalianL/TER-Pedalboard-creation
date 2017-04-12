@@ -27,7 +27,6 @@ class Pedal {
     // input and output
     this.input = document.createElement("div");
     this.input.classList.add("input");
-	  //this.input.innerHTML="<img src='img/rightInput.png' style='width:20px; height:20px;margin-left-100px;' />";
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + "px";
 
@@ -38,7 +37,6 @@ class Pedal {
 	
   	this.output.out = document.createElement("span");
   	this.output.out.classList.add("out");
-  	//this.output.out.innerHTML="<img src='img/rightJack.png' style='width:70px; height:20px;margin-left:60px;padding-top:-80px' />";
   	this.output.out.style.left = this.outputOffsetX+"px"; // relative to parent
     this.output.out.style.top = this.inputOffsetY + "px";
     

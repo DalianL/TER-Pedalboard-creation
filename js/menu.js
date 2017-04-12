@@ -68,6 +68,8 @@ function toggleMenuOn() {
   if ( menuState !== 1 ) {
     menuState = 1;
     menu.classList.add("context-menu--active");
+    // let wid = 70 * (1 + zoom);
+    // menu.style.width = "" + wid + "px";
   }
 }
 
@@ -77,6 +79,7 @@ function toggleMenuOff() {
     pedalMenu = null;
     menuState = 0;
     menu.classList.remove("context-menu--active");
+    menu.style.width = "70px";
   }
 }
 
@@ -103,11 +106,43 @@ function getPosition(e) {
 }
 
 function positionMenu(e,p) {
-  var inputCoordsX = p.getInputPos().x;// + e.target.offsetLeft;
-  var inputCoordsY = p.getInputPos().y;// + e.target.offsetTop;
+
+  var inputCoordsX;
+  var inputCoordsY;
 
   var menuWidth = menu.offsetWidth + 1;
   var menuHeight = menu.offsetHeight + 1;
+  
+  if (zoom == 1) {
+    var board = document.querySelector('#pedalboard');
+          
+    // Required to adjust the position according to where the origin was set,
+    // as the origin determines the menu css attributes top and left positions
+    if (board.style.transformOrigin == 'left top 0px') {
+      inputCoordsX = p.getInputPos().x * 2;
+      inputCoordsY = p.getInputPos().y * 2;
+    } else if (board.style.transformOrigin == 'left 50% 0px') {
+      inputCoordsX = p.getInputPos().x * 2;
+      inputCoordsY = (p.getInputPos().y * 2) - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    } else if (board.style.transformOrigin == 'center top 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - (parseInt(window.getComputedStyle(board).width, 10) / 2);
+      inputCoordsY = p.getInputPos().y * 2;
+    } else if (board.style.transformOrigin == 'center 50% 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - (parseInt(window.getComputedStyle(board).width, 10) / 2);
+      inputCoordsY = p.getInputPos().y * 2 - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    } else if (board.style.transformOrigin == 'right top 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
+      inputCoordsY = p.getInputPos().y * 2;
+    } else if (board.style.transformOrigin == 'right 50% 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
+      inputCoordsY = p.getInputPos().y * 2 - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    }
+  } else {
+
+    inputCoordsX = p.getInputPos().x;
+    inputCoordsY = p.getInputPos().y;
+
+  }
 
   var windowWidth = e.target.innerWidth;
   var windowHeight = e.target.innerHeight;

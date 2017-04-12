@@ -67,18 +67,4 @@ function addZoomListener() {
   window.addEventListener("mousewheel", mouseWheelHandler, false);
   // Firefox
   window.addEventListener("DOMMouseScroll", mouseWheelHandler, false);
-
-/*  var svg = document.querySelector('#svg-canvas');
-  var pt = svg.createSVGPoint();
-
-  function cursorPoint(evt){
-    pt.x = evt.clientX; pt.y = evt.clientY;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-  }
-
-  window.addEventListener('mousedown', function(evt){
-    var loc = cursorPoint(evt);
-    console.log("X : " + loc.x + " Y : " + loc.y)
-  },false);*/
-
 }

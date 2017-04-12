@@ -189,15 +189,14 @@ function mouseWheelHandler(e) {
         board.style.transformOrigin = 'right 50%';
       }
     }
-    board.style.transition = "transform 0.5s ease-in";
   } 
 
   if (delta == -1) {
     zoom = 0;
-    // board.style.transform = 'scale(1,1)';
-    // board.style.transition = '0.5s ease';
     board.style.transform = '';
-    board.style.transition = 'transform 0.5s ease-in';
+
   }
+
+  toggleMenuOff();
 
 }

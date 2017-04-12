@@ -3,18 +3,18 @@ function highlightInputsOutputs(e) {
   let mouseX = e.x - rect.left;
   let mouseY = e.y - rect.top;
   let closest = pedalboard.findClosestIO(mouseX, mouseY);
- }
- 
+}
+
 function makeSVG(tag, attrs) {
     var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (var k in attrs){
         if(k=="xlink:href") {
-            el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+          el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
         } else {
-             el.setAttribute(k, attrs[k]);
-         }
-     }
-     return el;
+          el.setAttribute(k, attrs[k]);
+        }
+    }
+    return el;
 }
 
 function createBezierSVGJack(id, x1, y1, x2, y2) {
@@ -129,6 +129,7 @@ function repositionJack(j, offsetY) {
   style = window.getComputedStyle(element),
   wid = style.getPropertyValue('width');
   let offestX = -parseInt(wid, 10);
+  
   updateSVGJack(j.jackSVG, posPedal1.x, posPedal1.y, posPedal2.x + offestX, posPedal2.y + offsetY);
 }
 
