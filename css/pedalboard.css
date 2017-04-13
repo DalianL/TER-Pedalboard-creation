@@ -1,8 +1,3 @@
-#main {
-  /* if pedalboard scaled, will make it scrollable */
-  overflow: scroll;
-}
-
 #pedalboard {
   height:600px;
   width:1500px;

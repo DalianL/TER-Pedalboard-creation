@@ -165,6 +165,7 @@ function mouseWheelHandler(e) {
   var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
   
   var board = document.querySelector('#pedalboard');
+  var boardC = document.querySelector('#pedalboard-container');
   let thirdWidth = parseInt(window.getComputedStyle(board).width, 10) / 3;
   let halfHeight = parseInt(window.getComputedStyle(board).height, 10) / 2;
 

@@ -63,8 +63,9 @@ function addMenuListerners() {
 }
 
 function addZoomListener() {
+  elem = document.querySelector('#pedalboard');
   // IE9, Chrome, Safari, Opera
-  window.addEventListener("mousewheel", mouseWheelHandler, false);
+  elem.addEventListener("mousewheel", mouseWheelHandler, false);
   // Firefox
-  window.addEventListener("DOMMouseScroll", mouseWheelHandler, false);
+  elem.addEventListener("DOMMouseScroll", mouseWheelHandler, false);
 }
