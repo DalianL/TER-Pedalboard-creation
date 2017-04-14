@@ -89,12 +89,14 @@ let pedalboard ={
   findClosestIO: function(x, y) {
       let self = this;
 
-      x = x / (zoom + 1);
+      // Adapts the coordinates according to zoom activation
+      // and the width of the jack
+      x = (-16 * (zoom + 1)) + x / (zoom + 1);
       y = y / (zoom + 1);
 
       this.pedals.forEach(function(p) {
         // be careful here this is not the pedalboard,
-        // we're in a forEach callback, remind the trap
+        // we're in a forEach callback, remember the trap
         // I talked into the course !!!! This is why we use
         // self = this just before !
         let iPos = p.getInputPos();
@@ -162,32 +164,40 @@ let pedalboard ={
 function mouseWheelHandler(e) {
   e.preventDefault();
 
-  var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-  
-  var board = document.querySelector('#pedalboard');
-  var boardC = document.querySelector('#pedalboard-container');
-  let thirdWidth = parseInt(window.getComputedStyle(board).width, 10) / 3;
-  let halfHeight = parseInt(window.getComputedStyle(board).height, 10) / 2;
+  let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+  let boardC = document.querySelector('#pedalboard-container');
+  let board = document.querySelector('#pedalboard');
+  let boardWid = parseInt(window.getComputedStyle(board).width, 10);
+  let boardHei = parseInt(window.getComputedStyle(board).height, 10);
 
   if(delta == 1) {
     zoom = 1;
     board.style.transform = 'scale(2,2)';
 
-    if (e.clientY < halfHeight) {
-      if (e.clientX < thirdWidth) {
+    if (e.clientY < boardHei / 3) {
+      if (e.clientX < boardWid / 3) {
         board.style.transformOrigin = 'left top';
-      } else if (e.clientX < 2 * thirdWidth) {
+      } else if (e.clientX < 2 * (boardWid / 3)) {
         board.style.transformOrigin = 'center top';
       } else {
         board.style.transformOrigin = 'right top';
       }
-    } else {
-      if (e.clientX < thirdWidth) {
-        board.style.transformOrigin = 'left 50%';
-      } else if (e.clientX < 2 * thirdWidth) {
-        board.style.transformOrigin = 'center 50%';
+    } else if (e.clientY < 2 * (boardHei / 3)) {
+      if (e.clientX < boardWid / 3) {
+        board.style.transformOrigin = 'left center';
+      } else if (e.clientX < 2 * (boardWid / 3)) {
+        board.style.transformOrigin = 'center center';
       } else {
-        board.style.transformOrigin = 'right 50%';
+        board.style.transformOrigin = 'right center';
+      }
+    } else {
+      if (e.clientX < boardWid / 3) {
+        board.style.transformOrigin = 'left bottom';
+      } else if (e.clientX < 2 * (boardWid / 3)) {
+        board.style.transformOrigin = 'center bottom';
+      } else {
+        board.style.transformOrigin = 'right bottom';
       }
     }
   } 
@@ -195,7 +205,6 @@ function mouseWheelHandler(e) {
   if (delta == -1) {
     zoom = 0;
     board.style.transform = '';
-
   }
 
   toggleMenuOff();

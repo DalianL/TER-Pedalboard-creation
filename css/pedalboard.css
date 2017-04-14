@@ -1,3 +1,9 @@
+#pedalboard-container {
+  height:610px;
+  width:1510px;
+  overflow:hidden;
+}
+
 #pedalboard {
   height:600px;
   width:1500px;

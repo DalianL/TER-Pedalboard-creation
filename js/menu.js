@@ -16,6 +16,10 @@ function handleJackMenu(elem) {
 
 function createMenuItems(jacks) {
   document.getElementById("menu-container").innerHTML = "";
+  let newMenuWid = 70 * (1 + zoom);
+  menu.style.width = "" + newMenuWid + "px";
+  document.querySelector('.context-menu__items').style.width = "" + newMenuWid + "px";
+
   let len = jacks.length;
   // Approximatively adapts the Y position where the jacks in menu start
   // according to the number of jacks plugged in the pedal, since the
@@ -26,9 +30,9 @@ function createMenuItems(jacks) {
     let ul = document.getElementById("menu-container");
     let li = document.createElement("li");
     li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
+    li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
     li.classList.add("context-menu__item");
     ul.appendChild(li);
-    li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
 
     // Repositions the current jack so that it feels like it's unplugged 
     // while in the opened menu
@@ -62,14 +66,13 @@ function createMenuItems(jacks) {
       window.addEventListener('mousemove', mouseMoveDraggable, true);
     })
   })
+
 }
 
 function toggleMenuOn() {
   if ( menuState !== 1 ) {
     menuState = 1;
     menu.classList.add("context-menu--active");
-    // let wid = 70 * (1 + zoom);
-    // menu.style.width = "" + wid + "px";
   }
 }
 
@@ -121,21 +124,30 @@ function positionMenu(e,p) {
     if (board.style.transformOrigin == 'left top 0px') {
       inputCoordsX = p.getInputPos().x * 2;
       inputCoordsY = p.getInputPos().y * 2;
-    } else if (board.style.transformOrigin == 'left 50% 0px') {
+    } else if (board.style.transformOrigin == 'left center 0px') {
       inputCoordsX = p.getInputPos().x * 2;
       inputCoordsY = (p.getInputPos().y * 2) - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    } else if (board.style.transformOrigin == 'left bottom 0px') {
+      inputCoordsX = p.getInputPos().x * 2;
+      inputCoordsY = (p.getInputPos().y * 2) - parseInt(window.getComputedStyle(board).height, 10);
     } else if (board.style.transformOrigin == 'center top 0px') {
       inputCoordsX = p.getInputPos().x * 2 - (parseInt(window.getComputedStyle(board).width, 10) / 2);
       inputCoordsY = p.getInputPos().y * 2;
-    } else if (board.style.transformOrigin == 'center 50% 0px') {
+    } else if (board.style.transformOrigin == 'center center 0px') {
       inputCoordsX = p.getInputPos().x * 2 - (parseInt(window.getComputedStyle(board).width, 10) / 2);
       inputCoordsY = p.getInputPos().y * 2 - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    } else if (board.style.transformOrigin == 'center bottom 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - (parseInt(window.getComputedStyle(board).width, 10) / 2);
+      inputCoordsY = p.getInputPos().y * 2 - parseInt(window.getComputedStyle(board).height, 10);
     } else if (board.style.transformOrigin == 'right top 0px') {
       inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
       inputCoordsY = p.getInputPos().y * 2;
-    } else if (board.style.transformOrigin == 'right 50% 0px') {
+    } else if (board.style.transformOrigin == 'right center 0px') {
       inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
       inputCoordsY = p.getInputPos().y * 2 - (parseInt(window.getComputedStyle(board).height, 10) / 2);
+    } else if (board.style.transformOrigin == 'right bottom 0px') {
+      inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
+      inputCoordsY = p.getInputPos().y * 2 - parseInt(window.getComputedStyle(board).height, 10);
     }
   } else {
 

@@ -128,7 +128,7 @@ function repositionJack(j, offsetY) {
   let element = document.getElementById('context-menuJack'),
   style = window.getComputedStyle(element),
   wid = style.getPropertyValue('width');
-  let offestX = -parseInt(wid, 10);
+  let offestX = -parseInt(wid, 10) / (zoom + 1);
   
   updateSVGJack(j.jackSVG, posPedal1.x, posPedal1.y, posPedal2.x + offestX, posPedal2.y + offsetY);
 }
