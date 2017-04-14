@@ -32,6 +32,9 @@ function createMenuItems(jacks) {
     li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
     li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
     li.classList.add("context-menu__item");
+    let menuItemWid = 40 * (1 + (zoom * 2));
+    let menuItemHei = 14 * (zoom + 1);
+    li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px";
     ul.appendChild(li);
 
     // Repositions the current jack so that it feels like it's unplugged 
@@ -82,7 +85,6 @@ function toggleMenuOff() {
     pedalMenu = null;
     menuState = 0;
     menu.classList.remove("context-menu--active");
-    menu.style.width = "70px";
   }
 }
 
@@ -162,13 +164,13 @@ function positionMenu(e,p) {
   if ((windowWidth - inputCoordsX) < menuWidth) {
     menu.style.left = windowWidth - menuWidth + "px";
   } else {
-    menu.style.left = inputCoordsX - menuWidth + "px";
+    menu.style.left = inputCoordsX - menuWidth + 13 + "px";
   }
 
   if ((windowHeight - inputCoordsY) < menuHeight) {
     menu.style.top = windowHeight - menuHeight + "px";
   } else {
-    menu.style.top = inputCoordsY - menuHeight/2 + "px";
+    menu.style.top = inputCoordsY - menuHeight/2 + 13 + "px";
   }
 }
 

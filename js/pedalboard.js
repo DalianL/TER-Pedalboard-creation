@@ -89,9 +89,10 @@ let pedalboard ={
   findClosestIO: function(x, y) {
       let self = this;
 
+      // Coordinates taking into account the length of the output
+      let xo = (-32 * (zoom + 1) + x) / (zoom + 1);
       // Adapts the coordinates according to zoom activation
-      // and the width of the jack
-      x = (-16 * (zoom + 1)) + x / (zoom + 1);
+      x = x / (zoom + 1);
       y = y / (zoom + 1);
 
       this.pedals.forEach(function(p) {
@@ -115,7 +116,7 @@ let pedalboard ={
           distInput = distance(x, y, iPos.x, iPos.y);
         }
         
-        let distOutput= distance(x, y, oPos.x, oPos.y);
+        let distOutput= distance(xo, y, oPos.x, oPos.y);
 
         // It depends if we're trying to plug a jack or not
         if(distInput < distMinToInputForHighlight) {
@@ -204,7 +205,7 @@ function mouseWheelHandler(e) {
 
   if (delta == -1) {
     zoom = 0;
-    board.style.transform = '';
+    board.style.transform = 'scale(1,1)';
   }
 
   toggleMenuOff();

@@ -11,6 +11,7 @@
   border: 5px solid grey;
   user-select: none;
   transition: transform 0.5s ease-in;
+  transform:scale(1,1);
 }
 
 #pedals {
@@ -115,7 +116,6 @@
 
 .context-menu__item:hover {
   color: #fff;
-  margin-left: 0px; 
-  
+  margin-left: 5px;
   background-image:url("../img/RightJackHover.png");
 }
