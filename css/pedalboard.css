@@ -101,21 +101,40 @@
   padding: 0;
 }
 
-.context-menu__item {
+.context-menu__item1 {
   display: block;
   margin-left: 5px;
   padding: 0px 12px;
-  width: 45px;
+  width: 40px;
   height: 14px;
   background-repeat: no-repeat;
 }
 
-.context-menu__item:last-child {
+.context-menu__item1:last-child {
   margin-bottom: 0;
 }
 
-.context-menu__item:hover {
+.context-menu__item1:hover {
   color: #fff;
   margin-left: 5px;
   background-image:url("../img/RightJackHover.png");
+}
+
+.context-menu__item2 {
+  display: block;
+  margin-left: 5px;
+  padding: 0px 12px;
+  width: 110px;
+  height: 28px;
+  background-repeat: no-repeat;
+}
+
+.context-menu__item2:last-child {
+  margin-bottom: 0;
+}
+
+.context-menu__item2:hover {
+  color: #fff;
+  margin-left: 5px;
+  background-image:url("../img/RightJackHoverL.png");
 }

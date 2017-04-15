@@ -25,16 +25,24 @@ function createMenuItems(jacks) {
   // according to the number of jacks plugged in the pedal, since the
   // menu adapts its position according to the number of item
   let offsetY = -(5*len) + 7 - (2 * len);
+  if (zoom == 1) {
+    if (board.style.transformOrigin == 'left top 0px' || board.style.transformOrigin == 'center top 0px' || board.style.transformOrigin == 'right top 0px') {
+      offsetY -= 2.5;
+    }
+    if (board.style.transformOrigin == 'left bottom 0px' || board.style.transformOrigin == 'center bottom 0px' || board.style.transformOrigin == 'right bottom 0px') {
+      offsetY += 2.5;
+    }
+  }
   jacks.forEach(function(j) {
     // Adds a menu item for each jack in the pedal
     let ul = document.getElementById("menu-container");
     let li = document.createElement("li");
     li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
     li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
-    li.classList.add("context-menu__item");
-    let menuItemWid = 40 * (1 + (zoom * 2));
+    zoom == 0 ? li.classList.add("context-menu__item1") : li.classList.add("context-menu__item2");
+/*  let menuItemWid = 40 * (1 + (zoom * 2));
     let menuItemHei = 14 * (zoom + 1);
-    li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px";
+    li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px";*/
     ul.appendChild(li);
 
     // Repositions the current jack so that it feels like it's unplugged 

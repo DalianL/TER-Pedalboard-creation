@@ -1,5 +1,7 @@
 // To know when the zoom is enabled
 var zoom = 0;
+// To give some classes a reference to the pedalboard
+var board;
 
 function resizePedalBoard(evt) {
   let svg = document.getElementById("svg-canvas");
@@ -165,12 +167,12 @@ let pedalboard ={
 function mouseWheelHandler(e) {
   e.preventDefault();
 
-  let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-
+  board = document.querySelector('#pedalboard');
   let boardC = document.querySelector('#pedalboard-container');
-  let board = document.querySelector('#pedalboard');
   let boardWid = parseInt(window.getComputedStyle(board).width, 10);
   let boardHei = parseInt(window.getComputedStyle(board).height, 10);
+
+  let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
 
   if(delta == 1) {
     zoom = 1;
