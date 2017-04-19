@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width">
   <title>Minimal draggable example</title>
   <link rel="stylesheet" href="css/pedalboard.css">
+  
+   <!-- Imports polyfill -->
+  <script src="./bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+  
   <script src="js/script.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/drag.js"></script>
@@ -12,23 +16,36 @@
   <script src="js/pedal.js"></script>
   <script src="js/pedalboard.js"></script>
   <script src="js/utils.js"></script>
+  
+    <!-- import pizzicato -->
+  <script src="./js/Pizzicato_2.js"></script>
+   <!-- Imports custom element -->
+  <script src="my_components/pedal-behavior.js"></script>
+  <link rel="import" href="./my_components/pedal-delay.html">
+  <link rel="import" href="./my_components/pedal-quadrafuzz.html">
+  <link rel="import" href="./my_components/pedal-lowpass.html">
+  <link rel="import" href="./my_components/pedal-flanger.html">
+
 </head>
 <body>
-<div id="pedalboard-container">
-  <div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);">
-  </div>
+  
+<div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);">
 </div>
   <div id="pedals">
-    <div id="disto1" class="pedal" 
-         draggable="true">Disto1</div>
-    <div id="flanger1" class="pedal" 
-         draggable="true">Flanger1</div>
+    
+    
+    <div id="delay1" class="pedal" 
+         draggable="true">Delay</div>
   </div>
   <div>
   <nav id="context-menuJack" class="context-menu">
     <ul id="menu-container" class="context-menu__items">
     </ul>
   </nav>
+  
   </div>
+  
+  
+  
 </body>
 </html>

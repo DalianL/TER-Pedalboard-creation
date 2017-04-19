@@ -39,7 +39,6 @@
 .draggable {
   padding:20px;
   text-align:center;
-  background-color:pink;
   border:2px dashed;
   position:absolute;
 }

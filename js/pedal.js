@@ -1,6 +1,6 @@
 class Pedal {
 
-  constructor(id, x, y, w, h) {
+  constructor(id, x, y, w, h, pedaltype) {
     this.id = id;
     this.x = x;
     this.y = y;
@@ -15,14 +15,14 @@ class Pedal {
     this.outputOffsetX = this.w+2*this.IOsize+4;
     this.outputOffsetY = this.IOsize; 
     
-    this.elem = document.createElement("div");
+    this.elem = document.createElement(pedaltype);
+    document.body.append(this.elem);
     this.elem.classList.add("draggable");
     this.elem.id = this.id;
     this.elem.style.left = this.x + "px";
     this.elem.style.top = this.y + "px";
     this.elem.style.width = this.w + "px";
     this.elem.style.height = this.h + "px";
-    this.elem.innerHTML = this.id;
     
     // input and output
     this.input = document.createElement("div");
@@ -136,6 +136,6 @@ function dropPedalHandler(event) {
   //console.log("pedal dropped id = " + id + "x = " + event.clientX);
   // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
   // de la même pédale
-  let p = new Pedal(id, event.clientX-30, event.clientY-50, 50, 50);
+  let p = new Pedal(id, event.clientX-30, event.clientY-50, 140, 230, "pedal-delay");
   pedalboard.addPedal(p)
 }

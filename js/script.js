@@ -2,23 +2,23 @@ window.onload = init;
 
 function init() {  
   pedalboard.init(); 
-  let p1 = new Pedal("pedal1", 120, 130, 50, 50);
-  let p2 = new Pedal("pedal2", 280, 180, 50, 50);
-  let p3 = new Pedal("pedal3", 170, 270, 50, 50);
-  let p4 = new Pedal("pedal4", 350, 400, 50, 50);
-  let p5 = new Pedal("pedal5", 350, 300, 50, 50);
+  let p1 = new Pedal("pedal1", 120, 130, 140, 230, "pedal-delay");
+  let p2 = new Pedal("pedal2", 420, 250, 230, 280, "pedal-flanger");
+  let p3 = new Pedal("pedal3", 820, 200, 150, 350, "pedal-lowpass");
+  //let p4 = new Pedal("pedal4", 920, 900, 170, 350, "pedal-delay");
+  //let p5 = new Pedal("pedal5", 1220, 1200, 170, 350, "pedal-lowpass");
 
   pedalboard.addPedal(p1);
   pedalboard.addPedal(p2);
   pedalboard.addPedal(p3);
-  pedalboard.addPedal(p4);
-  pedalboard.addPedal(p5);
+  //pedalboard.addPedal(p4);
+  //pedalboard.addPedal(p5);
 
   pedalboard.connect(p1, p2);
   pedalboard.connect(p2, p3);
-  pedalboard.connect(p3, p4);
+  //pedalboard.connect(p3, p4);
   pedalboard.connect(p1, p3);
-  pedalboard.connect(p3, p5);
+  //pedalboard.connect(p3, p5);
 
   // For new pedals to be added
   addNewPedalListeners();
