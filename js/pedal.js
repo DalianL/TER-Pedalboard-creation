@@ -1,6 +1,7 @@
 class Pedal {
 
   constructor(id, x, y, w, h, pedaltype) {
+    this.pedalType = pedaltype;
     this.id = id;
     this.x = x;
     this.y = y;
@@ -16,7 +17,6 @@ class Pedal {
     this.outputOffsetY = this.IOsize; 
     
     this.elem = document.createElement(pedaltype);
-    document.body.append(this.elem);
     this.elem.classList.add("draggable");
     this.elem.id = this.id;
     this.elem.style.left = this.x + "px";
@@ -40,6 +40,9 @@ class Pedal {
   	this.output.out.style.left = this.outputOffsetX+"px"; // relative to parent
     this.output.out.style.top = this.inputOffsetY + "px";
     
+    // add pedal to the document
+    document.body.append(this.elem);
+
     // add input and output to the body
 	  this.elem.appendChild(this.output.out);
     this.elem.appendChild(this.input);
@@ -136,6 +139,20 @@ function dropPedalHandler(event) {
   //console.log("pedal dropped id = " + id + "x = " + event.clientX);
   // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
   // de la même pédale
-  let p = new Pedal(id, event.clientX-30, event.clientY-50, 140, 230, "pedal-delay");
-  pedalboard.addPedal(p)
+  if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadra") {
+    let p;
+    if (id == "delay") {
+      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-35, 135, 220, "pedal-delay");
+    } else if (id == "flanger") {
+      p = new Pedal(id + uniqueID, event.clientX-30-(225/2), event.clientY-40-(245/2), 225, 245, "pedal-flanger");
+    } else if (id == "lowpass") {
+      p = new Pedal(id + uniqueID, event.clientX-30-(110/2), event.clientY-20, 110, 245, "pedal-lowpass");
+    } else if (id == "quadra") {
+      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-40-(275/2), 135, 275, "pedal-quadrafuzz");
+    }
+    
+    uniqueID++;
+    pedalboard.addPedal(p)
+  }
+  
 }

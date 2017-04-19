@@ -2,6 +2,8 @@
 var zoom = 0;
 // To give some classes a reference to the pedalboard
 var board;
+// To make sure each pedal has a unique ID
+var uniqueID;
 
 function resizePedalBoard(evt) {
   let svg = document.getElementById("svg-canvas");
@@ -43,6 +45,7 @@ let pedalboard ={
   init: function() {
     this.elem = document.querySelector("#pedalboard");
     svgcanvas = createSVGcanvas(this.elem);
+    uniqueID = 0;
   },
   
   addPedal:function(p) {
