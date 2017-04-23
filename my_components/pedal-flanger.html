@@ -42,17 +42,19 @@
             left: 70px;
         }
         .pedalLabel{
+            user-select: none; 
             position: absolute;
-            right:-2px;
+            right:75px;
             top: 225px;
             font-size: 25px;
             font-family: Lemon\/Milk;
             text-align: center;
             line-height: 30px;
-            width: 265px;
+            width: 110px;
             color: white;
         }
         .knob-label{
+            user-select: none; 
             position: absolute;
             font-size: 12px;
             line-height: 12px;
@@ -88,17 +90,17 @@
     <template>
 
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1"></webaudio-knob>
-        <p class="knob-label" id="knob1-label" contenteditable="true">TIME</p>
+        <p class="knob-label" id="knob1-label">TIME</p>
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2"></webaudio-knob>
-        <p class="knob-label" id="knob2-label" contenteditable="true">SPEED</p>
+        <p class="knob-label" id="knob2-label">SPEED</p>
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3"></webaudio-knob>
-        <p class="knob-label" id="knob3-label" contenteditable="true">DEPTH</p>
+        <p class="knob-label" id="knob3-label">DEPTH</p>
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4"></webaudio-knob>
-        <p class="knob-label" id="knob4-label" contenteditable="true">FEEDBACK</p>
+        <p class="knob-label" id="knob4-label">FEEDBACK</p>
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob5"></webaudio-knob>
-        <p class="knob-label" id="knob5-label" contenteditable="true">MIX</p>
-        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="128"></webaudio-switch>
-        <p class="pedalLabel" contenteditable="true">FLANGER</p>
+        <p class="knob-label" id="knob5-label">MIX</p>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="100"></webaudio-switch>
+        <p class="pedalLabel">FLANGER</p>
     </template>
     <script>
         PedalFlanger = Polymer({
