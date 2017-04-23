@@ -65,9 +65,9 @@ function createMenuItems(jacks) {
       let x2 = j.p2.getInputPos().x;
       let y2 = j.p2.getInputPos().y;
 
-      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
-      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
-      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x, loc.y);
+      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y - 10);
       pedalboard.currentDraggableJack.sourcePedal = j.p1;
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
@@ -110,8 +110,8 @@ function getPosition(e) {
   var loc = cursorPoint(e);
   
   var rect = e.target.getBoundingClientRect();
-  var posx = loc.x / (zoom + 1);// - rect.left;
-  var posy = loc.y / (zoom + 1);// - rect.top;
+  var posx = loc.x;// - rect.left;
+  var posy = loc.y;// - rect.top;
   return {
     x: posx,
     y: posy

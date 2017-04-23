@@ -50,10 +50,10 @@ function mouseDownDraggable(e) {
     let x1 = p.getOutputPos().x;
     let y1 = p.getOutputPos().y;
 
-    pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
+    pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x, loc.y);
     pedalboard.currentDraggableJack.sourcePedal = p;
-    pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
-    pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
+    pedalboard.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+    pedalboard.currentDraggableJack.end.setAttribute("y", loc.y - 10);
     pedalboard.currentDraggableJack.x1 = x1;
     pedalboard.currentDraggableJack.y1 = y1;
 
@@ -68,10 +68,10 @@ function mouseDownDraggable(e) {
       let x1 = sourcePedal.getOutputPos().x;
       let y1 = sourcePedal.getOutputPos().y;
 
-      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x / (zoom + 1), loc.y / (zoom + 1));
+      pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x, loc.y);
       pedalboard.currentDraggableJack.sourcePedal = sourcePedal;
-      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x / (zoom + 1) - 7);
-      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y / (zoom + 1) - 10);
+      pedalboard.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+      pedalboard.currentDraggableJack.end.setAttribute("y", loc.y - 10);
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
     }
@@ -91,8 +91,8 @@ function mouseDownDraggable(e) {
   
   }
   // Keep track of mouse clicked pos (source position)
-  oldMousePosX = loc.x / (zoom + 1);
-  oldMousePosY = loc.y / (zoom + 1);
+  oldMousePosX = loc.x;
+  oldMousePosY = loc.y;
 
 }
 
@@ -103,12 +103,12 @@ function mouseMoveDraggable(e) {
   switch(pedalboard.currentState) {
     case "drawingNewJack":
       let jackWeAreDragging = pedalboard.currentDraggableJack;
-      updateSVGJack(jackWeAreDragging, jackWeAreDragging.x1, jackWeAreDragging.y1, loc.x / (zoom + 1), loc.y / (zoom + 1))
+      updateSVGJack(jackWeAreDragging, jackWeAreDragging.x1, jackWeAreDragging.y1, loc.x, loc.y)
       break;
     case "draggingPedal":
         // deplacement souris incrémental
-        let dx = (loc.x / (zoom + 1) - oldMousePosX);
-        let dy = (loc.y / (zoom + 1) - oldMousePosY);
+        let dx = (loc.x - oldMousePosX);
+        let dy = (loc.y - oldMousePosY);
     
         // test obligatoire car on pourrait cliquer
         // sur les input ou output ou boutons rotatifs etc.
