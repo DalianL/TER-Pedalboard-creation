@@ -10,7 +10,6 @@
   background-color:lightgreen;
   border: 5px solid grey;
   user-select: none;
-  transition: transform 0.5s ease-in;
   transform:scale(1,1);
 }
 

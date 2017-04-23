@@ -32,12 +32,12 @@ class Pedal {
 
     this.output = document.createElement("div");
     this.output.classList.add("output");
-    this.output.style.left = this.outputOffsetX+"px"; // relative to parent
+    this.output.style.left = this.outputOffsetX +"px"; // relative to parent
     this.output.style.top = this.inputOffsetY + "px";
 	
   	this.output.out = document.createElement("span");
   	this.output.out.classList.add("out");
-  	this.output.out.style.left = this.outputOffsetX+"px"; // relative to parent
+  	this.output.out.style.left = this.outputOffsetX +"px"; // relative to parent
     this.output.out.style.top = this.inputOffsetY + "px";
     
     // add pedal to the document

@@ -27,6 +27,8 @@ function mouseUpDraggable() {
       break;
     case "draggingPedal":
       break;
+    case "draggingPedalboard":
+      break;
     }
     // set back pedalboard state to "none", we finished a drag
     pedalboard.currentState = "none";
@@ -75,8 +77,7 @@ function mouseDownDraggable(e) {
       pedalboard.currentDraggableJack.x1 = x1;
       pedalboard.currentDraggableJack.y1 = y1;
     }
-
-  }  else {
+  } else if (clickInPedal(e)) {
     // dragging a pedal
     pedalboard.currentState = "draggingPedal";
 
@@ -89,16 +90,20 @@ function mouseDownDraggable(e) {
     p.beforeDragPosX = draggableElementClicked.offsetLeft;
     p.beforeDragPosY = draggableElementClicked.offsetTop;
   
+  } else {
+    pedalboard.currentState = "draggingPedalboard";
   }
   // Keep track of mouse clicked pos (source position)
   oldMousePosX = loc.x;
   oldMousePosY = loc.y;
-
 }
 
 function mouseMoveDraggable(e) {
   // Computes the location of the mouse in the SVG canvas
   var loc = cursorPoint(e);
+  // deplacement souris incrémental 
+  let dx = (loc.x - oldMousePosX);
+  let dy = (loc.y - oldMousePosY);
 
   switch(pedalboard.currentState) {
     case "drawingNewJack":
@@ -106,17 +111,15 @@ function mouseMoveDraggable(e) {
       updateSVGJack(jackWeAreDragging, jackWeAreDragging.x1, jackWeAreDragging.y1, loc.x, loc.y)
       break;
     case "draggingPedal":
-        // deplacement souris incrémental
-        let dx = (loc.x - oldMousePosX);
-        let dy = (loc.y - oldMousePosY);
-    
-        // test obligatoire car on pourrait cliquer
-        // sur les input ou output ou boutons rotatifs etc.
-        if(pedalboard.currentDraggablePedal !== undefined) {
-          let p = pedalboard.currentDraggablePedal;
-          p.move(p.beforeDragPosX + dx, p.beforeDragPosY + dy)
-        }
-
+      // test obligatoire car on pourrait cliquer
+      // sur les input ou output ou boutons rotatifs etc.
+      if(pedalboard.currentDraggablePedal !== undefined) {
+        let p = pedalboard.currentDraggablePedal;
+        p.move(p.beforeDragPosX + dx, p.beforeDragPosY + dy)
+      }
+      break;
+    case "draggingPedalboard":
+      pedalboard.move(dx, dy);
       break;
   }
 }
@@ -136,4 +139,20 @@ function cursorPoint(evt){
   pt.x = evt.clientX; 
   pt.y = evt.clientY;
   return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+
+function clickInPedal(e) {
+  pedals = document.querySelectorAll('.draggable');
+
+  let loc = cursorPoint(e);
+  let result = false;
+
+  pedals.forEach(function (d) {
+    pedal = pedalboard.getPedalFromHtmlElem(d);
+    if (loc.x > pedal.x && loc.x < pedal.x + pedal.w * 1.25 && loc.y > pedal.y && loc.y < pedal.y + pedal.h * 1.25) {
+      result = true;
+    }
+  });
+
+  return result;
 }

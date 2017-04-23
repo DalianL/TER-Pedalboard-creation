@@ -36,16 +36,19 @@ function createSVGcanvas(parent) {
 }
 
 let pedalboard ={
-  elem:undefined,
-  pedals:[],
+  elem: undefined,
+  pedals: [],
   // the svgcanvas
   svgcanvas: undefined,
-  currentState : "none",
+  currentState: "none",
+  pedalboardOrigin: [],
   
   init: function() {
     this.elem = document.querySelector("#pedalboard");
     svgcanvas = createSVGcanvas(this.elem);
     uniqueID = 0;
+    this.pedalboardOrigin.x = 0;
+    this.pedalboardOrigin.y = 0;
   },
   
   addPedal:function(p) {
@@ -91,6 +94,15 @@ let pedalboard ={
     return undefined;
   },
   
+  move: function(dx, dy) {
+    if (zoom == 1) {
+      this.elem.style.transition = '';
+      this.pedalboardOrigin.x += dx / 50;
+      this.pedalboardOrigin.y += dy / 50;
+      this.elem.style.transform = "scale(2,2) translate("+this.pedalboardOrigin.x+"px,"+this.pedalboardOrigin.y+"px)";
+    }
+  },
+
   findClosestIO: function(x, y) {
       let self = this;
 
@@ -180,6 +192,7 @@ function mouseWheelHandler(e) {
   if(delta == 1) {
     zoom = 1;
     board.style.transform = 'scale(2,2)';
+    board.style.transition = 'transform 0.5s ease-in';
 
     if (e.clientY < boardHei / 3) {
       if (e.clientX < boardWid / 3) {
@@ -211,6 +224,9 @@ function mouseWheelHandler(e) {
   if (delta == -1) {
     zoom = 0;
     board.style.transform = 'scale(1,1)';
+    board.style.transition = 'transform 0.5s ease-in';
+    pedalboard.pedalboardOrigin.x = 0;
+    pedalboard.pedalboardOrigin.y = 0;
   }
 
   toggleMenuOff();

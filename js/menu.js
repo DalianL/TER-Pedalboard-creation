@@ -159,6 +159,8 @@ function positionMenu(e,p) {
       inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
       inputCoordsY = p.getInputPos().y * 2 - parseInt(window.getComputedStyle(board).height, 10);
     }
+    inputCoordsX += pedalboard.pedalboardOrigin.x * 2;
+    inputCoordsY += pedalboard.pedalboardOrigin.y * 2;
   } else {
 
     inputCoordsX = p.getInputPos().x;
