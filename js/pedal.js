@@ -142,11 +142,11 @@ function dropPedalHandler(event) {
   if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadra") {
     let p;
     if (id == "delay") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-35, 135, 220, "pedal-delay");
+      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-10-(110/2), 135, 220, "pedal-delay");
     } else if (id == "flanger") {
       p = new Pedal(id + uniqueID, event.clientX-30-(225/2), event.clientY-40-(245/2), 225, 245, "pedal-flanger");
     } else if (id == "lowpass") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(110/2), event.clientY-20, 110, 245, "pedal-lowpass");
+      p = new Pedal(id + uniqueID, event.clientX-30-(110/2), event.clientY-20-(245/2), 110, 245, "pedal-lowpass");
     } else if (id == "quadra") {
       p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-40-(275/2), 135, 275, "pedal-quadrafuzz");
     }
