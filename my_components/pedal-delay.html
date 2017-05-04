@@ -112,23 +112,20 @@
               knobs[0].setAttribute("data-role","feedback");
               knobs[1].setAttribute("data-role","time");
               knobs[2].setAttribute("data-role","mix");
-            }
-            ,
+            },
             getDefaultButtonsValues: function() {
               return { feedback : 50 , time : 30 , mix: 50};
+            },
+            bypass: function() {
+              this.effect.bypass();
+            },
+            reactivate: function() {
+              this.effect.reactivate();
+            },
+            connectInternNodes:function () {
+              this.soundNodeIn.connect(this.effect);
+              this.effect.connect(this.soundNodeOut);
             }
-            ,
-              bypass: function() {
-                this.effect.bypass();
-              },
-              reactivate: function() {
-                this.effect.reactivate();
-              },
-              connectInternNodes:function () {
-                this.soundNodeIn.connect(this.effect);
-                this.effect.connect(this.soundNodeOut);
-              }
-
         });
     </script>
 </dom-module>

@@ -86,13 +86,11 @@
               var knobs = this.getElementsByTagName("webaudio-knob");
               var t = this;
               knobs[0].addEventListener('change', function (e) { t.lowPassFilter.frequency.value = 440+((e.target.value)*50);});
-            }
-            ,
+            },
             setRolesToKnobs:function () {
               var knobs = this.getElementsByTagName("webaudio-knob");
               knobs[0].setAttribute("data-role","frequency");
-            }
-            ,
+            },
             getDefaultButtonsValues: function() {
               return { frequency : 10 };
             },
@@ -103,8 +101,7 @@
             reactivate: function() {
               this.wetGainNode.gain.value = 1;
       				this.dryGainNode.gain.value = 0;
-            }
-            ,
+            },
             connectInternNodes:function ()  {
               this.soundNodeIn.connect(this.wetGainNode);
               this.wetGainNode.connect(this.lowPassFilter)

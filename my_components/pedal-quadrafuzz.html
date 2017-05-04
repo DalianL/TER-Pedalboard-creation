@@ -80,7 +80,6 @@
 
     </style>
     <template>
-
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1"></webaudio-knob>
         <p class="knob-label" id="knob1-label">LOWGAIN</p>
         <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2"></webaudio-knob>
@@ -118,16 +117,14 @@
               knobs[2].addEventListener('change', function (e) { t.effect.midHighGain = e.target.value/100;});
               knobs[3].addEventListener('change', function (e) { t.effect.highGain = e.target.value/100;});
 
-            }
-            ,
+            },
             setRolesToKnobs:function () {
               var knobs = this.getElementsByTagName("webaudio-knob");
               knobs[0].setAttribute("data-role","lowGain");
               knobs[1].setAttribute("data-role","midLowGain");
               knobs[2].setAttribute("data-role","midHighGain");
               knobs[3].setAttribute("data-role","highGain");
-            }
-            ,
+            },
             getDefaultButtonsValues: function() {
               return { lowGain : 60 , midLowGain : 80 , midHighGain: 50 ,highGain: 60};
             },
@@ -136,8 +133,7 @@
             },
             reactivate: function() {
               this.effect.reactivate();
-            }
-            ,
+            },
             connectInternNodes:function ()  {
               this.soundNodeIn.connect(this.effect);
               this.effect.connect(this.soundNodeOut);
