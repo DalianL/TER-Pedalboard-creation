@@ -87,7 +87,9 @@ let pedalboard = {
     var jack = new Jack(p1, p2);
     p1.addJackAtOutput(jack);
     p2.addJackAtInput(jack);
-    if (p1.id == "pedalIn") {
+    if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+      connectMedia();
+    } else if (p1.id == "pedalIn") {
       enablePedalEffect(p2);
     } else if (p2.id == "pedalOut") {
       enableAudio(p1);
@@ -113,6 +115,16 @@ let pedalboard = {
     for(var i=1; i <= 4; i++) {
       var elem = document.getElementById("jack"+p1.id+p2.id+"_"+i);
       if (elem != null) elem.parentNode.removeChild(elem);
+    }
+
+    if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+      disconnectMedia();
+    } else if (p1.id == "pedalIn") {
+      disablePedalEffect(p2);
+    } else if (p2.id == "pedalOut") {
+      disableAudio(p1);
+    } else {
+      disconnectAudioNodes(p1,p2);
     }
   },
   
