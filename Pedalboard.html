@@ -15,6 +15,7 @@
   <script src="js/jacks.js"></script>
   <script src="js/pedal.js"></script>
   <script src="js/pedalboard.js"></script>
+  <script src="js/sound.js"></script>
   <script src="js/utils.js"></script>
   
     <!-- import pizzicato -->
@@ -28,6 +29,7 @@
 
 </head>
 <body>
+  <audio src="http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio><br>
   <div id="pedalboard-container">
     <div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);">
     </div>
@@ -45,8 +47,6 @@
   </nav>
   
   </div>
-  
-  
   
 </body>
 </html>

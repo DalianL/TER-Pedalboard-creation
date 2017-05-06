@@ -1,10 +1,3 @@
-function highlightInputsOutputs(e) {
-  let rect = pedalboard.elem.getBoundingClientRect();
-  let mouseX = e.x - rect.left;
-  let mouseY = e.y - rect.top;
-  let closest = pedalboard.findClosestIO(mouseX, mouseY);
-}
-
 function makeSVG(tag, attrs) {
     var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
     for (var k in attrs){

@@ -78,6 +78,12 @@
   background-position:left center;
 }
 
+.audioInput, .audioOutput {
+  background-color: black;
+  border-radius: 15px;
+  position: absolute;
+}
+
 .context-menu {
   display: none;
   position: absolute;

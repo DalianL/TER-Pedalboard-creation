@@ -140,7 +140,7 @@ function dropPedalHandler(event) {
   // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
   // de la même pédale
   if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadra") {
-    let p;
+    let p, ptype;
     if (id == "delay") {
       p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-10-(110/2), 135, 220, "pedal-delay");
     } else if (id == "flanger") {
@@ -150,9 +150,22 @@ function dropPedalHandler(event) {
     } else if (id == "quadra") {
       p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-40-(275/2), 135, 275, "pedal-quadrafuzz");
     }
-    
+
     uniqueID++;
-    pedalboard.addPedal(p)
+    pedalboard.addPedal(p);
+
+    if (id == "delay") {
+      ptype = document.querySelector('pedal-delay');
+    } else if (id == "flanger") {
+      ptype = document.querySelector('pedal-flanger');
+    } else if (id == "lowpass") {
+      ptype = document.querySelector('pedal-lowpass');
+    } else if (id == "quadra") {
+      ptype = document.querySelector('pedal-quadrafuzz');
+    }
+
+    ptype.factoryImpl();
+
   }
   
 }

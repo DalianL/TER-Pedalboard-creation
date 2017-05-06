@@ -35,10 +35,11 @@ function createSVGcanvas(parent) {
   return svg;
 }
 
-let pedalboard ={
+let pedalboard = {
   elem: undefined,
   pedals: [],
-  // the svgcanvas
+  audioInput: undefined,
+  audioOutput: undefined,
   svgcanvas: undefined,
   currentState: "none",
   pedalboardOrigin: [],
@@ -49,6 +50,30 @@ let pedalboard ={
     uniqueID = 0;
     this.pedalboardOrigin.x = 0;
     this.pedalboardOrigin.y = 0;
+    this.addAudioInput();
+    this.addAudioOutput();
+  },
+
+  addAudioInput:function() {
+    this.audioInput = document.createElement("div");
+    this.audioInput.id = "input0";
+    this.audioInput.style.left = "-10px";
+    this.audioInput.style.top = "290px";
+    this.audioInput.style.width = "20px";
+    this.audioInput.style.height = "20px";
+    this.audioInput.classList.add("audioInput");
+    this.elem.appendChild(this.audioInput);
+  },
+
+  addAudioOutput:function() {
+    this.audioOutput = document.createElement("div");
+    this.audioOutput.id = "output0";
+    this.audioOutput.style.right = "-10px";
+    this.audioOutput.style.top = "290px";
+    this.audioOutput.style.width = "20px";
+    this.audioOutput.style.height = "20px";
+    this.audioOutput.classList.add("audioOutput");
+    this.elem.appendChild(this.audioOutput);
   },
   
   addPedal:function(p) {
@@ -62,6 +87,13 @@ let pedalboard ={
     var jack = new Jack(p1, p2);
     p1.addJackAtOutput(jack);
     p2.addJackAtInput(jack);
+    if (p1.id == "pedalIn") {
+      enablePedalEffect(p2);
+    } else if (p2.id == "pedalOut") {
+      enableAudio(p1);
+    } else {
+      connectAudioNodes(p1,p2);
+    }
   },
 
   disconnect : function(p1, p2) {
@@ -231,4 +263,11 @@ function mouseWheelHandler(e) {
 
   toggleMenuOff();
 
+}
+
+function highlightInputsOutputs(e) {
+  let rect = pedalboard.elem.getBoundingClientRect();
+  let mouseX = e.x - rect.left;
+  let mouseY = e.y - rect.top;
+  let closest = pedalboard.findClosestIO(mouseX, mouseY);
 }
