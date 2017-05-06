@@ -87,15 +87,7 @@ let pedalboard = {
     var jack = new Jack(p1, p2);
     p1.addJackAtOutput(jack);
     p2.addJackAtInput(jack);
-    if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-      connectMedia();
-    } else if (p1.id == "pedalIn") {
-      enablePedalEffect(p2);
-    } else if (p2.id == "pedalOut") {
-      enableAudio(p1);
-    } else {
-      connectAudioNodes(p1,p2);
-    }
+    soundNodeConnection(p1,p2);
   },
 
   disconnect : function(p1, p2) {
@@ -117,15 +109,7 @@ let pedalboard = {
       if (elem != null) elem.parentNode.removeChild(elem);
     }
 
-    if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-      disconnectMedia();
-    } else if (p1.id == "pedalIn") {
-      disablePedalEffect(p2);
-    } else if (p2.id == "pedalOut") {
-      disableAudio(p1);
-    } else {
-      disconnectAudioNodes(p1,p2);
-    }
+    soundNodeDisconnection(p1,p2);
   },
   
   getPedalFromHtmlElem: function(elem) {

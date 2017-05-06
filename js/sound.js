@@ -16,34 +16,26 @@ function soundHandler() {
 
 };
 
-function connectMedia() {
-  mediaSource.connect(audioDestination);
+function soundNodeConnection(p1,p2) {
+  if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+    mediaSource.connect(audioDestination);
+  } else if (p1.id == "pedalIn") {
+    mediaSource.connect(p2.elem.soundNodeIn);
+  } else if (p2.id == "pedalOut") {
+    p1.elem.soundNodeOut.connect(audioDestination);
+  } else {
+    p1.elem.soundNodeOut.connect(p2.elem.soundNodeIn);
+  }
 }
 
-function disconnectMedia() {
-  mediaSource.disconnect(audioDestination);
-}
-
-function enablePedalEffect(p) {
-  mediaSource.connect(p.elem.soundNodeIn);
-}
-
-function disablePedalEffect(p) {
-  mediaSource.disconnect(p.elem.soundNodeIn);
-}
-
-function enableAudio(p) {
-  p.elem.soundNodeOut.connect(audioDestination);
-}
-
-function disableAudio(p) {
-  p.elem.soundNodeOut.disconnect(audioDestination);
-}
-
-function connectAudioNodes(p1,p2) {
-  p1.elem.soundNodeOut.connect(p2.elem.soundNodeIn);
-}
-
-function disconnectAudioNodes(p1,p2) {
-  p1.elem.soundNodeOut.disconnect(p2.elem.soundNodeIn);
+function soundNodeDisconnection(p1,p2) {
+  if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+    mediaSource.disconnect(audioDestination);
+  } else if (p1.id == "pedalIn") {
+    mediaSource.disconnect(p2.elem.soundNodeIn);
+  } else if (p2.id == "pedalOut") {
+    p1.elem.soundNodeOut.disconnect(audioDestination);
+  } else {
+    p1.elem.soundNodeOut.disconnect(p2.elem.soundNodeIn);
+  }
 }
