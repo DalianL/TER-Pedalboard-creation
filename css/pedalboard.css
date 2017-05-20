@@ -1,12 +1,12 @@
 #pedalboard-container {
-  height:610px;
-  width:1510px;
+  height:710px;
+  width:99%;
   overflow:hidden;
 }
 
 #pedalboard {
-  height:600px;
-  width:1500px;
+  height:700px;
+  width:99.5%;
   background-color:lightgreen;
   border: 5px solid grey;
   user-select: none;
@@ -14,14 +14,13 @@
 }
 
 #pedals {
-  height:100px;
-  width:1500px;
+  height:100%;
+  width:98.5%;
   background-color:lightGrey;
   border: 5px solid grey;
   margin-top:5px;
   display: flex;
   flex-direction: row; 
-  height: 100%;
   user-select: none;
 }
 
@@ -38,8 +37,8 @@
 .draggable {
   padding:20px;
   text-align:center;
-  border:2px dashed;
   position:absolute;
+  border:2px dashed;
 }
 
 .delete {

@@ -2,8 +2,13 @@ window.onload = init;
 
 function init() {  
   pedalboard.init();
-  let pIn = new Pedal("pedalIn", -1,-60, 278, 10, 10);
-  let pOut = new Pedal("pedalOut", -1, 1500, 278, 10, 10);
+
+  let cvs = document.querySelector("#svg-canvas");
+  let cvsWidth = cvs.width.baseVal.value;
+  let cvsHeight = cvs.height.baseVal.value;
+
+  let pIn = new Pedal("pedalIn", -1, -60, -20 + (cvsHeight / 2), 10, 10);
+  let pOut = new Pedal("pedalOut", -1, cvsWidth, -20 + (cvsHeight / 2), 10, 10);
 
   pedalboard.addPedal(pIn);
   pedalboard.addPedal(pOut);
