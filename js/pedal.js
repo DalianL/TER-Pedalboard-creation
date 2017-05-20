@@ -1,8 +1,9 @@
 class Pedal {
 
-  constructor(id, x, y, w, h, pedaltype) {
+  constructor(id, number, x, y, w, h, pedaltype) {
     this.pedalType = pedaltype;
     this.id = id;
+    this.number = number;
     this.x = x;
     this.y = y;
     this.w = w;
@@ -23,6 +24,13 @@ class Pedal {
     this.elem.style.top = this.y + "px";
     this.elem.style.width = this.w + "px";
     this.elem.style.height = this.h + "px";
+
+    // delete
+    if (this.number != '1') {
+      this.delete = document.createElement("div");
+      this.delete.innerHTML += "<a href=\"#\" onclick=\"pedalboard.removePedal("+this.number+", '"+this.id+"');\"><img src=\"img/trash.png\" alt=\"Delete pedal\" title=\"Delete pedal\"/></a>";
+      this.delete.classList.add("delete");
+    }
     
     // input and output
     this.input = document.createElement("div");
@@ -32,21 +40,26 @@ class Pedal {
 
     this.output = document.createElement("div");
     this.output.classList.add("output");
-    this.output.style.left = this.outputOffsetX +"px"; // relative to parent
+    this.output.style.left = this.outputOffsetX + "px"; // relative to parent
     this.output.style.top = this.inputOffsetY + "px";
-	
-  	this.output.out = document.createElement("span");
-  	this.output.out.classList.add("out");
-  	this.output.out.style.left = this.outputOffsetX +"px"; // relative to parent
+  
+    this.output.out = document.createElement("span");
+    this.output.out.classList.add("out");
+    this.output.out.style.left = this.outputOffsetX + "px"; // relative to parent
     this.output.out.style.top = this.inputOffsetY + "px";
     
     // add pedal to the document
     document.body.append(this.elem);
 
     // add input and output to the body
-	  this.elem.appendChild(this.output.out);
+    this.elem.appendChild(this.output.out);
     this.elem.appendChild(this.input);
     this.elem.appendChild(this.output);
+
+    if (this.number != '1') {
+      this.elem.appendChild(this.delete);
+    }
+
   }
   
   addJackAtInput(jack) {
@@ -129,6 +142,15 @@ class Pedal {
   }
 }
 
+function getTokenPedal() {
+  countPedals += 1;
+  return countPedals;
+}
+
+function updateTokenPedal() {
+  countPedals--;
+}
+
 function pedalDragStart(event) {
   // console.log("pedal drag start");
   event.dataTransfer.setData("pedalId", event.target.id);
@@ -142,13 +164,13 @@ function dropPedalHandler(event) {
   if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadra") {
     let p, ptype;
     if (id == "delay") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-10-(110/2), 135, 220, "pedal-delay");
+      p = new Pedal(id + uniqueID, getTokenPedal(), event.clientX-30-(135/2), event.clientY-10-(110/2), 135, 220, "pedal-delay");
     } else if (id == "flanger") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(225/2), event.clientY-40-(245/2), 225, 245, "pedal-flanger");
+      p = new Pedal(id + uniqueID, getTokenPedal(), event.clientX-30-(225/2), event.clientY-40-(245/2), 225, 245, "pedal-flanger");
     } else if (id == "lowpass") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(110/2), event.clientY-20-(245/2), 110, 245, "pedal-lowpass");
+      p = new Pedal(id + uniqueID, getTokenPedal(), event.clientX-30-(110/2), event.clientY-20-(245/2), 110, 245, "pedal-lowpass");
     } else if (id == "quadra") {
-      p = new Pedal(id + uniqueID, event.clientX-30-(135/2), event.clientY-40-(275/2), 135, 275, "pedal-quadrafuzz");
+      p = new Pedal(id + uniqueID, getTokenPedal(), event.clientX-30-(135/2), event.clientY-40-(275/2), 135, 275, "pedal-quadrafuzz");
     }
 
     uniqueID++;

@@ -40,9 +40,9 @@ function createMenuItems(jacks) {
     li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
     li.setAttribute("id", "jack"+j.p1.id.substring(5,6)); 
     zoom == 0 ? li.classList.add("context-menu__item1") : li.classList.add("context-menu__item2");
-/*  let menuItemWid = 40 * (1 + (zoom * 2));
+    /* let menuItemWid = 40 * (1 + (zoom * 2));
     let menuItemHei = 14 * (zoom + 1);
-    li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px";*/
+    li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px"; */
     ul.appendChild(li);
 
     // Repositions the current jack so that it feels like it's unplugged 
@@ -159,8 +159,10 @@ function positionMenu(e,p) {
       inputCoordsX = p.getInputPos().x * 2 - parseInt(window.getComputedStyle(board).width, 10);
       inputCoordsY = p.getInputPos().y * 2 - parseInt(window.getComputedStyle(board).height, 10);
     }
+
     inputCoordsX += pedalboard.pedalboardOrigin.x * 2;
     inputCoordsY += pedalboard.pedalboardOrigin.y * 2;
+  
   } else {
 
     inputCoordsX = p.getInputPos().x;

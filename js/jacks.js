@@ -65,8 +65,7 @@ function createBezierSVGJack(id, x1, y1, x2, y2) {
   
     // Jack ends are images  
     let end = makeSVG( 
-          'image', 
-          { 
+          'image', { 
             class:'map-tile', 
             'xlink:href':'http://img4.hostingpics.net/pics/146380rightJack.png', 
             width:'100px', height: '20px',
@@ -93,8 +92,7 @@ function updateSVGJack(jack, x1, y1, x2, y2) {
       let d = jack1.getAttribute("d");
       let tension = 1;
 
-      if(x2 < x1) 
-          tension = -tension;
+      if(x2 < x1) tension = -tension;
   
       let delta = (x2-x1) * tension;
       let hx1=x1+delta;

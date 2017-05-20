@@ -5,6 +5,8 @@ var board;
 // To make sure each pedal has a unique ID
 var uniqueID;
 
+var countPedals = 1;
+
 function resizePedalBoard(evt) {
   let svg = document.getElementById("svg-canvas");
   svg.setAttribute('width', pedalboard.elem.clientWidth);
@@ -50,37 +52,52 @@ let pedalboard = {
     uniqueID = 0;
     this.pedalboardOrigin.x = 0;
     this.pedalboardOrigin.y = 0;
-    this.addAudioInput();
-    this.addAudioOutput();
-  },
-
-  addAudioInput:function() {
-    this.audioInput = document.createElement("div");
-    this.audioInput.id = "input0";
-    this.audioInput.style.left = "-10px";
-    this.audioInput.style.top = "290px";
-    this.audioInput.style.width = "20px";
-    this.audioInput.style.height = "20px";
-    this.audioInput.classList.add("audioInput");
-    this.elem.appendChild(this.audioInput);
-  },
-
-  addAudioOutput:function() {
-    this.audioOutput = document.createElement("div");
-    this.audioOutput.id = "output0";
-    this.audioOutput.style.right = "-10px";
-    this.audioOutput.style.top = "290px";
-    this.audioOutput.style.width = "20px";
-    this.audioOutput.style.height = "20px";
-    this.audioOutput.classList.add("audioOutput");
-    this.elem.appendChild(this.audioOutput);
   },
   
-  addPedal:function(p) {
+  addPedal: function(p) {
     this.pedals.push(p);
     p.pedalboard = this;
     handleJackMenu(p.input);
     resizeListener(p.input);
+  },
+
+  removePedal: function(p, type) {
+    let self = this;
+    if (p > -1) {
+
+      let toDeletePedal = this.pedals[p];
+
+      let jacksIn = toDeletePedal.inputJacks;
+      let jacksOut = toDeletePedal.outputJacks;
+      let jacksInLen = jacksIn.length;
+      let jacksOutLen = jacksOut.length;
+
+      for (let i = 0; i < jacksInLen; i++) {
+        // Delete the input jacks from the list starting from the last one
+        self.disconnect(jacksIn[jacksInLen - i - 1].p1, jacksIn[jacksInLen - i - 1].p2);
+      }
+
+      for (let i = 0; i < jacksOutLen; i++) {
+        // Delete the output jacks from the list starting from the last one
+        self.disconnect(jacksOut[jacksOutLen - i - 1].p1, jacksOut[jacksOutLen - i - 1].p2);
+      }
+
+      this.pedals.splice(p, 1);
+
+      for (i = p; i < this.pedals.length; i++) {
+        this.pedals[i].number -= 1;
+        this.pedals[i].delete.innerHTML = "<a href=\"#\" onclick=\"pedalboard.removePedal("+this.pedals[i].number+", '"+
+          this.pedals[i].id+"');\"><img src=\"img/trash.png\" alt=\"Delete pedal\" title=\"Delete pedal\"/></a>";
+      }
+
+      updateTokenPedal();
+
+      let el = document.getElementById(type);
+      el.parentNode.removeChild(el);
+    }
+
+    //console.log(this.pedals);
+    p.pedalboard = this;
   },
 
   connect: function(p1, p2) {

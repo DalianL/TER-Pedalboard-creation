@@ -42,32 +42,38 @@
   position:absolute;
 }
 
+.delete {
+  position:absolute;
+  top:-8%;
+  left:80%;
+}
+
 .input,.output {
   position:absolute;
 }
 
 .output {
-	background-image:url("../img/minirightJack.png");
-	background-repeat:no-repeat;
-	width:65px;
-	height:10px;
-	background-position:center center;
+  background-image:url("../img/minirightJack.png");
+  background-repeat:no-repeat;
+  width:65px;
+  height:10px;
+  background-position:center center;
 }
 
 .output:Hover {
-	background-image:url("../img/minirightJackMini.png");
-	background-repeat:no-repeat;
-	width:65px;
-	height:10px;
-	background-position:center center;
+  background-image:url("../img/minirightJackMini.png");
+  background-repeat:no-repeat;
+  width:65px;
+  height:10px;
+  background-position:center center;
 }
 
 .input {
-	background-image:url("../img/leftInput.png");
-	background-repeat:no-repeat;
-	width:20px;
-	height:10px;
-	background-position:left center;
+  background-image:url("../img/leftInput.png");
+  background-repeat:no-repeat;
+  width:20px;
+  height:10px;
+  background-position:left center;
 }
 
 .input:Hover {
