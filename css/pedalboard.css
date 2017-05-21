@@ -46,6 +46,11 @@
   top:-8%;
   left:80%;
 }
+.optionMenu {
+  position:absolute;
+  top:-8%;
+  left:68%;
+}
 
 .input,.output {
   position:absolute;
