@@ -26,19 +26,16 @@ class Pedal {
     this.elem.style.height = this.h + "px";
 
     
-    if (this.number != '1') {
+    if (this.number != '-1') {
       // delete
       this.delete = document.createElement("div");
       this.delete.innerHTML += "<a href=\"#\" onclick=\"pedalboard.removePedal("+this.number+", '"+this.id+"');\"><img src=\"img/trash.png\" alt=\"Delete pedal\" title=\"Delete pedal\"/></a>";
       this.delete.classList.add("delete");
       // Option menu
-       this.optionMenu = document.createElement("div");
-       this.optionMenu.innerHTML += "<a href=\"#\"><img src=\"img/gear.png\" alt=\"Open menu\" title=\"Open menu\"/></a>";
-       this.optionMenu.classList.add("optionMenu");
+      this.optionMenu = document.createElement("div");
+      this.optionMenu.innerHTML += "<a href=\"#\"><img src=\"img/gear.png\" alt=\"Open menu\" title=\"Open menu\"/></a>";
+      this.optionMenu.classList.add("optionMenu");
     }
-
-    
-
     
     // input and output
     this.input = document.createElement("div");
@@ -64,7 +61,7 @@ class Pedal {
     this.elem.appendChild(this.input);
     this.elem.appendChild(this.output);
 
-    if (this.number != '1') {
+    if (this.number != '-1') {
       this.elem.appendChild(this.delete);
       this.elem.appendChild(this.optionMenu);
     }

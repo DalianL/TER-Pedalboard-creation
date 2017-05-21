@@ -185,10 +185,3 @@ function positionMenu(e,p) {
     menu.style.top = inputCoordsY - menuHeight/2 + 13 + "px";
   }
 }
-
-function resizeListener (elem) {
-  window.onresize = function(e) {
-    // Hide menu if the window is resized
-    toggleMenuOff();
-  }
-}

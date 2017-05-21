@@ -3,12 +3,12 @@ window.onload = init;
 function init() {  
   pedalboard.init();
 
-  let cvs = document.querySelector("#svg-canvas");
-  let cvsWidth = cvs.width.baseVal.value;
-  let cvsHeight = cvs.height.baseVal.value;
+  let pdb = document.querySelector("#pedalboard");
+  let pdbW = parseInt(window.getComputedStyle(pdb).width, 10);
+  let pdbH = parseInt(window.getComputedStyle(pdb).height, 10);
 
-  let pIn = new Pedal("pedalIn", -1, -60, -20 + (cvsHeight / 2), 10, 10);
-  let pOut = new Pedal("pedalOut", -1, cvsWidth, -20 + (cvsHeight / 2), 10, 10);
+  let pIn = new Pedal("pedalIn", -1, -55, -20 + (pdbH / 2), 10, 10);
+  let pOut = new Pedal("pedalOut", -1, pdbW, -20 + (pdbH / 2), 10, 10);
 
   pedalboard.addPedal(pIn);
   pedalboard.addPedal(pOut);
@@ -64,4 +64,11 @@ function addZoomListener() {
   elem.addEventListener("mousewheel", mouseWheelHandler, false);
   // Firefox
   elem.addEventListener("DOMMouseScroll", mouseWheelHandler, false);
+}
+
+function resizeListener (elem) {
+  window.onresize = function(e) {
+    // Hide menu if the window is resized
+    toggleMenuOff();
+  }
 }
