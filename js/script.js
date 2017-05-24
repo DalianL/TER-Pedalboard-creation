@@ -70,5 +70,13 @@ function resizeListener (elem) {
   window.onresize = function(e) {
     // Hide menu if the window is resized
     toggleMenuOff();
+
+    // Repositions the pedal located on the right 
+    // according to the new width
+    let pdb = document.querySelector("#pedalboard");
+    let pdbW = parseInt(window.getComputedStyle(pdb).width, 10);
+    let pdbH = parseInt(window.getComputedStyle(pdb).height, 10);
+    pedalboard.pedals[1].move(pdbW, -20 + (pdbH / 2));
+  
   }
 }
