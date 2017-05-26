@@ -90,7 +90,9 @@ function mouseDownDraggable(e) {
     p.beforeDragPosX = draggableElementClicked.offsetLeft;
     p.beforeDragPosY = draggableElementClicked.offsetTop;
   
-  } else {
+  } else if (loc.x < parseInt(window.getComputedStyle(pedalboard.elem).width, 10) && 
+    loc.y < parseInt(window.getComputedStyle(pedalboard.elem).height, 10)) {
+    // dragging the pedalboard
     pedalboard.currentState = "draggingPedalboard";
   }
   // Keep track of mouse clicked pos (source position)
