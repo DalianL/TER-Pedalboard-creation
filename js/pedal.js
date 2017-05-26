@@ -13,8 +13,8 @@ class Pedal {
     // relative position of input and output
     this.IOsize = 15;
     this.inputOffsetX = -this.IOsize/2;
-    this.inputOffsetY = this.IOsize;
-    this.outputOffsetX = this.w+2*this.IOsize+4;
+    this.inputOffsetY = this.IOsize - 4;
+    this.outputOffsetX = this.w+2*this.IOsize-2;
     this.outputOffsetY = this.IOsize; 
     
     this.elem = document.createElement(pedaltype);
@@ -24,7 +24,6 @@ class Pedal {
     this.elem.style.top = this.y + "px";
     this.elem.style.width = this.w + "px";
     this.elem.style.height = this.h + "px";
-
     
     if (this.number != '-1') {
       // delete
@@ -41,7 +40,7 @@ class Pedal {
     this.input = document.createElement("div");
     this.input.classList.add("input");
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
-    this.input.style.top = this.inputOffsetY + "px";
+    this.input.style.top = this.inputOffsetY + 1 + "px";
 
     this.output = document.createElement("div");
     this.output.classList.add("output");
@@ -122,9 +121,9 @@ class Pedal {
   
   highLightInput(flag) {
     if(flag)
-       this.input.style.backgroundImage = "url('img/leftInputHover.png')";
+       this.input.style.backgroundImage = "url('img/inputHover.png')";
     else
-      this.input.style.backgroundImage = "url('img/leftInput.png')";
+      this.input.style.backgroundImage = "url('img/input.png')";
 
     this.inputHighlighted = flag;
   }
@@ -135,15 +134,15 @@ class Pedal {
 
   getInputPos() {
     return {
-      x: this.x +  this.IOsize/2 + this.inputOffsetX,
-      y: this.y + this.IOsize/2 + this.inputOffsetY
+      x: this.x + this.IOsize/2 + this.inputOffsetX,
+      y: this.y + this.IOsize/2 + this.inputOffsetY + 5
     }
   }
   
   getOutputPos() {
     return {
       x: this.x + this.IOsize/2 +  this.outputOffsetX,
-      y: this.y + this.IOsize/2 +  this.outputOffsetY
+      y: this.y + this.IOsize/2 +  this.outputOffsetY + 2
     }
   }
 }

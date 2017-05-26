@@ -152,7 +152,7 @@ let pedalboard = {
       let self = this;
 
       // Coordinates taking into account the length of the output
-      let xo = (-32 * (zoom + 1) + x) / (zoom + 1);
+      let xo = (-40 * (zoom + 1) + x) / (zoom + 1);
       // Adapts the coordinates according to zoom activation
       x = x / (zoom + 1);
       y = y / (zoom + 1);
@@ -191,7 +191,7 @@ let pedalboard = {
           }
         }
         
-        if(distOutput < 30) {
+        if(distOutput < 40) {
           if(!p.outputHighlighted) {
             p.highLightOutput(true);
              
