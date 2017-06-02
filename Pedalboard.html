@@ -4,9 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Minimal draggable example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Quicksand">
   <link rel="stylesheet" href="css/pedalboard.css">
   
-   <!-- Imports polyfill -->
+  <!-- Imports polyfill -->
   <script src="./bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
   
   <script src="js/script.js"></script>
@@ -18,9 +20,9 @@
   <script src="js/sound.js"></script>
   <script src="js/utils.js"></script>
   
-    <!-- import pizzicato -->
+  <!-- import pizzicato -->
   <script src="./js/Pizzicato_2.js"></script>
-   <!-- Imports custom element -->
+  <!-- Imports custom element -->
   <script src="my_components/pedal-behavior.js"></script>
   <link rel="import" href="./my_components/pedal-delay.html">
   <link rel="import" href="./my_components/pedal-quadrafuzz.html">
@@ -29,24 +31,62 @@
 
 </head>
 <body>
+  <header>
+    <span>PedalBoard</span>
+    <audio src="http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio>
+  </header>
+
   <div id="pedalboard-container">
-    <div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);">
+    <div id="pedalboard" ondragover="return false" ondrop="dropPedalHandler(event);"></div>
+  </div>
+
+
+  <div class="div_app_tabs">
+    <div class="div_tabs" id="div_tabs">
+      <input id="tab-1" type="radio" name="input-tab" checked><label for="tab-1">delay</label>
+      <input id="tab-2" type="radio" name="input-tab"><label for="tab-2">lowpass</label>
+      <input id="tab-3" type="radio" name="input-tab"><label for="tab-3">quadra</label>
+      <input id="tab-4" type="radio" name="input-tab"><label for="tab-4">flanger</label>
+      
+      <div class="div_container">
+        <div id="content-1">
+          <div class="pedals">  
+            <div id="delay" class="pedal" draggable="true"></div>
+            <span>delay</span>
+          </div>
+        </div>
+
+        <div id="content-2">
+          <div class="pedals">  
+            <div id="lowpass" class="pedal" draggable="true"></div>
+            <span>lowpass</span>
+          </div>
+        </div>
+
+        <div id="content-3">
+          <div class="pedals">  
+            <div id="quadra" class="pedal" draggable="true"></div>
+            <span>quadra</span>
+          </div>
+        </div>
+
+        <div id="content-4">
+          <div class="pedals">  
+            <div id="flanger" class="pedal" draggable="true"></div>
+            <span>flanger</span>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
-  <audio src="http://mainline.i3s.unice.fr/mooc/guitarRiff1.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio><br>
-  <div id="pedals">  
-    <div id="delay" class="pedal" draggable="true"></div>
-    <div id="flanger" class="pedal" draggable="true"></div>
-    <div id="lowpass" class="pedal" draggable="true"></div>
-    <div id="quadra" class="pedal" draggable="true"></div>
-  </div>
+
+
   <div>
-  <nav id="context-menuJack" class="context-menu">
-    <ul id="menu-container" class="context-menu__items">
-    </ul>
-  </nav>
-  
+    <nav id="context-menuJack" class="context-menu">
+      <ul id="menu-container" class="context-menu__items"></ul>
+    </nav>
   </div>
-  
+  <footer><a href="https://github.com/dl100463/TER-Pedalboard-creation"> PedalBoard 2017</a></footer>
 </body>
 </html>

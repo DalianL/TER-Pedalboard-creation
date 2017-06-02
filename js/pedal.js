@@ -26,14 +26,21 @@ class Pedal {
     this.elem.style.height = this.h + "px";
     
     if (this.number != '-1') {
+      // menu panel contient les éléments du menu (paramètres, suppression)
+      this.menuPanel=document.createElement("div");
+      this.menuPanel.className="div_menuPanel";
+
       // delete
       this.delete = document.createElement("div");
-      this.delete.innerHTML += "<a href=\"#\" onclick=\"pedalboard.removePedal("+this.number+", '"+this.id+"');\"><img src=\"img/trash.png\" alt=\"Delete pedal\" title=\"Delete pedal\"/></a>";
+      this.delete.innerHTML += "<a href='#'' onclick=\"pedalboard.removePedal("+this.number+", '"+this.id+"');\"><i class='fa fa-trash' title='Delete pedal'></i></a>";
       this.delete.classList.add("delete");
       // Option menu
       this.optionMenu = document.createElement("div");
-      this.optionMenu.innerHTML += "<a href=\"#\"><img src=\"img/gear.png\" alt=\"Open menu\" title=\"Open menu\"/></a>";
+      this.optionMenu.innerHTML += "<a href='#'><i class='fa fa-cog' title='Open menu'></i></a>";
       this.optionMenu.classList.add("optionMenu");
+
+      this.menuPanel.appendChild(this.optionMenu);
+      this.menuPanel.appendChild(this.delete);
     }
     
     // input and output
@@ -61,8 +68,7 @@ class Pedal {
     this.elem.appendChild(this.output);
 
     if (this.number != '-1') {
-      this.elem.appendChild(this.delete);
-      this.elem.appendChild(this.optionMenu);
+      this.elem.appendChild(this.menuPanel);
     }
 
   }

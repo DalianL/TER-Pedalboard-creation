@@ -5,14 +5,17 @@
 <dom-module name="pedal-lowpass">
     <style>
         :host{
-            user-select: none; 
-            display: block;
             background-color: #fff600;
-            width: 150px;
-            height: 300px;
+            background: linear-gradient(yellow, orange);
+            box-shadow: inset -3px -3px 3px 5px rgba(0,0,0,0.6),inset 3px 3px 3px 5px rgba(255,255,255,0.5),0 2px 4px -1px rgba(0,0,0,0.9),0 4px 5px 0 rgba(0,0,0,0.9),0 1px 10px 0 rgba(0,0,0,0.9);
+
+            width: 150px !important;
+            height: 300px !important;
             border-radius: 20px;
-            box-shadow: inset -3px -3px 3px 5px rgba(0, 0, 0, 0.6), inset 3px 3px 3px 5px rgba( 255, 255, 255, 0.5);
+
             position: relative;
+            display: block;
+            user-select: none; 
         }
         .knob, .switch{
             position: absolute;
@@ -50,7 +53,7 @@
             color: black;
         }
         #knob1-label{
-            top: 84px;
+            top: 94px;
             left: 43px;
         }
 
