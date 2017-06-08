@@ -36,7 +36,8 @@ function init() {
 
 function buildMenuPedals(){
   let div_tabs=document.querySelector("#div_tabs");
-  let tabMenuPedals=["all","delay","distortion","dynamics","filter","generation","modulator","reverb","simulator","spatial","spectral","utility"];
+  //let tabMenuPedals=["all","delay","distortion","dynamics","filter","generation","modulator","reverb","simulator","spatial","spectral","utility"];
+  let tabMenuPedals=["all","delay","quadra","lowpass","flanger","distortion","dynamics","filter","generation","modulator","reverb","simulator","spatial","spectral","utility"];
   let input, label, divContent, divPedals, divPedal, span;
 
   let div_container=document.createElement("div");

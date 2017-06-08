@@ -159,7 +159,7 @@ audio::-webkit-media-controls-time-remaining-display
 .pedalInMic{
   width:70px;
   height:190px;
-  
+
   pointer-events: none;
 }
 .output {
@@ -343,7 +343,10 @@ audio::-webkit-media-controls-time-remaining-display
 .div_app_tabs #content-9,
 .div_app_tabs #content-10,
 .div_app_tabs #content-11,
-.div_app_tabs #content-12{
+.div_app_tabs #content-12,
+.div_app_tabs #content-13,
+.div_app_tabs #content-14,
+.div_app_tabs #content-15{
   display:none;
 }
 
@@ -359,6 +362,9 @@ audio::-webkit-media-controls-time-remaining-display
 .div_app_tabs #tab-9:checked ~ .div_container #content-9,
 .div_app_tabs #tab-10:checked ~ .div_container #content-10,
 .div_app_tabs #tab-11:checked ~ .div_container #content-11,
-.div_app_tabs #tab-12:checked ~ .div_container #content-12{
+.div_app_tabs #tab-12:checked ~ .div_container #content-12,
+.div_app_tabs #tab-13:checked ~ .div_container #content-13,
+.div_app_tabs #tab-14:checked ~ .div_container #content-14,
+.div_app_tabs #tab-15:checked ~ .div_container #content-15{
   display:flex;
 }
