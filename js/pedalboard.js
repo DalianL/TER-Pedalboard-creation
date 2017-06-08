@@ -18,15 +18,15 @@ function createSVGcanvas(parent) {
   let svg = document.getElementById("svg-canvas");
   if (null == svg) {
     svg = document.createElementNS("http://www.w3.org/2000/svg", 
-                                   "svg");
+     "svg");
     svg.setAttribute('id', 'svg-canvas');
     svg.setAttribute('style', 'position:absolute;top:0px;left:0px');
     // Should use here pedalboard
     svg.setAttribute('width', parent.clientWidth);
     svg.setAttribute('height', parent.clientHeight);
     svg.setAttributeNS("http://www.w3.org/2000/xmlns/", 
-                       "xmlns:xlink", 
-                       "http://www.w3.org/1999/xlink");
+     "xmlns:xlink", 
+     "http://www.w3.org/1999/xlink");
     // Important to use prepend here instead of appendChild
     // Otherwise cables/jacks will be in front of pedals
     // trashing the GUI + complicating the click
@@ -86,8 +86,7 @@ let pedalboard = {
 
       for (i = p; i < this.pedals.length; i++) {
         this.pedals[i].number -= 1;
-        this.pedals[i].delete.innerHTML = "<a href=\"#\" onclick=\"pedalboard.removePedal("+this.pedals[i].number+", '"+
-          this.pedals[i].id+"');\"><img src=\"img/trash.png\" alt=\"Delete pedal\" title=\"Delete pedal\"/></a>";
+        this.pedals[i].delete.innerHTML = "<a href='#' onclick=\"pedalboard.removePedal("+this.pedals[i].number+", '"+this.pedals[i].id+"');\"><i class='fa fa-trash' title='Delete pedal'></i></a>";
       }
 
       updateTokenPedal();
@@ -149,7 +148,7 @@ let pedalboard = {
   },
 
   findClosestIO: function(x, y) {
-      let self = this;
+    let self = this;
 
       // Coordinates taking into account the length of the output
       let xo = (-40 * (zoom + 1) + x) / (zoom + 1);
@@ -194,7 +193,7 @@ let pedalboard = {
         if(distOutput < 40) {
           if(!p.outputHighlighted) {
             p.highLightOutput(true);
-             
+
           }
         } else {
           if(p.outputHighlighted) {
@@ -203,84 +202,84 @@ let pedalboard = {
         }
 
       });
-  },
-  
-  findPedalWhoseOutputIsHighlighted: function() {
-    for(var i=0; i < this.pedals.length; i++) {
-      let p = this.pedals[i];
-      if(p.outputHighlighted) return p;
+    },
+
+    findPedalWhoseOutputIsHighlighted: function() {
+      for(var i=0; i < this.pedals.length; i++) {
+        let p = this.pedals[i];
+        if(p.outputHighlighted) return p;
+      }
+    },
+
+    findPedalWhoseInputIsHighlighted: function() {
+      for(var i=0; i < this.pedals.length; i++) {
+        let p = this.pedals[i];
+        if(p.inputHighlighted) return p;
+      }
+    },
+
+    rescale(s) {
+      this.elem.style = 'transform(' + s + ',' + s + ')';
     }
-  },
-  
-  findPedalWhoseInputIsHighlighted: function() {
-    for(var i=0; i < this.pedals.length; i++) {
-      let p = this.pedals[i];
-      if(p.inputHighlighted) return p;
+  };
+
+  function mouseWheelHandler(e) {
+    e.preventDefault();
+
+    board = document.querySelector('#pedalboard');
+    let boardC = document.querySelector('#pedalboard-container');
+    let boardWid = parseInt(window.getComputedStyle(board).width, 10);
+    let boardHei = parseInt(window.getComputedStyle(board).height, 10);
+
+    let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+    if(delta == 1) {
+      zoom = 1;
+      board.style.transform = 'scale(2,2)';
+      board.style.transition = 'transform 0.5s ease-in';
+
+      if (e.clientY < boardHei / 3) {
+        if (e.clientX < boardWid / 3) {
+          board.style.transformOrigin = 'left top';
+        } else if (e.clientX < 2 * (boardWid / 3)) {
+          board.style.transformOrigin = 'center top';
+        } else {
+          board.style.transformOrigin = 'right top';
+        }
+      } else if (e.clientY < 2 * (boardHei / 3)) {
+        if (e.clientX < boardWid / 3) {
+          board.style.transformOrigin = 'left center';
+        } else if (e.clientX < 2 * (boardWid / 3)) {
+          board.style.transformOrigin = 'center center';
+        } else {
+          board.style.transformOrigin = 'right center';
+        }
+      } else {
+        if (e.clientX < boardWid / 3) {
+          board.style.transformOrigin = 'left bottom';
+        } else if (e.clientX < 2 * (boardWid / 3)) {
+          board.style.transformOrigin = 'center bottom';
+        } else {
+          board.style.transformOrigin = 'right bottom';
+        }
+      }
+    } 
+
+    if (delta == -1) {
+      zoom = 0;
+      board.style.transform = 'scale(1,1)';
+      board.style.transition = 'transform 0.5s ease-in';
+      pedalboard.pedalboardOrigin.x = 0;
+      pedalboard.pedalboardOrigin.y = 0;
     }
-  },
-  
-  rescale(s) {
-    this.elem.style = 'transform(' + s + ',' + s + ')';
+
+    toggleMenuOff();
+
   }
-};
 
-function mouseWheelHandler(e) {
-  e.preventDefault();
-
-  board = document.querySelector('#pedalboard');
-  let boardC = document.querySelector('#pedalboard-container');
-  let boardWid = parseInt(window.getComputedStyle(board).width, 10);
-  let boardHei = parseInt(window.getComputedStyle(board).height, 10);
-
-  let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
-
-  if(delta == 1) {
-    zoom = 1;
-    board.style.transform = 'scale(2,2)';
-    board.style.transition = 'transform 0.5s ease-in';
-
-    if (e.clientY < boardHei / 3) {
-      if (e.clientX < boardWid / 3) {
-        board.style.transformOrigin = 'left top';
-      } else if (e.clientX < 2 * (boardWid / 3)) {
-        board.style.transformOrigin = 'center top';
-      } else {
-        board.style.transformOrigin = 'right top';
-      }
-    } else if (e.clientY < 2 * (boardHei / 3)) {
-      if (e.clientX < boardWid / 3) {
-        board.style.transformOrigin = 'left center';
-      } else if (e.clientX < 2 * (boardWid / 3)) {
-        board.style.transformOrigin = 'center center';
-      } else {
-        board.style.transformOrigin = 'right center';
-      }
-    } else {
-      if (e.clientX < boardWid / 3) {
-        board.style.transformOrigin = 'left bottom';
-      } else if (e.clientX < 2 * (boardWid / 3)) {
-        board.style.transformOrigin = 'center bottom';
-      } else {
-        board.style.transformOrigin = 'right bottom';
-      }
-    }
-  } 
-
-  if (delta == -1) {
-    zoom = 0;
-    board.style.transform = 'scale(1,1)';
-    board.style.transition = 'transform 0.5s ease-in';
-    pedalboard.pedalboardOrigin.x = 0;
-    pedalboard.pedalboardOrigin.y = 0;
+  function highlightInputsOutputs(e) {
+    let rect = pedalboard.elem.getBoundingClientRect();
+    let mouseX = e.x - rect.left;
+    let mouseY = e.y - rect.top;
+    let closest = pedalboard.findClosestIO(mouseX, mouseY);
   }
-
-  toggleMenuOff();
-
-}
-
-function highlightInputsOutputs(e) {
-  let rect = pedalboard.elem.getBoundingClientRect();
-  let mouseX = e.x - rect.left;
-  let mouseY = e.y - rect.top;
-  let closest = pedalboard.findClosestIO(mouseX, mouseY);
-}

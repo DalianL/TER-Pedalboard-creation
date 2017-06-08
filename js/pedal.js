@@ -49,11 +49,18 @@ class Pedal {
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + 1 + "px";
 
-    this.output = document.createElement("div");
-    this.output.classList.add("output");
+    if (this.id=="pedalInMic"){
+      this.output = document.createElement("img");
+      this.output.src=("../img/mic.png");
+      this.output.classList.add("pedalInMic");
+      this.output.style.top = this.inputOffsetY-100 + "px";
+    }else{
+      this.output = document.createElement("div");
+      this.output.classList.add("output");
+      this.output.style.top = this.inputOffsetY + "px";
+    }
     this.output.style.left = this.outputOffsetX + "px"; // relative to parent
-    this.output.style.top = this.inputOffsetY + "px";
-  
+
     this.output.out = document.createElement("span");
     this.output.out.classList.add("out");
     this.output.out.style.left = this.outputOffsetX + "px"; // relative to parent
@@ -127,30 +134,30 @@ class Pedal {
   
   highLightInput(flag) {
     if(flag)
-       this.input.style.backgroundImage = "url('img/inputHover.png')";
-    else
-      this.input.style.backgroundImage = "url('img/input.png')";
+     this.input.style.backgroundImage = "url('img/inputHover.png')";
+   else
+    this.input.style.backgroundImage = "url('img/input.png')";
 
-    this.inputHighlighted = flag;
-  }
+  this.inputHighlighted = flag;
+}
 
-  highLightOutput(flag) {
-    this.outputHighlighted = flag;
-  }
+highLightOutput(flag) {
+  this.outputHighlighted = flag;
+}
 
-  getInputPos() {
-    return {
-      x: this.x + this.IOsize/2 + this.inputOffsetX,
-      y: this.y + this.IOsize/2 + this.inputOffsetY + 5
-    }
+getInputPos() {
+  return {
+    x: this.x + this.IOsize/2 + this.inputOffsetX,
+    y: this.y + this.IOsize/2 + this.inputOffsetY + 5
   }
-  
-  getOutputPos() {
-    return {
-      x: this.x + this.IOsize/2 +  this.outputOffsetX,
-      y: this.y + this.IOsize/2 +  this.outputOffsetY + 2
-    }
+}
+
+getOutputPos() {
+  return {
+    x: this.x + this.IOsize/2 +  this.outputOffsetX,
+    y: this.y + this.IOsize/2 +  this.outputOffsetY + 2
   }
+}
 }
 
 function getTokenPedal() {

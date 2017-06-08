@@ -152,8 +152,15 @@ audio::-webkit-media-controls-time-remaining-display
 }
 
 /***** .input,.output  *****/
-.input,.output {
+.input,.output,.pedalInMic {
   position:absolute;
+}
+/* micro : guitar ; */
+.pedalInMic{
+  width:70px;
+  height:190px;
+  
+  pointer-events: none;
 }
 .output {
   background-image:url("../img/output.png");
@@ -297,14 +304,18 @@ audio::-webkit-media-controls-time-remaining-display
   background:#222;
 }
 .div_app_tabs label{
-  background:#444;
-  color:#eee;
+  background:#333;
+  color:#fff;
   border-top:3px solid #222;
 
   padding:10px;
+  margin-right: 1px;
+  font-size: 14px;
   
   font-family: 'Quicksand', cursive;
   display:inline-block;
+  text-transform: uppercase;
+  font-weight: bold;
   cursor:pointer;
 }
 
@@ -320,16 +331,34 @@ audio::-webkit-media-controls-time-remaining-display
   align-items:stretch;
 }
 
+.div_app_tabs #content-0,
 .div_app_tabs #content-1,
 .div_app_tabs #content-2,
 .div_app_tabs #content-3,
-.div_app_tabs #content-4{
+.div_app_tabs #content-4,
+.div_app_tabs #content-5,
+.div_app_tabs #content-6,
+.div_app_tabs #content-7,
+.div_app_tabs #content-8,
+.div_app_tabs #content-9,
+.div_app_tabs #content-10,
+.div_app_tabs #content-11,
+.div_app_tabs #content-12{
   display:none;
 }
 
+.div_app_tabs #tab-0:checked ~ .div_container #content-0,
 .div_app_tabs #tab-1:checked ~ .div_container #content-1,
 .div_app_tabs #tab-2:checked ~ .div_container #content-2,
 .div_app_tabs #tab-3:checked ~ .div_container #content-3,
-.div_app_tabs #tab-4:checked ~ .div_container #content-4{
+.div_app_tabs #tab-4:checked ~ .div_container #content-4,
+.div_app_tabs #tab-5:checked ~ .div_container #content-5,
+.div_app_tabs #tab-6:checked ~ .div_container #content-6,
+.div_app_tabs #tab-7:checked ~ .div_container #content-7,
+.div_app_tabs #tab-8:checked ~ .div_container #content-8,
+.div_app_tabs #tab-9:checked ~ .div_container #content-9,
+.div_app_tabs #tab-10:checked ~ .div_container #content-10,
+.div_app_tabs #tab-11:checked ~ .div_container #content-11,
+.div_app_tabs #tab-12:checked ~ .div_container #content-12{
   display:flex;
 }

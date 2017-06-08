@@ -100,36 +100,36 @@
         this.setSwitchListener();
       },
       createAllInternNodes: function () {
-              //custom sound modification, here a Pizzicato delay
-              this.effect = new Pizzicato.Effects.Delay();
-            },
-            setKnobsListeners: function() {
-              var knobs = this.getElementsByTagName("webaudio-knob");
-              var t = this;
-              knobs[0].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
-              knobs[1].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
-              knobs[2].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
+        //custom sound modification, here a Pizzicato delay
+        this.effect = new Pizzicato.Effects.Delay();
+      },
+      setKnobsListeners: function() {
+        var knobs = this.getElementsByTagName("webaudio-knob");
+        var t = this;
+        knobs[0].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
+        knobs[1].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
+        knobs[2].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
 
-            },
-            setRolesToKnobs:function () {
-              var knobs = this.getElementsByTagName("webaudio-knob");
-              knobs[0].setAttribute("data-role","feedback");
-              knobs[1].setAttribute("data-role","time");
-              knobs[2].setAttribute("data-role","mix");
-            },
-            getDefaultButtonsValues: function() {
-              return { feedback : 50 , time : 30 , mix: 50};
-            },
-            bypass: function() {
-              this.effect.bypass();
-            },
-            reactivate: function() {
-              this.effect.reactivate();
-            },
-            connectInternNodes:function () {
-              this.soundNodeIn.connect(this.effect);
-              this.effect.connect(this.soundNodeOut);
-            }
-          });
-        </script>
-      </dom-module>
+      },
+      setRolesToKnobs:function () {
+        var knobs = this.getElementsByTagName("webaudio-knob");
+        knobs[0].setAttribute("data-role","feedback");
+        knobs[1].setAttribute("data-role","time");
+        knobs[2].setAttribute("data-role","mix");
+      },
+      getDefaultButtonsValues: function() {
+        return { feedback : 50 , time : 30 , mix: 50};
+      },
+      bypass: function() {
+        this.effect.bypass();
+      },
+      reactivate: function() {
+        this.effect.reactivate();
+      },
+      connectInternNodes:function () {
+        this.soundNodeIn.connect(this.effect);
+        this.effect.connect(this.soundNodeOut);
+      }
+    });
+  </script>
+</dom-module>
