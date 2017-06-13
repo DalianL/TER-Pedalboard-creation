@@ -36,7 +36,7 @@ class Pedal {
       this.delete.classList.add("delete");
       // Option menu
       this.optionMenu = document.createElement("div");
-      this.optionMenu.innerHTML += "<a href='#'><i class='fa fa-cog' title='Open menu'></i></a>";
+      this.optionMenu.innerHTML += "<a href='#'><i class='fa fa-cog' title='Open menu' onclick=\"pedalboard.getSettings("+this.number+", '"+this.id+"');\"></i></a>";
       this.optionMenu.classList.add("optionMenu");
 
       this.menuPanel.appendChild(this.optionMenu);
@@ -48,17 +48,18 @@ class Pedal {
     this.input.classList.add("input");
     this.input.style.left = this.inputOffsetX + "px"; // relative to parent
     this.input.style.top = this.inputOffsetY + 1 + "px";
-
+    /*
     if (this.id=="pedalInMic"){
       this.output = document.createElement("img");
       this.output.src=("../img/mic.png");
       this.output.classList.add("pedalInMic");
       this.output.style.top = this.inputOffsetY-100 + "px";
     }else{
+      */
       this.output = document.createElement("div");
       this.output.classList.add("output");
       this.output.style.top = this.inputOffsetY + "px";
-    }
+    //}
     this.output.style.left = this.outputOffsetX + "px"; // relative to parent
 
     this.output.out = document.createElement("span");

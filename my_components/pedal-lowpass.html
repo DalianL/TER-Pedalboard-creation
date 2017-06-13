@@ -25,8 +25,8 @@
             left: 43px;
         }
         #switch1{
-            top: 150px;
-            left: 13px;
+            top: 170px;
+            left: 42px;
         }
         .pedalLabel{
             user-select: none; 
@@ -59,9 +59,9 @@
 
     </style>
     <template>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_white_black_stripe.png" class="knob" id="knob1"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_white_black_stripe.png" class="knob" id="knob1" midilearn="true" data-role="frequency"></webaudio-knob>
         <p class="knob-label" id="knob1-label">FREQ</p>
-        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="98"></webaudio-switch>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="40" width="60" midilearn="true"></webaudio-switch>
         <p class="pedalLabel">LOW PASS</p>
     </template>
     <script>
@@ -72,7 +72,6 @@
               this.createAllInternNodes();
               this.connectInternNodes();
               this.resetKnobs();
-              this.setRolesToKnobs();
               this.setKnobsListeners();
               this.setValuesToKnobs(options);
               this.setPedalActive(isOn);
@@ -89,10 +88,6 @@
               var knobs = this.getElementsByTagName("webaudio-knob");
               var t = this;
               knobs[0].addEventListener('change', function (e) { t.lowPassFilter.frequency.value = 440+((e.target.value)*50);});
-            },
-            setRolesToKnobs:function () {
-              var knobs = this.getElementsByTagName("webaudio-knob");
-              knobs[0].setAttribute("data-role","frequency");
             },
             getDefaultButtonsValues: function() {
               return { frequency : 10 };

@@ -19,7 +19,7 @@ function soundHandler() {
   //pedal.connect(pzContext.createMediaElementSource(soundSample),pzContext.destination);
 
 
-  /** ELEMENT STREAM AUDIO  **/
+  /** ELEMENT STREAM AUDIO  **
   if (navigator.mediaDevices.getUserMedia) {
     console.log('getUserMedia supported.');
     navigator.mediaDevices.getUserMedia({ 
@@ -37,13 +37,20 @@ function soundHandler() {
 function soundNodeConnection(p1,p2) {
   if (p1.id == "pedalIn" && p2.id == "pedalOut") {
     mediaSource.connect(audioDestination);
-  } else if (p1.id == "pedalInMic" && p2.id == "pedalOut"){
+  }
+  /*else if (p1.id == "pedalInMic" && p2.id == "pedalOut"){
     mediaSourceM.connect(audioDestination);
-  } else if (p1.id == "pedalIn") {
+  }
+  */ 
+  else if (p1.id == "pedalIn") {
     mediaSource.connect(p2.elem.soundNodeIn);
-  } else if (p1.id == "pedalInMic") {
+  } 
+  /*
+  else if (p1.id == "pedalInMic") {
     mediaSourceM.connect(p2.elem.soundNodeIn);
-  } else if (p2.id == "pedalOut") {
+  } 
+  */
+  else if (p2.id == "pedalOut") {
     p1.elem.soundNodeOut.connect(audioDestination);
   } else {
     p1.elem.soundNodeOut.connect(p2.elem.soundNodeIn);
@@ -53,13 +60,21 @@ function soundNodeConnection(p1,p2) {
 function soundNodeDisconnection(p1,p2) {
   if (p1.id == "pedalIn" && p2.id == "pedalOut") {
     mediaSource.disconnect(audioDestination);
-  }else if (p1.id == "pedalInMic" && p2.id == "pedalOut") {
+  }
+  /*
+  else if (p1.id == "pedalInMic" && p2.id == "pedalOut") {
     mediaSourceM.disconnect(audioDestination);
-  } else if (p1.id == "pedalIn") {
+  } 
+  */
+  else if (p1.id == "pedalIn") {
     mediaSource.disconnect(p2.elem.soundNodeIn);
-  } else if (p1.id == "pedalInMic") {
+  } 
+  /*
+  else if (p1.id == "pedalInMic") {
     mediaSourceM.disconnect(p2.elem.soundNodeIn);
-  } else if (p2.id == "pedalOut") {
+  } 
+  */
+  else if (p2.id == "pedalOut") {
     p1.elem.soundNodeOut.disconnect(audioDestination);
   } else {
     p1.elem.soundNodeOut.disconnect(p2.elem.soundNodeIn);

@@ -5,6 +5,7 @@
 
   border-collapse: collapse;
   box-sizing: border-box;
+  font-family: 'Quicksand', cursive;
 }
 :focus{
   outline: none;
@@ -21,33 +22,49 @@ body{
 }
 
 header{
-  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.4));
-  box-shadow: inset 0px 1px 10px 0px #111;
+  background: #333;
+  box-shadow: 0px 1px 10px 0px #111;
 
-  padding: 20px;
-  margin-bottom: 1px;
   z-index: 1;
 
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: flex-start;
   align-items: center;
 }
-header span{
+header span#span_label{
   color: #ccc;
   text-shadow: 0px -1px 0px #000;
 
+  flex:1;
   font-size: 24px;
+  margin-left: 20px;
 
   font-family: 'Quicksand', cursive;
 }
+header button:hover{
+  background: dodgerblue;
+}
+header button{
+  background: #222;
+  color:#fff;
 
+  font-size: 18px;
+  padding: 15px;
+
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+}
 footer{
-  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.4));
-  box-shadow: inset 0px 1px 10px 0px #111;
+  background: #000;
 
   flex:1;
-  text-align: right;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
 }
 footer a:hover{
   color: #fff;
@@ -55,7 +72,7 @@ footer a:hover{
 footer a{
   color: #eee;
 
-
+  flex:1;
   padding: 10px 20px;
 
   font-family: 'Quicksand', cursive;
@@ -75,7 +92,6 @@ audio::-webkit-media-controls-time-remaining-display
 
 #pedalboard-container {
   width:100%;
-  height:710px;
 
   overflow:hidden;
 }
@@ -84,10 +100,11 @@ audio::-webkit-media-controls-time-remaining-display
   background-color:maroon;
   background-image: url(https://s-media-cache-ak0.pinimg.com/736x/e4/49/64/e44964f7f9bf0765895b3a382d75bed7.jpg);
 
-
   height:700px;
   width:100%;
   transform:scale(1,1);
+  
+  user-select: none;
 }
 
 .pedals:hover {
@@ -95,13 +112,13 @@ audio::-webkit-media-controls-time-remaining-display
 }
 .pedals {
   padding: 10px;
+  border-radius: 10px;
 
   display: flex;
   flex-direction: column; 
   justify-content: flex-start;
   align-items: center;
   cursor: pointer;
-  border-radius: 10px;
 }
 .pedals .pedal{
   height: 160px;
@@ -121,23 +138,18 @@ audio::-webkit-media-controls-time-remaining-display
 
 /***** div_menuPanel *****/
 .div_menuPanel{
-  background: rgba(0,0,0,0.2);
-
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: stretch;
 
   position: absolute;
-  top: -25px;
-  right: 15px;
+  top: -35px;
+  right: 0px;
   z-index: 99;
 }
 .div_menuPanel a:hover > i{
   color: #fff;
-}
-.div_menuPanel a:hover{
-  background: rgba(0,0,0,0.4);
 }
 .div_menuPanel a{
   padding: 3px 5px;
@@ -146,9 +158,9 @@ audio::-webkit-media-controls-time-remaining-display
   display: block;
 }
 .div_menuPanel a i{
-  color: #bbb;
+  color: #777;
 
-  font-size: 16px;
+  font-size: 24px;
 }
 
 /***** .input,.output  *****/
@@ -284,16 +296,27 @@ audio::-webkit-media-controls-time-remaining-display
 }
 
 /***** div_app_tabs *****/
+.div_tabs {
+}
+.div_tabs input{
+    background: transparent;
+    color: #eee;
+    border-bottom: 3px solid #111;
+
+    padding: 10px;
+    flex: 1;
+    width: 100%;
+}
 .div_app_tabs {
-  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.4));
-  margin: 20px;
+  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.8),rgba(0,0,0,0.4));
+  height: 300px;
 }
 .div_app_tabs input[type=radio]{
   display:none;
 }
 .div_app_tabs input:hover + label{
-  background:#222;  
-  border-top:3px solid orange;
+  background:transparent;  
+  border-top:3px solid transparent;
 }
 .div_app_tabs input:checked + label{
   background:#111;  
@@ -301,12 +324,12 @@ audio::-webkit-media-controls-time-remaining-display
 }
 
 .div_app_tabs label:hover{
-  background:#222;
+  background:#111;
 }
 .div_app_tabs label{
-  background:#333;
+  background:#222;
   color:#fff;
-  border-top:3px solid #222;
+  border-top:3px solid transparent;
 
   padding:10px;
   margin-right: 1px;
@@ -322,8 +345,7 @@ audio::-webkit-media-controls-time-remaining-display
 .div_app_tabs .div_container{
   box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06), 0 4px 5px 0 rgba(0,0,0,0.06), 0 1px 10px 0 rgba(0,0,0,0.08);
 
-  height:260px;
-  padding:20px;
+  padding:5px;
   
   display:flex;
   flex-direction:column;
@@ -367,4 +389,61 @@ audio::-webkit-media-controls-time-remaining-display
 .div_app_tabs #tab-14:checked ~ .div_container #content-14,
 .div_app_tabs #tab-15:checked ~ .div_container #content-15{
   display:flex;
+}
+
+
+#frame_save{
+  background: #333;
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.6),0 4px 5px 0 rgba(0,0,0,0.06),0 1px 10px 0 rgba(0,0,0,0.6);
+
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100px;
+  left: 30%;
+
+  padding: 20px;
+  width:40%;
+  margin: 0 auto;
+}
+#frame_save #bt_closeFrameP:hover{
+  background: #111;
+}
+#frame_save #bt_closeFrameP{
+  background: transparent;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+
+  cursor: pointer;
+}
+#frame_save span#span_preset{
+  color:#fff;
+
+  font-size: 24px;
+  padding: 10px 0px;
+}
+#frame_save input{
+  padding: 10px;
+  margin-bottom: 10px;
+}
+#frame_save textarea{
+  background: #ccc;
+
+  padding: 10px;
+  margin-bottom: 10px;
+
+  resize: vertical;
+}
+#frame_save button:hover{
+  background: #1565c0;
+}
+#frame_save button{
+  background: dodgerblue;
+  color: #fff;
+
+  padding: 10px;
+
+  text-transform: uppercase;
+  cursor: pointer;
 }

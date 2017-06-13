@@ -25,7 +25,6 @@
       /** The abstract functions every pedal must override **/
       createAllInternNodes: function () {},
       setKnobsListeners: function() {},
-      setRolesToKnobs:function () {},
       getDefaultButtonsValues: function() {},
       bypass: function() {},
       reactivate: function() {},
@@ -96,7 +95,10 @@
       getCurrentKnobsValues: function() {
         var values = {};
         var knobs = this.getElementsByTagName("webaudio-knob");
+        var _switch = this.getElementsByTagName("webaudio-switch");
         var i , l = knobs.length;
+        values.id=this.id;
+        values.switch=this.isOn;
         for (i=0;i< l;i++) {
           if (knobs[i].dataset.role)
             values[knobs[i].dataset.role] = knobs[i].value;

@@ -41,8 +41,8 @@
             left: 150px;
         }
         #switch1{
-            top: 175px;
-            left: 70px;
+            top: 195px;
+            left:100px;
         }
         .pedalLabel{
             user-select: none; 
@@ -95,17 +95,17 @@
 
     </style>
     <template>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1" midilearn="true" data-role="time"></webaudio-knob>
         <p class="knob-label" id="knob1-label">TIME</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2" midilearn="true" data-role="speed"></webaudio-knob>
         <p class="knob-label" id="knob2-label">SPEED</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3" midilearn="true" data-role="depth"></webaudio-knob>
         <p class="knob-label" id="knob3-label">DEPTH</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4" midilearn="true" data-role="feedback"></webaudio-knob>
         <p class="knob-label" id="knob4-label">FEEDBACK</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob5"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob5" midilearn="true" data-role="mix"></webaudio-knob>
         <p class="knob-label" id="knob5-label">MIX</p>
-        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="100"></webaudio-switch>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="40" width="60" midilearn="true"></webaudio-switch>
         <p class="pedalLabel">FLANGER</p>
     </template>
     <script>
@@ -116,17 +116,16 @@
               this.createAllInternNodes();
               this.connectInternNodes();
               this.resetKnobs();
-              this.setRolesToKnobs();
               this.setKnobsListeners();
               this.setValuesToKnobs(options);
               this.setPedalActive(isOn);
               this.setSwitchListener();
-            },
-            createAllInternNodes: function () {
+          },
+          createAllInternNodes: function () {
               //custom sound modification, here a Pizzicato delay
               this.effect = new Pizzicato.Effects.Flanger();
-            },
-            setKnobsListeners: function() {
+          },
+          setKnobsListeners: function() {
               var knobs = this.getElementsByTagName("webaudio-knob");
               var t = this;
               knobs[0].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
@@ -134,28 +133,20 @@
               knobs[2].addEventListener('change', function (e) { t.effect.depth = e.target.value/100;});
               knobs[3].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
               knobs[4].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
-            },
-            setRolesToKnobs:function () {
-              var knobs = this.getElementsByTagName("webaudio-knob");
-              knobs[0].setAttribute("data-role","time");
-              knobs[1].setAttribute("data-role","speed");
-              knobs[2].setAttribute("data-role","depth");
-              knobs[3].setAttribute("data-role","feedback");
-              knobs[4].setAttribute("data-role","mix");
-            },
-            getDefaultButtonsValues: function() {
+          },
+          getDefaultButtonsValues: function() {
               return { time : 45 , speed : 20 , depth: 10 ,feedback: 10, mix : 50};
-            },
-            bypass: function() {
+          },
+          bypass: function() {
               this.effect.bypass();
-            },
-            reactivate: function() {
+          },
+          reactivate: function() {
               this.effect.reactivate();
-            },
-            connectInternNodes:function ()  {
+          },
+          connectInternNodes:function ()  {
               this.soundNodeIn.connect(this.effect);
               this.effect.connect(this.soundNodeOut);
-            }
-        });
-    </script>
+          }
+      });
+  </script>
 </dom-module>

@@ -7,11 +7,9 @@
       background-color: #5aaa60;
       background: linear-gradient(#009688, #004d40);
       box-shadow: inset -3px -3px 3px 5px rgba(0,0,0,0.6),inset 3px 3px 3px 5px rgba(255,255,255,0.5),0 2px 4px -1px rgba(0,0,0,0.9),0 4px 5px 0 rgba(0,0,0,0.9),0 1px 10px 0 rgba(0,0,0,0.9);
-
       width: 175px !important;
       height: 300px !important;
       border-radius: 20px;
-
       position: relative;
       display: block;
       user-select: none; 
@@ -32,8 +30,8 @@
       left: 56px;
     }
     #switch1{
-      top: 150px;
-      left: 22px;
+      top: 170px;
+      left: 52px;
     }
     .pedalLabel{
       user-select: none; 
@@ -71,29 +69,28 @@
       top: 140px;
       left: 56px;
     }
-
   </style>
   <template>
     <div>
-      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob1"></webaudio-knob>
+      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob1" midilearn="true" data-role="feedback"></webaudio-knob>
       <p class="knob-label" id="knob1-label">FEEDBACK</p>
-      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob2"></webaudio-knob>
+      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob2" midilearn="true" data-role="time"></webaudio-knob>
       <p class="knob-label" id="knob2-label">TIME</p>
-      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob3"></webaudio-knob>
+      <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_yellow_not_stripped.png" class="knob" id="knob3" midilearn="true" data-role="mix"></webaudio-knob>
       <p class="knob-label" id="knob3-label">MIX</p>
-      <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="100"></webaudio-switch>
+      <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="40" width="60" midilearn="true"></webaudio-switch>
       <p class="pedalLabel">DELAY</p>
     </div>
   </template>
   <script>
     PedalDelay = Polymer({
       is: 'pedal-delay',
-      behaviors: [PedalBehavior],
+      behaviors:
+      [PedalBehavior],
       factoryImpl: function(options,isOn) {
         this.createAllInternNodes();
         this.connectInternNodes();
         this.resetKnobs();
-        this.setRolesToKnobs();
         this.setKnobsListeners();
         this.setValuesToKnobs(options);
         this.setPedalActive(isOn);
@@ -109,13 +106,6 @@
         knobs[0].addEventListener('change', function (e) { t.effect.feedback = e.target.value/100;});
         knobs[1].addEventListener('change', function (e) { t.effect.time = e.target.value/100;});
         knobs[2].addEventListener('change', function (e) { t.effect.mix = e.target.value/100;});
-
-      },
-      setRolesToKnobs:function () {
-        var knobs = this.getElementsByTagName("webaudio-knob");
-        knobs[0].setAttribute("data-role","feedback");
-        knobs[1].setAttribute("data-role","time");
-        knobs[2].setAttribute("data-role","mix");
       },
       getDefaultButtonsValues: function() {
         return { feedback : 50 , time : 30 , mix: 50};

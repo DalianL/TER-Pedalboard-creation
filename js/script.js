@@ -12,11 +12,11 @@ function init() {
   let pIn = new Pedal("pedalIn", -1, -55, -20 + (3*pdbH / 4), 10, 10);
   let pOut = new Pedal("pedalOut", -1, pdbW, -20 + (pdbH / 2), 10, 10);
   // constructor(id, number, x, y, w, h, pedaltype)
-  let pInMIC = new Pedal("pedalInMic", -1, -65, -20 + (pdbH / 4), 10, 10);
+  //let pInMIC = new Pedal("pedalInMic", -1, -65, -20 + (pdbH / 4), 10, 10);
 
   pedalboard.addPedal(pIn);
   pedalboard.addPedal(pOut);
-  pedalboard.addPedal(pInMIC);
+  //pedalboard.addPedal(pInMIC);
 
   // Handles the WebAudio graph initialization
   soundHandler();
@@ -32,6 +32,41 @@ function init() {
 
   // For mouse zooming 
   addZoomListener();
+
+
+  let bt_clear = document.querySelector("#bt_clear");
+  let bt_save = document.querySelector("#bt_save");
+  let frame_save=document.querySelector("#frame_save");
+  let code_preset=document.querySelector("#code_preset");
+  let input_preset=document.querySelector("#input_preset");
+  let bt_save_preset=document.querySelector("#bt_save_preset");
+  let bt_closeFrameP = document.querySelector("#bt_closeFrameP");
+
+  bt_save.addEventListener("click",function(){
+    code_preset.innerText=pedalboard.getAllSettings();
+    frame_save.style.display="flex";
+  });
+
+  bt_closeFrameP.addEventListener("click",function(){
+    frame_save.style.display="none";
+  });
+
+  bt_save_preset.addEventListener("click",function(){
+    if (input_preset.value.trim()){
+      bt_save.title="Save as "+input_preset.value;
+      document.title=input_preset.value+" was saved";
+      frame_save.style.display="none";
+    }else{
+      alert("Veuillez saisir un nom pour cette pedalboard");
+    }
+  });
+
+  bt_clear.addEventListener("click",function(){
+    if (confirm("Êtes-vous sûre de vouloir supprimer toutes les pédales ?")){
+      pedalboard.removeAllPedals();
+    }
+  });
+
 }
 
 function buildMenuPedals(){
@@ -43,6 +78,10 @@ function buildMenuPedals(){
   let div_container=document.createElement("div");
   div_container.className="div_container";
 
+  let inputSearch=document.createElement("input");
+  inputSearch.type="search";
+  inputSearch.placeholder="Rechercher une pédale";
+  div_tabs.appendChild(inputSearch);
   tabMenuPedals.forEach((e,i)=>{
     input=document.createElement("input");
     input.id="tab-"+i;
@@ -71,11 +110,12 @@ function buildMenuPedals(){
     span=document.createElement("span");
     span.appendChild(document.createTextNode(e));
 
-    divPedals.appendChild(span);
     divPedals.appendChild(divPedal);
+    divPedals.appendChild(span);
     divContent.appendChild(divPedals);
     div_container.appendChild(divContent);
   });
+
 
   div_tabs.appendChild(div_container);
 

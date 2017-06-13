@@ -60,7 +60,30 @@ let pedalboard = {
     handleJackMenu(p.input);
     resizeListener(p.input);
   },
+  getAllSettings:function(){
+    var values=[];
+    let _i=0;
+    this.pedals.forEach((e,i)=>{
+      if (typeof e.pedalType!='undefined'){
+        values.push(this.getSettingFromPedal(e.id));
+        _i++;
+      }
+    });
+    return JSON.stringify(values);
+  },
+  getSettingFromPedal: function(_id) {
+    return document.querySelector("#"+_id).getCurrentKnobsValues();    
+  },
 
+  removeAllPedals:function(){
+    console.log(this.pedals);
+    this.pedals.forEach((e,i)=>{
+      console.log(e);
+      if (typeof e.pedalType!='undefined'){
+        this.removePedal(e.number,e.id);
+      }
+    });
+  },
   removePedal: function(p, type) {
     let self = this;
     if (p > -1) {

@@ -37,8 +37,8 @@
             left: 100px;
         }
         #switch1{
-            top: 175px;
-            left: 23px;
+            top: 195px;
+            left: 52px;
         }
         .pedalLabel{
             user-select: none; 
@@ -87,15 +87,15 @@
 
     </style>
     <template>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob1" midilearn="true" data-role="lowGain"></webaudio-knob>
         <p class="knob-label" id="knob1-label">LOWGAIN</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob2" midilearn="true" data-role="midLowGain"></webaudio-knob>
         <p class="knob-label" id="knob2-label">MIDLOW<br>GAIN</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob3" midilearn="true" data-role="midHighGain"></webaudio-knob>
         <p class="knob-label" id="knob3-label">MIDHIGH<br>GAIN</p>
-        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4"></webaudio-knob>
+        <webaudio-knob sprites="99" value="0" step="1" src="../img/knobs/nux_black_white_stripe.png" class="knob" id="knob4" midilearn="true" data-role="highGain"></webaudio-knob>
         <p class="knob-label" id="knob4-label">HIGHGAIN</p>
-        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="64" width="100"></webaudio-switch>
+        <webaudio-switch src="../img/switches/switch_1.png" class="switch" id="switch1" height="40" width="60" midilearn="true"></webaudio-switch>
         <p class="pedalLabel">QUADRA FUZZ</p>
     </template>
     <script>
@@ -106,7 +106,6 @@
               this.createAllInternNodes();
               this.connectInternNodes();
               this.resetKnobs();
-              this.setRolesToKnobs();
               this.setKnobsListeners();
               this.setValuesToKnobs(options);
               this.setPedalActive(isOn);
@@ -124,13 +123,6 @@
               knobs[2].addEventListener('change', function (e) { t.effect.midHighGain = e.target.value/100;});
               knobs[3].addEventListener('change', function (e) { t.effect.highGain = e.target.value/100;});
 
-            },
-            setRolesToKnobs:function () {
-              var knobs = this.getElementsByTagName("webaudio-knob");
-              knobs[0].setAttribute("data-role","lowGain");
-              knobs[1].setAttribute("data-role","midLowGain");
-              knobs[2].setAttribute("data-role","midHighGain");
-              knobs[3].setAttribute("data-role","highGain");
             },
             getDefaultButtonsValues: function() {
               return { lowGain : 60 , midLowGain : 80 , midHighGain: 50 ,highGain: 60};
