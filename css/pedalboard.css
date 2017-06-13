@@ -1,44 +1,110 @@
+*{
+  padding: 0px;
+  margin:0px;
+  border:0px;
+
+  border-collapse: collapse;
+  box-sizing: border-box;
+}
+
+:focus{
+  outline: none;
+}
+
+html, body{
+  height: 100%;
+}
+body{
+  background: #222;
+  background-image: url('../img/background.jpg');
+
+  display: flex;
+  flex-direction: column;
+}
+
+header{
+  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.4));
+  box-shadow: inset 0px 1px 10px 0px #111;
+
+  padding: 20px;
+  margin-bottom: 1px;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+header a {
+  text-decoration:none;
+}
+
+header a{
+  color: #ccc;
+  text-shadow: 0px -1px 0px #000;
+
+  font-size: 24px;
+
+  font-family: 'Quicksand', cursive;
+}
+
+/***** https://stackoverflow.com/questions/4126708/is-it-possible-to-style-html5-audio-tag *****/
+audio::-webkit-media-controls-panel{
+  background:transparent;
+}
+audio::-webkit-media-controls-current-time-display,
+audio::-webkit-media-controls-time-remaining-display
+{
+  color:#888;
+}
+
 #pedalboard-container {
   height:710px;
-  width:99%;
+  width:100%;
   overflow:hidden;
 }
 
 #pedalboard {
+ box-shadow: 0 2px 4px -1px rgba(0,0,0,0.6),0 4px 5px 0 rgba(0,0,0,0.06),0 1px 10px 0 rgba(0,0,0,0.6);
+  background-color:maroon;
+  background-image: url('../img/background-pedalboard.jpg');
+
+
   height:700px;
-  width:99.5%;
-  background-color:lightgreen;
-  border: 5px solid grey;
+  width:100%;
   user-select: none;
   transform:scale(1,1);
 }
 
-#pedals {
-  height:100%;
-  width:98.5%;
-  background-color:lightGrey;
-  border: 5px solid grey;
-  margin-top:5px;
+.pedals:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.pedals {
+  padding: 10px;
+
   display: flex;
-  flex-direction: row; 
-  user-select: none;
+  flex-direction: column; 
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 10px;
 }
-
-.pedal {
-  width:50px;
-  height:80px;
-  background-color:red;
-  margin:5px;
-  font-size:10px;
-  text-align:center;
-  user-select: none;
+.pedals .pedal{
+  height: 160px;
 }
+.pedals span{
+  color: #eee;
 
+  font-size: 14px;
+  padding-top: 10px;
+
+ font-family: 'Quicksand', cursive;
+}
 .draggable {
-  padding:20px;
   text-align:center;
   position:absolute;
-  border:2px dashed;
 }
 
 .delete {
@@ -52,6 +118,39 @@
   left:68%;
 }
 
+/***** div_menuPanel *****/
+.div_menuPanel{
+  background: rgba(0,0,0,0.2);
+
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  position: absolute;
+  top: -25px;
+  right: 15px;
+  z-index: 99;
+}
+.div_menuPanel a:hover > i{
+  color: #fff;
+}
+.div_menuPanel a:hover{
+  background: rgba(0,0,0,0.4);
+}
+.div_menuPanel a{
+  padding: 3px 5px;
+
+  text-decoration: none;
+  display: block;
+}
+.div_menuPanel a i{
+  color: #bbb;
+
+  font-size: 16px;
+}
+
+/***** .input,.output  *****/
 .input,.output {
   position:absolute;
 }
@@ -178,4 +277,62 @@
   height:162px;
   background-image:url("../img/flanger.png");
   margin-left:5%;
+}
+
+/***** div_app_tabs *****/
+.div_app_tabs {
+  background: repeating-linear-gradient(0deg,rgba(0,0,0,0.1),rgba(0,0,0,0.4));
+  margin: 20px;
+}
+.div_app_tabs input[type=radio]{
+  display:none;
+}
+.div_app_tabs input:hover + label{
+  background:#222;  
+  border-top:3px solid orange;
+}
+.div_app_tabs input:checked + label{
+  background:#111;  
+  border-top:3px solid purple;
+}
+
+.div_app_tabs label:hover{
+  background:#222;
+}
+.div_app_tabs label{
+  background:#444;
+  color:#eee;
+  border-top:3px solid #222;
+
+  padding:10px;
+  
+  font-family: 'Quicksand', cursive;
+  display:inline-block;
+  cursor:pointer;
+}
+
+.div_app_tabs .div_container{
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.06), 0 4px 5px 0 rgba(0,0,0,0.06), 0 1px 10px 0 rgba(0,0,0,0.08);
+
+  height:230px;
+  padding:10px;
+  
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:stretch;
+}
+
+.div_app_tabs #content-1,
+.div_app_tabs #content-2,
+.div_app_tabs #content-3,
+.div_app_tabs #content-4{
+  display:none;
+}
+
+.div_app_tabs #tab-1:checked ~ .div_container #content-1,
+.div_app_tabs #tab-2:checked ~ .div_container #content-2,
+.div_app_tabs #tab-3:checked ~ .div_container #content-3,
+.div_app_tabs #tab-4:checked ~ .div_container #content-4{
+  display:flex;
 }
