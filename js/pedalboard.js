@@ -240,6 +240,7 @@ function mouseWheelHandler(e) {
     board.style.transition = 'transform 0.5s ease-in';
 
     if (e.clientY < boardHei / 3) {
+      menu.style.marginTop = "32px";
       if (e.clientX < boardWid / 3) {
         board.style.transformOrigin = 'left top';
       } else if (e.clientX < 2 * (boardWid / 3)) {
@@ -248,6 +249,7 @@ function mouseWheelHandler(e) {
         board.style.transformOrigin = 'right top';
       }
     } else if (e.clientY < 2 * (boardHei / 3)) {
+      menu.style.marginTop = "38px";
       if (e.clientX < boardWid / 3) {
         board.style.transformOrigin = 'left center';
       } else if (e.clientX < 2 * (boardWid / 3)) {
@@ -256,6 +258,7 @@ function mouseWheelHandler(e) {
         board.style.transformOrigin = 'right center';
       }
     } else {
+      menu.style.marginTop = "44px";
       if (e.clientX < boardWid / 3) {
         board.style.transformOrigin = 'left bottom';
       } else if (e.clientX < 2 * (boardWid / 3)) {
@@ -270,6 +273,7 @@ function mouseWheelHandler(e) {
     zoom = 0;
     board.style.transform = 'scale(1,1)';
     board.style.transition = 'transform 0.5s ease-in';
+    menu.style.marginTop = "38px";
     pedalboard.pedalboardOrigin.x = 0;
     pedalboard.pedalboardOrigin.y = 0;
   }
