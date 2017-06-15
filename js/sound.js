@@ -21,14 +21,14 @@ function soundHandler() {
 
 
 if (navigator.mediaDevices.getUserMedia) {
-  console.log('getUserMedia supported.');
-  navigator.mediaDevices.getUserMedia({ 
-  audio: true
+    console.log('getUserMedia supported.');
+    navigator.mediaDevices.getUserMedia({ 
+    audio: true
   }).then(function(stream) {
       mediaSourceM = pzContext.createMediaStreamSource(stream);
   }).catch(function(err) {
-  // handle the error
-  console.log(err.name + ": " + err.message);
+    // handle the error
+    console.log(err.name + ": " + err.message);
   });
 }
 
@@ -36,12 +36,27 @@ if (navigator.mediaDevices.getUserMedia) {
     var mic = document.getElementById("mic");
     mic.addEventListener('change', function(e) {
     if(state == 0) { 
+      if (pedalboard.pedals[0].outputJacks.length != 0) {
+        pedalboard.pedals[0].outputJacks.forEach(function(j) {
+          soundNodeDisconnection(j.p1,j.p2);
+          state = 1;
+          soundNodeConnection(j.p1,j.p2);
+          // state goes back to 0 for the next disconnect
+          state = 0;
+        })
+      }
       state = 1;
-      console.log(state);
-    }
-    else { 
+    } else { 
+      if (pedalboard.pedals[0].outputJacks.length != 0) {
+        pedalboard.pedals[0].outputJacks.forEach(function(j) {
+          soundNodeDisconnection(j.p1,j.p2);
+          state = 0;
+          soundNodeConnection(j.p1,j.p2);
+          // state goes back to 1 for the next disconnect
+          state = 1;
+        })
+      }
       state = 0;
-      console.log(state);
     }
   });
 
@@ -60,14 +75,19 @@ function soundNodeConnection(p1,p2) {
     else { mediaSourceM.connect(p2.elem.soundNodeIn); }
 
   } else if (p2.id == "pedalOut") {
+
     p1.elem.soundNodeOut.connect(audioDestination);
+
   } else {
+
     p1.elem.soundNodeOut.connect(p2.elem.soundNodeIn);
+
   }
 }
 
 function soundNodeDisconnection(p1,p2) {
   if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+
     // Check state
     if(state == 0) { mediaSource.disconnect(audioDestination); }
     else { mediaSourceM.disconnect(audioDestination); }
@@ -78,9 +98,13 @@ function soundNodeDisconnection(p1,p2) {
     else { mediaSourceM.disconnect(p2.elem.soundNodeIn); }
     
   } else if (p2.id == "pedalOut") {
+
     p1.elem.soundNodeOut.disconnect(audioDestination);
+
   } else {
+
     p1.elem.soundNodeOut.disconnect(p2.elem.soundNodeIn);
+
   }
 }
 
