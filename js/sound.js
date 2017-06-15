@@ -3,6 +3,7 @@ var mediaSource;
 var audioDestination;
 var mediaSourceM;
 var mediaSRC;
+var state = 0;
 
 
 
@@ -31,15 +32,33 @@ if (navigator.mediaDevices.getUserMedia) {
   });
 }
 
+// CHANGE STATE MIC (1) -> DEMO SOUND (0)
+    var mic = document.getElementById("mic");
+    mic.addEventListener('change', function(e) {
+    if(state == 0) { 
+      state = 1;
+      console.log(state);
+    }
+    else { 
+      state = 0;
+      console.log(state);
+    }
+  });
+
 };
 
 function soundNodeConnection(p1,p2) {
   if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-    mediaSource.connect(audioDestination);
-    mediaSourceM.connect(audioDestination);
+
+    // Check state
+    if(state == 0) { mediaSource.connect(audioDestination); }
+    else { mediaSourceM.connect(audioDestination); }
+    
   } else if (p1.id == "pedalIn") {
-    mediaSource.connect(p2.elem.soundNodeIn);
-    mediaSourceM.connect(p2.elem.soundNodeIn);
+
+    if(state == 0) { mediaSource.connect(p2.elem.soundNodeIn); }
+    else { mediaSourceM.connect(p2.elem.soundNodeIn); }
+
   } else if (p2.id == "pedalOut") {
     p1.elem.soundNodeOut.connect(audioDestination);
   } else {
@@ -49,11 +68,15 @@ function soundNodeConnection(p1,p2) {
 
 function soundNodeDisconnection(p1,p2) {
   if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-    mediaSource.disconnect(audioDestination);
-    mediaSourceM.disconnect(audioDestination);
+    // Check state
+    if(state == 0) { mediaSource.disconnect(audioDestination); }
+    else { mediaSourceM.disconnect(audioDestination); }
+    
   } else if (p1.id == "pedalIn") {
-    mediaSource.disconnect(p2.elem.soundNodeIn);
-    mediaSourceM.disconnect(p2.elem.soundNodeIn);
+    
+    if(state == 0) { mediaSource.disconnect(p2.elem.soundNodeIn); }
+    else { mediaSourceM.disconnect(p2.elem.soundNodeIn); }
+    
   } else if (p2.id == "pedalOut") {
     p1.elem.soundNodeOut.disconnect(audioDestination);
   } else {
