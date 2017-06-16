@@ -33,6 +33,7 @@ function createMenuItems(jacks) {
       offsetY += 2.5;
     }
   }
+  
   jacks.forEach(function(j) {
     // Adds a menu item for each jack in the pedal
     let ul = document.getElementById("menu-container");

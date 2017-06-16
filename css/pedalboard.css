@@ -38,12 +38,11 @@ header {
   align-items: center;
 }
 
-header span
-{
+header span {
   color: #ccc;
   text-shadow: 0px -1px 0px #000;
 
-  font-size: 18px;
+  font-size: 20px;
 
   font-family: 'Quicksand', cursive;
 }
@@ -64,6 +63,8 @@ header a {
 /***** https://stackoverflow.com/questions/4126708/is-it-possible-to-style-html5-audio-tag *****/
 audio::-webkit-media-controls-panel {
   background:transparent;
+  width:500px;
+  left:-100px;
 }
 
 audio::-webkit-media-controls-current-time-display,
