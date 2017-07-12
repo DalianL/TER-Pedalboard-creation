@@ -417,11 +417,11 @@
         this.resizeListener();
 
         // ADD NEW PEDAL TO PEDALBOARD
-
-        /*
         let p1 = document.createElement("amp-sim");
         p1.setPosition(150, 400);
         this.addPedal(p1);
+
+        /*
 
         let p2 = document.createElement("pedal-flanger");
         p2.setPosition(400, 400);
@@ -437,10 +437,8 @@
         */
 
         // CONNECT PEDALS
-
-        // this.connect(this.pIn, p1);
-        // this.connect(p1,this.pOut);
-
+        this.connect(this.pIn, p1);
+        this.connect(p1,this.pOut);
       }
 
       addPedal(p) {

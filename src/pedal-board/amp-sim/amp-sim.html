@@ -17,7 +17,6 @@
 <dom-module id="amp-sim">
   <template>
     <style include="shared-styles">
-
       #QFPresetMenu2 {
         background-color: transparent;
         color: white;
@@ -233,35 +232,35 @@
         <div class="ampGUI">
           <div id="mainAmp">
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob1" midilearn step="0.1" src="{{knobSrc}}" value="7" min="0" max="10" diameter="69" sprites="99" tooltip="Volume"></webaudio-knob>
+                  <webaudio-knob id="Knob1" midilearn step="0.1" src="{{knobSrc}}" data-role="volume" min="0" max="10" diameter="69" sprites="99" tooltip="Volume"></webaudio-knob>
                   Volume
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob2" midilearn step="0.1" src="{{knobSrc}}" value="2" min="0" max="10" diameter="69" sprites="99" tooltip="Master"></webaudio-knob>
+                  <webaudio-knob id="Knob2" midilearn step="0.1" src="{{knobSrc}}" data-role="master" min="0" max="10" diameter="69" sprites="99" tooltip="Master"></webaudio-knob>
                   Master
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob3" midilearn="true" src="{{knobSrc}}" value="0" step="0.1" min="0" max="10" diameter="69" sprites="99" tooltip="Drive"></webaudio-knob>
+                  <webaudio-knob id="Knob3" midilearn="true" src="{{knobSrc}}" data-role="drive" step="0.1" min="0" max="10" diameter="69" sprites="99" tooltip="Drive"></webaudio-knob>
                   Drive
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob4" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Bass"></webaudio-knob>
+                  <webaudio-knob id="Knob4" midilearn src="{{knobSrc}}" data-role="bass" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Bass"></webaudio-knob>
                   Bass
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob5" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Midlle"></webaudio-knob>
+                  <webaudio-knob id="Knob5" midilearn src="{{knobSrc}}" data-role="midlle" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Midlle"></webaudio-knob>
                   Midlle
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob6" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Treble"></webaudio-knob>
+                  <webaudio-knob id="Knob6" midilearn src="{{knobSrc}}" data-role="treble"  min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Treble"></webaudio-knob>
                   Treble
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob7" midilearn src="{{knobSrc}}" value="2" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Reverb"></webaudio-knob>
+                  <webaudio-knob id="Knob7" midilearn src="{{knobSrc}}" data-role="reverb" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Reverb"></webaudio-knob>
                   Reverb
                 </span>
             <span class="knobWrapper">
-                  <webaudio-knob id="Knob8" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Presence"></webaudio-knob>
+                  <webaudio-knob id="Knob8" midilearn src="{{knobSrc}}" data-role="presence" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Presence"></webaudio-knob>
                   Presence
                 </span>
             <span class="knobWrapper">
@@ -319,7 +318,7 @@
                 </select>
           </div>
         </div>
-        
+
       </section>
       <div class="events" id="events" style="background:rgba(128,128,255,0.5);overflow:scroll"></div>
     </div>
@@ -697,7 +696,10 @@
       ready() {
         super.ready();
         // Create an AudioNode from the stream.
-        this.audioPlayer = this.querySelector("#player");
+        //this.audioPlayer = this.querySelector("#player");
+        this.audioPlayer = this.pedalboard.soundSample;
+        console.log(this.audioPlayer);
+        
         var convolverSlider,
           convolverCabinetSlider,
           inputStream,
@@ -867,7 +869,13 @@
             */
         this.reverb = new Convolver(this.audioContext, this.reverbImpulses, this.$.reverbImpulses);
         this.cabinetSim = new Convolver(this.audioContext, this.cabinetImpulses, this.$.cabinetImpulses);
-        this.doAllConnections();
+
+        //this.doAllConnections();
+        
+        this.effect = new Pizzicato.Effects.Delay();
+        this.soundNodeIn.connect(this.effect);
+        this.effect.connect(this.soundNodeOut);
+
         try {
           // if ShadowDOMPolyfill is defined, then we are using the Polymer
           // WebComponent polyfill that wraps the HTML audio
@@ -959,6 +967,19 @@
             this.boostOnOff(state);
           });
         })
+      }
+
+      getDefaultButtonsValues() {
+        return {
+          volume: 7,
+          master: 2,
+          drive: 0,
+          bass: 5,
+          midlle: 5,
+          treble: 5,
+          reverb: 2,
+          presence: 5
+        };
       }
 
       changeDemoSample(event) {
