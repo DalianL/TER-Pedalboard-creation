@@ -1,0 +1,1710 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="../pedals/js/pedal-behavior.html">
+
+<link rel="stylesheet" charset="UTF-8" href="./src/css/translateelement.css">
+<link rel="stylesheet" charset="UTF-8" href="./src/css/amp.css">
+
+<script src="./src/js/adapter.js"></script>
+<script src="./src/js/Booster.class.js"></script>
+<script src="./src/js/Convolver.class.js"></script>
+<script src="./src/js/CurveDrawer.class.js"></script>
+<script src="./src/js/Equalizer.class.js"></script>
+<script src="./src/js/Utils.class.js"></script>
+<script src="./src/js/Visualization.class.js"></script>
+<script src="./src/js/WaveShapers.class.js"></script>
+
+<dom-module id="amp-sim">
+  <template>
+    <style include="shared-styles">
+
+      #QFPresetMenu2 {
+        background-color: transparent;
+        color: white;
+      }
+
+      .ampGUI {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      #divEqualizer {
+        background-color: #c3c3c3;
+      }
+
+
+      #divAudioPlayer {
+        background: #fff;
+        box-shadow: inset 0px 0px 3px 6px rgba(195, 195, 195, 0.8);
+
+        padding: 5px 10px;
+        margin-top: 5px;
+        border-radius: 50px;
+
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-align: center;
+      }
+
+      #mainAmp {
+        background-color: #000;
+        display: flex;
+        /*background: linear-gradient(black, rgba(0, 0, 0, 0.82));*/
+        box-shadow: inset 0px 0px 3px 6px rgba(195, 195, 195, 0.8);
+        padding: 30px;
+        border-radius: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        position: relative;
+      }
+
+      #divPresetAmp {
+        position: absolute;
+        top: 7px;
+        right: 7px;
+        z-index: 999;
+      }
+
+      #divSwitch {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .knobWrapper {
+        color: white;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .events {
+        overflow: hidden !important;
+      }
+
+      .laPedale {
+        display: flex;
+        flex-direction: row;
+      }
+    </style>
+    <div class="laPedale">
+      <section hidden$="{{!showPreamp}}" style="flex: 1;">
+        <div class="eq">
+          <h2>Advanced settings</h2>
+          <p>Preamp internals</p>
+          <div class="controls">
+            <label>lowShelf1 Freq</label>
+            <input id="lowShelf1FreqSlider" type="range" value="720" step="1" min="500" max="1000" on-input="_changeLowShelf1FrequencyValue"
+            />
+            <output id="lowShelf1Freq">720 Hz</output>
+          </div>
+          <div class="controls">
+            <label>lowShelf1 Gain</label>
+            <input id="lowShelf1GainSlider" type="range" value="-6" step="0.1" min="-10" max="0" on-input="_changeLowShelf1GainValue"
+            />
+            <output id="lowShelf1Gain">-6 dB</output>
+          </div>
+          <div class="controls">
+            <label>lowShelf2 Freq</label>
+            <input id="lowShelf2FreqSlider" type="range" value="320" step="1" min="300" max="400" on-input="_changeLowShelf2FrequencyValue"
+            />
+            <output id="lowShelf2Freq">320 Hz</output>
+          </div>
+          <div class="controls">
+            <label>lowShelf2 Gain</label>
+            <input id="lowShelf2GainSlider" type="range" value="-6" step="0.1" min="-12" max="10" on-input="_changeLowShelf2GainValue"
+            />
+            <output id="lowShelf2Gain">-5 dB</output>
+          </div>
+          <div class="controls">
+            <label>Stage 1 Gain</label>
+            <input id="preampStage1GainSlider" type="range" value="0.1" step="0.01" min="0" max="10" on-input="_changePreampStage1GainValue"
+            />
+            <output id="preampStage1Gain">1</output>
+          </div>
+          <div class="controls">
+            <label>HighPass1 freq</label>
+            <input id="highPass1FreqSlider" type="range" value="6" step="1" min="5" max="7" on-input="_changeHighPass1FrequencyValue"
+            />
+            <output id="highPass1Freq">6 Hz</output>
+          </div>
+          <div class="controls">
+            <label>HighPass1 Q</label>
+            <input id="highPass1QSlider" type="range" value="0.7071" step="0.001" min="0" max="5" on-input="_changeHighPass1QValue" />
+            <output id="highPass1Q">0.7071</output>
+          </div>
+          <div class="controls">
+            <label>lowShelf3 Freq</label>
+            <input id="lowShelf3FreqSlider" type="range" value="720" step="1" min="300" max="1000" on-input="_changeLowShelf3FrequencyValue"
+            />
+            <output id="lowShelf3Freq">720 Hz</output>
+          </div>
+          <div class="controls">
+            <label>lowShelf3 Gain</label>
+            <input id="lowShelf3GainSlider" type="range" value="-6" step="0.1" min="-10" max="0" on-input="_changeLowShelf3GainValue"
+            />
+            <output id="lowShelf3Gain">-6 dB</output>
+          </div>
+          <div class="controls">
+            <label>Stage 2 Gain</label>
+            <input id="preampStage2GainSlider" type="range" value="1" step="0.01" min="0" max="10" on-input="_changePreampStage2GainValue"
+            />
+            <output id="preampStage2Gain">1</output>
+          </div>
+
+          <p>DRIVE : distorsion levels</p>
+          <div class="controls">
+            <label>K1</label>
+            <input id="K1slider" type="range" value="4" step="0.1" min="0" max="10" data-disto=0 on-input="_changeDistorsionValues" />
+            <output id="k0">4</output>
+          </div>
+          <div class="controls">
+            <label>K2</label>
+            <input id="K2slider" type="range" value="4" step="0.1" min="0" max="10" data-disto=1 on-input="_changeDistorsionValues" />
+            <output id="k1">4</output>
+          </div>
+          <div class="onoffswitch">
+            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" on-click="_changeOversampling"
+            />
+            <label class="onoffswitch-label" for="myonoffswitch"> <span class="onoffswitch-inner"></span> <span class="onoffswitch-switch"></span></label>
+          </div>
+          <div>
+            <label for="convolverCabinetSlider">Cabinet Simulator (Dry/Wet)</label>
+            <input type="range" min="0" max="10" step="0.1" value="7.5" id="convolverCabinetSlider" on-input="_changeRoom" />
+            <output id="cabinetGainOutput">2</output>
+          </div>
+          <div>
+            <label for="cabinetImpulses">Cabinet Impulse:</label><br>
+            <select id="cabinetImpulses">
+              <template is="dom-repeat" items="{{cabinetImpulses}}" as="cabinetImpulse" index-as="index">
+                <option value="{{index}}">{{cabinetImpulse.name}}</option>
+              </template>
+            </select>
+          </div>
+          <div>
+            <label for="reverbImpulses">Reverb Impulse:</label><br>
+            <select id="reverbImpulses">
+              <template is="dom-repeat" items="{{reverbImpulses}}" as="reverbImpulse" index-as="index">
+                <option value="{{index}}">{{reverbImpulse.name}}</option>
+              </template>
+            </select>
+          </div>
+          <!--CurveDrawer-->
+          <div>
+            <select id="distorsionMenu1">
+              <template is="dom-repeat" items="{{_toArray(wsFactory)}}" as="distorsionCurves1">
+                <option value="{{distorsionCurves1}}">{{distorsionCurves1}}</option>
+              </template>
+            </select>
+            <div>
+              <canvas id="distoDrawerCanvas1" style="margin-right:10px;margin-left:10px;" width="100" height="100"></canvas>
+              <canvas id="signalDrawerCanvas1" width="100" height="100"></canvas>
+            </div>
+            <select id="distorsionMenu2">
+              <template is="dom-repeat" items="{{_toArray(wsFactory)}}" as="distorsionCurves2">
+                <option value="{{distorsionCurves2}}">{{distorsionCurves2}}</option>
+              </template>
+            </select>
+            <div>
+              <canvas id="distoDrawerCanvas2" style="margin-right:10px;margin-left:10px;" width="100" height="100"></canvas>
+              <canvas id="signalDrawerCanvas2" width="100" height="100"></canvas>
+            </div>
+          </div>
+          <div>
+            <br>
+            <button id="toggleGuitarIn" class="pulse" type="button" on-click="toggleGuitarInput">Guitar input: <span style='color:red;'>NOT ACTIVATED</span>, click to toggle on/off!</button>
+            <br>
+            <div>Input Gain:</div>
+            <webaudio-knob id="Knob9" midilearn src="{{knobSrc}}" value="1" default="1" min="0" max="10" step="0.1" diameter="49" sprites="99"
+              tooltip="InputGain"></webaudio-knob>
+            <canvas id="inputSignalCanvas" width=150 height=50></canvas>
+            <div>Output Gain:</div>
+            <webaudio-knob id="Knob10" midilearn src="{{knobSrc}}" value="5" default="5" min="0" max="10" step="0.1" diameter="49" sprites="99"
+              tooltip="OutputGain"></webaudio-knob>
+            <canvas id="outputSignalCanvas" width=150 height=50></canvas>
+          </div>
+        </div>
+        <!-- end amp jsbin -->
+      </section>
+
+      <section>
+        <div class="ampGUI">
+          <div id="mainAmp">
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob1" midilearn step="0.1" src="{{knobSrc}}" value="7" min="0" max="10" diameter="69" sprites="99" tooltip="Volume"></webaudio-knob>
+                  Volume
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob2" midilearn step="0.1" src="{{knobSrc}}" value="2" min="0" max="10" diameter="69" sprites="99" tooltip="Master"></webaudio-knob>
+                  Master
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob3" midilearn="true" src="{{knobSrc}}" value="0" step="0.1" min="0" max="10" diameter="69" sprites="99" tooltip="Drive"></webaudio-knob>
+                  Drive
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob4" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Bass"></webaudio-knob>
+                  Bass
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob5" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Midlle"></webaudio-knob>
+                  Midlle
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob6" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Treble"></webaudio-knob>
+                  Treble
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob7" midilearn src="{{knobSrc}}" value="2" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Reverb"></webaudio-knob>
+                  Reverb
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-knob id="Knob8" midilearn src="{{knobSrc}}" value="5" min="0" max="10" step="0.1" diameter="69" sprites="99" tooltip="Presence"></webaudio-knob>
+                  Presence
+                </span>
+            <span class="knobWrapper">
+                  <webaudio-switch midilearn id="toggleBoost" value="0" src="{{switchBoostSrc}}" tooltip="Toggle clean/disto channel"></webaudio-switch>
+                  Clean / Disto
+                </span>
+            <div id="divPresetAmp">
+              <select id="QFPresetMenu2">
+                    <template is="dom-repeat" items="{{presets}}" as="preset" index-as="index">
+                      <option value="{{index}}">{{preset.name}}</option>
+                    </template>
+                  </select>
+            </div>
+            <div id="divSwitch">
+              <webaudio-switch id="switch1" midilearn src="{{switchToggleSrc}}" value="0" height="45" width="45" tooltip="Switch-A Tooltip text test"></webaudio-switch>
+              <webaudio-switch id="led" src="{{resolveUrl('./src/img/led_23_red.png')}}" value="1" height="23" width="23" tooltip="Switch-B"></webaudio-switch>
+              <webaudio-switch id="switch2" midilearn src="{{switchToggleSrc}}" value="0" height="45" width="45" tooltip="Switch-B"></webaudio-switch>
+            </div>
+          </div>
+          <div id="divEqualizer" hidden$="{{!showEqualizer}}">
+            <webaudio-slider id="slider1" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider1"></webaudio-slider>
+            <webaudio-slider id="slider2" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider2"></webaudio-slider>
+            <webaudio-slider id="slider3" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider3"></webaudio-slider>
+            <webaudio-slider id="slider4" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider4"></webaudio-slider>
+            <webaudio-slider id="slider5" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider5"></webaudio-slider>
+            <webaudio-slider id="slider6" midilearn units="Db" src="{{sliderBackgroundSrc}}" knobsrc="{{sliderKnobSrc}}" min="-30" max="30"
+              tooltip="Slider6"></webaudio-slider>
+          </div>
+        </div>
+
+        <div id="divAudioPlayer">
+          <audio id="player" controls loop>
+            <source src="{{resolveUrl('src/assets/audio/BasketCase Greenday riff DI.mp3')}}">
+            <source src="{{resolveUrl('src/assets/audio/BasketCase Greenday riff DI.ogg')}}"> Your browser does not support the audio tag.
+          </audio>
+          <div id="demoSample">Choose a demo sample:
+            <select id="demoSampleMenu" on-change="changeDemoSample">
+                  <option value="0">Metal riff 1</option>
+                  <option value="1">Metal riff 2</option>
+                   <option value="2">Blues solo 1</option>
+                  <option value="3">Cool rythm</option>
+                  <option value="4">Trash metal</option>
+                  <option value="5">Black Sabbath Rythm</option>
+                  <option value="6">Black Sabbath Solo</option>
+                  <option value="7">Basketcase Riff</option>
+                  <option value="8">In Bloom riff</option>
+                  <option value="9">Muse solo</option>
+                  <option value="10">Muse rythm</option>
+                  <option value="11">Simple guitar riff</option>
+                </select>
+          </div>
+        </div>
+        
+      </section>
+      <div class="events" id="events" style="background:rgba(128,128,255,0.5);overflow:scroll"></div>
+    </div>
+  </template>
+  <script>
+    /**
+     * `amp-sim`
+     * 
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class AmpSim extends MyMixin(Polymer.Element) {
+      static get is() {
+        return 'amp-sim';
+      }
+      static get properties() {
+        return {
+          dataWidth: {
+            type: Number,
+            value: 742
+          },
+          dataHeight: {
+            type: Number,
+            value: 182
+          },
+          switchToggleSrc: {
+            type: String,
+            value: function () {
+              return this.resolveUrl("./src/img/switch_toggle.png")
+            }
+          },
+          switchBoostSrc: {
+            type: String,
+            value: function () {
+              return this.resolveUrl("./src/img/boostSwitch.png")
+            }
+          },
+          sliderBackgroundSrc: {
+            type: String,
+            value: function () {
+              return this.resolveUrl("./src/img/vsliderbody.png")
+            }
+          },
+          sliderKnobSrc: {
+            type: String,
+            value: function () {
+              return this.resolveUrl("./src/img/vsliderknob.png")
+            }
+          },
+          knobSrc: {
+            type: String,
+            value: function () {
+              return this.resolveUrl("./src/img/Prophet.png")
+            }
+          },
+          showPreamp: {
+            type: Boolean,
+            value: false
+          },
+          showEqualizer: {
+            type: Boolean,
+            value: false
+          },
+          // for Wave Shaper Curves visualization
+          DRAWER_CANVAS_SIZE: {
+            type: Number,
+            value: 100
+          },
+          wsFactory: {
+            type: Object,
+            value: new WaveShapers()
+          },
+          demoSampleURLs: {
+            type: Array,
+            value: function () {
+              return [
+                this.resolveUrl("./src/assets/audio/Guitar_DI_Track.mp3"),
+                this.resolveUrl("./src/assets/audio/LasseMagoDI.mp3"),
+                this.resolveUrl("./src/assets/audio/RawPRRI.mp3"),
+                this.resolveUrl("./src/assets/audio/Di-Guitar.mp3"),
+                this.resolveUrl("./src/assets/audio/NarcosynthesisDI.mp3"),
+                this.resolveUrl("./src/assets/audio/BlackSabbathNIB_rythmDI.mp3"),
+                this.resolveUrl("./src/assets/audio/BlackSabbathNIBLead_DI.mp3"),
+                this.resolveUrl("./src/assets/audio/BasketCase Greenday riff DI.mp3"),
+                this.resolveUrl("./src/assets/audio/InBloomNirvanaRiff1DI.mp3"),
+                this.resolveUrl("./src/assets/audio/Muse1Solo.mp3"),
+                this.resolveUrl("./src/assets/audio/Muse2Rythm.mp3")
+              ]
+            }
+          },
+          "presets": {
+            type: Array,
+            value: [{
+              "name": "Hard Rock classic 1",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -5,
+              "gain1": 1,
+              "distoName1": "asymetric",
+              "K1": "7.8",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "notSoDistorded",
+              "K2": "7.8",
+              "OG": "7.0",
+              "BF": "8.2",
+              "MF": "8.2",
+              "TF": "3.8",
+              "PF": "6.9",
+              "EQ": [5, 11, -6, -10, 7, 2],
+              "MV": "7.2",
+              "RN": "Fender Hot Rod",
+              "RG": "2.0",
+              "CN": "Marshall 1960, axis",
+              "CG": "9.4"
+            }, {
+              "name": "Clean and Warm",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": 1.600000023841858,
+              "gain1": 1,
+              "distoName1": "asymetric",
+              "K1": "7.8",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "standard",
+              "K2": "0.9",
+              "OG": "7.0",
+              "BF": "6.7",
+              "MF": "7.1",
+              "TF": "3.2",
+              "PF": "6.9",
+              "EQ": [10, 5, -7, -7, 16, 0],
+              "MV": "7.2",
+              "RN": "Fender Hot Rod",
+              "RG": "1.4",
+              "CN": "Marshall 1960, axis",
+              "CG": "8.8"
+            }, {
+              "name": "Strong and Warm",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -1,
+              "gain1": 1.0299999713897705,
+              "distoName1": "asymetric",
+              "K1": "7.8",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "superClean",
+              "K2": "7.8",
+              "OG": "7.0",
+              "BF": "8.2",
+              "MF": "6.7",
+              "TF": "5.0",
+              "PF": "6.9",
+              "EQ": [0, 0, 0, -1, 0, 1],
+              "MV": "5.9",
+              "RN": "Fender Hot Rod",
+              "RG": "1.1",
+              "CN": "Vox Custom Bright 4x12 M930 Axis 1",
+              "CG": "8.0"
+            }, {
+              "name": "Clean no reverb",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -6.300000190734863,
+              "gain1": 1,
+              "distoName1": "asymetric",
+              "K1": "2.1",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "crunch",
+              "K2": "2.1",
+              "OG": "7.0",
+              "BF": "6.7",
+              "MF": "5.0",
+              "TF": "5.0",
+              "PF": "8.9",
+              "EQ": [4, 13, -8, -8, 15, 12],
+              "MV": "3.7",
+              "RN": "Fender Hot Rod",
+              "RG": "0.0",
+              "CN": "Marshall 1960, axis",
+              "CG": "4.5"
+            }, {
+              "name": "Another Clean Sound",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -6.300000190734863,
+              "gain1": 1,
+              "distoName1": "asymetric",
+              "K1": "6.4",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "crunch",
+              "K2": "6.4",
+              "OG": "7.0",
+              "BF": "6.7",
+              "MF": "5.0",
+              "TF": "5.0",
+              "PF": "8.9",
+              "EQ": [4, 13, -8, -8, 15, 12],
+              "MV": "3.7",
+              "RN": "Fender Hot Rod",
+              "RG": "2",
+              "CN": "Marshall 1960, axis",
+              "CG": "4.5"
+            }, {
+              "name": "Mostly even harmonics",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -7.5,
+              "gain1": 1,
+              "distoName1": "standard",
+              "K1": "6.7",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "standard",
+              "K2": "6.7",
+              "OG": "7.0",
+              "BF": "4.3",
+              "MF": "2.6",
+              "TF": "6.1",
+              "PF": "4.2",
+              "EQ": [5, 12, -5, -10, 2, 10],
+              "MV": "1.7",
+              "RN": "Fender Hot Rod",
+              "RG": "0.0",
+              "CN": "Vintage Marshall 1",
+              "CG": "8.4"
+            }, {
+              "name": "Hard Rock classic 2",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -10.199999809265137,
+              "gain1": 1,
+              "distoName1": "standard",
+              "K1": "5.2",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "notSoDistorded",
+              "K2": "5.1",
+              "OG": "7.0",
+              "BF": "8.7",
+              "MF": "8.0",
+              "TF": "3.8",
+              "PF": "9.4",
+              "EQ": [19, 8, -6, -10, 7, 2],
+              "MV": "5.5",
+              "RN": "Fender Hot Rod",
+              "RG": "0.7",
+              "CN": "Marshall 1960, axis",
+              "CG": "9.2"
+            }, {
+              "name": "SuperClean/Jazz",
+              "boost": false,
+              "LS1Freq": 720,
+              "LS1Gain": -6,
+              "LS2Freq": 320,
+              "LS2Gain": -6.300000190734863,
+              "gain1": 1,
+              "distoName1": "crunch",
+              "K1": "5.4",
+              "HP1Freq": 6,
+              "HP1Q": 0.707099974155426,
+              "LS3Freq": 720,
+              "LS3Gain": -6,
+              "gain2": 1,
+              "distoName2": "crunch",
+              "K2": "5.4",
+              "OG": "7.0",
+              "BF": "7.0",
+              "MF": "5.1",
+              "TF": "5.2",
+              "PF": "3.1",
+              "EQ": [10, 7, 0, -10, 5, 12],
+              "MV": "3.8",
+              "RN": "Fender Hot Rod",
+              "RG": "1.5",
+              "CN": "Marshall 1960, axis",
+              "CG": "4.5"
+            }]
+          },
+          reverbImpulses: {
+            type: Array,
+            value: function () {
+              return [{
+                  name: "Fender Hot Rod",
+                  url: this.resolveUrl("./src/assets/impulses/reverb/cardiod-rear-levelled.wav")
+                }, {
+                  name: "PCM 90 clean plate",
+                  url: this.resolveUrl("./src/assets/impulses/reverb/pcm90cleanplate.wav")
+                },
+                {
+                  name: "Scala de Milan",
+                  url: this.resolveUrl("./src/assets/impulses/reverb/ScalaMilanOperaHall.wav")
+                }
+              ];
+            }
+          },
+          cabinetImpulses: {
+            type: Array,
+            value: function () {
+              return [{
+                name: "Marshall 1960, axis",
+                url: this.resolveUrl("./src/assets/impulses/cabinet/Marshall1960.wav")
+              }, {
+                name: "Vintage Marshall 1",
+                url: this.resolveUrl("./src/assets/impulses/cabinet/Block%20Inside.wav")
+              }, {
+                name: "Vox Custom Bright 4x12 M930 Axis 1",
+                url: this.resolveUrl("./src/assets/impulses/cabinet/voxCustomBrightM930OnAxis1.wav")
+              }, {
+                name: "Fender Champ, axis",
+                url: this.resolveUrl("./src/assets/impulses/cabinet/FenderChampAxisStereo.wav")
+              }]
+            }
+          }
+        };
+      }
+      constructor() {
+        super();
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        this.audioContext = new AudioContext();
+        this.guitarPluggedIn = false;
+        this.menuPresets;
+        this.menuDisto1;
+        this.menuDisto2;
+        this.audioPlayer
+        this.input;
+        this.inputVisualization;
+        this.outputVisualization;
+        this.analyzerAtInput;
+        this.analyzerAtOutput;
+        this.guitarInput;
+      }
+
+      ready() {
+        super.ready();
+        // Create an AudioNode from the stream.
+        this.audioPlayer = this.querySelector("#player");
+        var convolverSlider,
+          convolverCabinetSlider,
+          inputStream,
+          inputStream2;
+        //Declared into the constructor
+        this.menuPresets = this.$.QFPresetMenu2;
+        this.menuDisto1 = this.$.distorsionMenu1;
+        this.menuDisto2 = this.$.distorsionMenu2;
+        this.currentDistoName = "standard";
+        this.currentK = 2; // we have separates ks, but also a "global" one that
+        // is the max of the two (the knob value)
+        this.distoDrawer1 = new CurveDrawer(this.$.distoDrawerCanvas1);
+        this.signalDrawer1 = new CurveDrawer(this.$.signalDrawerCanvas1);
+        this.distoDrawer2 = new CurveDrawer(this.$.distoDrawerCanvas2);
+        this.signalDrawer2 = new CurveDrawer(this.$.signalDrawerCanvas2);
+
+        this.currentWSCurve = this.wsFactory.distorsionCurves[this.currentDistoName](this.currentK);
+
+        // ------------
+        // PREAM STAGE
+        // ------------
+        // Channel booster
+        this.boost = new Boost(this.audioContext);
+        // Main input and output and bypass
+        this.input = this.audioContext.createGain();
+        this.output = this.audioContext.createGain();
+        this.byPass = this.audioContext.createGain();
+        this.byPass.gain.value = 0;
+        // ampli input gain towards pream stage
+        this.inputGain = this.audioContext.createGain();
+        this.inputGain.gain.value = 1;
+        // tonestack
+        this.bassFilter;
+        this.midFilter;
+        this.trebleFilter;
+        this.presenceFilter;
+        // overdrives
+        this.k = [2, 2, 2, 2]; // array of k initial values
+        this.od = [];
+        this.distoTypes = ['asymetric', 'standard'];
+        this.gainsOds = [];
+        // Tonestack in serie, cf Lepou's mail  
+        /*
+        for (var i = 0; i < 4; i++) {
+            loCutFilters[i] = this.audioContext.createBiquadFilter();
+            loCutFilters[i].type = "lowshelf";
+            loCutFilters[i].frequency.value = 720;
+            loCutFilters[i].gain.value = 3.3;
+
+            hiCutFilters[i] = this.audioContext.createBiquadFilter();
+            hiCutFilters[i].type = "lowpass";
+            hiCutFilters[i].frequency.value = 12000;
+            hiCutFilters[i].Q.value = 0.7071;
+
+            highShelfBoosts[i] = this.audioContext.createBiquadFilter();
+            highShelfBoosts[i].type = "highshelf";
+            highShelfBoosts[i].frequency.value = 12000; // Which values ?
+            highShelfBoosts[i].Q.value = 0.7071;        // Which values ?
+
+            this.od[i] = this.audioContext.createWaveShaper();
+            this.od[i].curve = this.makeDistortionCurve(k[i]);
+            // Oversampling generates some (small) latency
+            //this.od[i].oversample = '4x';
+
+            // gains
+            this.gainsOds[i] = this.audioContext.createGain();
+            this.gainsOds[i].gain.value = 1;
+        }
+        */
+        // JCM 800 preamp schematic...
+        // Low shelf cut -6db à 720Hz
+        this.lowShelf1 = this.audioContext.createBiquadFilter();
+        this.lowShelf1.type = "lowshelf";
+        this.lowShelf1.frequency.value = 720;
+        this.lowShelf1.gain.value = -6;
+        // Low shelf cut variable wired to volume knob
+        // if vol = 50%, then filter at -6db, 320Hz
+        // shoud go from -4db to -6db for +/- fatness
+        this.lowShelf2 = this.audioContext.createBiquadFilter();
+        this.lowShelf2.type = "lowshelf";
+        this.lowShelf2.frequency.value = 320;
+        this.lowShelf2.gain.value = -5;
+        // Gain 1
+        this.preampStage1Gain = this.audioContext.createGain();
+        this.preampStage1Gain.gain.value = 1.0;
+        // Distorsion 1, here we should use an asymetric function in order to 
+        // generate odd harmonics
+        this.od[0] = this.audioContext.createWaveShaper();
+        this.od[0].curve = this.wsFactory.distorsionCurves[this.distoTypes[0]](0);
+        this.menuDisto1.value = this.distoTypes[0];
+        // HighPass at 7-8 Hz, rectify the signal that got a DC value due
+        // to the possible asymetric transfer function
+        this.highPass1 = this.audioContext.createBiquadFilter();
+        this.highPass1.type = "highpass";
+        this.highPass1.frequency.value = 6;
+        this.highPass1.Q.value = 0.7071;
+        // lowshelf cut -6db 720Hz
+        this.lowShelf3 = this.audioContext.createBiquadFilter();
+        this.lowShelf3.type = "lowshelf";
+        this.lowShelf3.frequency.value = 720;
+        this.lowShelf3.gain.value = -6;
+        // Gain 2
+        this.preampStage2Gain = this.audioContext.createGain();
+        this.preampStage2Gain.gain.value = 1;
+        // Distorsion 2, symetric function to generate even harmonics
+        this.od[1] = this.audioContext.createWaveShaper();
+        this.od[1].curve = this.wsFactory.distorsionCurves[this.distoTypes[1]](0);
+        this.menuDisto2.value = this.distoTypes[1];
+        this.changeDistorsionValues(4, 0);
+        this.changeDistorsionValues(4, 1);
+        // output gain after preamp stage
+        this.outputGain = this.audioContext.createGain();
+        this.changeOutputGainValue(7);
+        // ------------------------------
+        // TONESTACK STAGES
+        // ------------------------------
+        // Useless ?
+        this.bassFilter = this.audioContext.createBiquadFilter();
+        this.bassFilter.frequency.value = 100;
+        this.bassFilter.type = "lowshelf";
+        this.bassFilter.Q.value = 0.7071; // To check with Lepou
+
+        this.midFilter = this.audioContext.createBiquadFilter();
+        this.midFilter.frequency.value = 1700;
+        this.midFilter.type = "peaking";
+        this.midFilter.Q.value = 0.7071; // To check with Lepou
+
+        this.trebleFilter = this.audioContext.createBiquadFilter();
+        this.trebleFilter.frequency.value = 6500;
+        this.trebleFilter.type = "highshelf";
+        this.trebleFilter.Q.value = 0.7071; // To check with Lepou
+
+        this.presenceFilter = this.audioContext.createBiquadFilter();
+        this.presenceFilter.frequency.value = 3900;
+        this.presenceFilter.type = "peaking";
+        this.presenceFilter.Q.value = 0.7071; // To check with Lepou
+        // -----------------------------------
+        // POST PROCESSING STAGE (EQ, reverb)
+        // -----------------------------------
+        //  before EQ, filter highs and lows (Fred Miniere advise)
+        this.eqhicut = this.audioContext.createBiquadFilter();
+        this.eqhicut.frequency.value = 10000;
+        this.eqhicut.type = "peaking";
+        this.eqhicut.gain.value = -25;
+
+        this.eqlocut = this.audioContext.createBiquadFilter();
+        this.eqlocut.frequency.value = 60;
+        this.eqlocut.type = "peaking";
+        this.eqlocut.gain.value = -19;
+
+        this.eq = new Equalizer(this.audioContext, this.$);
+        this.changeEQValues([0, 0, 0, 0, 0, 0]);
+        this.bypassEQg = this.audioContext.createGain();
+        this.bypassEQg.gain.value = 0; // by defaut EQ is in
+        this.inputEQ = this.audioContext.createGain();
+        // Master volume
+        this.masterVolume = this.audioContext.createGain();
+        this.changeMasterVolume(2);
+        /*
+            reverb = new Reverb(this.audioContext, function () {
+                console.log("reverb created");
+                cabinetSim = new CabinetSimulator(this.audioContext, function () {
+                    console.log("cabinet sim created");
+                    doAllConnections();
+                });
+            });
+            */
+        this.reverb = new Convolver(this.audioContext, this.reverbImpulses, this.$.reverbImpulses);
+        this.cabinetSim = new Convolver(this.audioContext, this.cabinetImpulses, this.$.cabinetImpulses);
+        this.doAllConnections();
+        try {
+          // if ShadowDOMPolyfill is defined, then we are using the Polymer
+          // WebComponent polyfill that wraps the HTML audio
+          // element into something that cannot be used with
+          // createMediaElementSource. We use ShadowDOMPolyfill.unwrap(...)
+          // to get the "real" HTML audio element
+          this.audioPlayer = ShadowDOMPolyfill.unwrap(this.audioPlayer);
+        } catch (e) {
+          console.log(
+            "ShadowDOMPolyfill undefined, running native Web Component code"
+          );
+        }
+        if (inputStream2 === undefined) inputStream2 = this.audioContext.createMediaElementSource(this.audioPlayer);
+        var constraints = {
+          audio: {
+            echoCancellation: false,
+            mozNoiseSuppression: false,
+            mozAutoGainControl: false
+          }
+        };
+        navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+          window.stream = stream; // make stream available to console
+          // Refresh button list in case labels have become available
+          inputStream = this.audioContext.createMediaStreamSource(window.stream);
+          this.guitarInput = this.convertToMono(inputStream);
+          // create quadrafuzz
+          this.analyzerAtInput = this.audioContext.createAnalyser();
+          this.input.connect(this.analyzerAtInput);
+          // build graph
+          if (this.guitarPluggedIn) {
+            this.guitarInput.connect(this.input);
+          }
+          // connect audio player to ampli for previewing presets
+          inputStream2.connect(this.input);
+          // output, add an analyser at the end
+          this.analyzerAtOutput = this.audioContext.createAnalyser();
+          this.output.connect(this.analyzerAtOutput);
+          this.analyzerAtOutput.connect(this.audioContext.destination);
+          convolverSlider = this.$.convolverSlider;
+          convolverCabinetSlider = this.$.convolverCabinetSlider;
+          this.initVisualizations();
+          // Binding avec le vrai ampli
+          // Volume
+          this.$.Knob1.addEventListener("change", (evt) => this.changeOutputGain(evt.target.value));
+          // Master Volume
+          this.$.Knob2.addEventListener("change", (evt) => this.changeMasterVolume(evt.target.value));
+          // Drive
+          this.$.Knob3.addEventListener("change", (evt) => this.changeDrive(evt.target.value));
+          // Bass
+          this.$.Knob4.addEventListener("change", (evt) => this.changeBassFilterValue(evt.target.value));
+          // Middle
+          this.$.Knob5.addEventListener("change", (evt) => this.changeMidFilterValue(evt.target.value));
+          // Treble
+          this.$.Knob6.addEventListener("change", (evt) => this.changeTrebleFilterValue(evt.target.value));
+          // Reverb
+          this.$.Knob7.addEventListener("change", (evt) => this.changeReverbGain(evt.target.value));
+          // Presence 
+          this.$.Knob8.addEventListener("change", (evt) => this.changePresenceFilterValue(evt.target.value));
+          // input gain
+          this.$.Knob9.addEventListener("change", (evt) => this.changeInputGainValue(evt.target.value));
+          // output gain
+          this.$.Knob10.addEventListener("change", (evt) => this.changeOutputGainValue(evt.target.value));
+          this.menuPresets.addEventListener("change", () => this.changePreset());
+          this.menuDisto1.addEventListener("change", () => this.changeDistoType1());
+          this.menuDisto2.addEventListener("change", () => this.changeDistoType2());
+          // Equalizer
+          for (var i = 1; i < 7; i++) {
+            ((i) => {
+              this.$["slider" + i].addEventListener("change", (evt) => this.eq.changeGain(evt.target.value, i -
+                1));
+            })(i)
+          }
+          // On / Off switch
+          this.$.switch1.addEventListener("change", (evt) => {
+            var state = {};
+            evt.target.value == 1 ? state.checked = false : state.checked = true;
+            this.bypass(state);
+          });
+          // EQ on/off switch
+          this.$.switch2.addEventListener("change", (evt) => {
+            var state = {};
+            evt.target.value == 1 ? state.checked = false : state.checked = true;
+            this.bypassEQ(state);
+          });
+          // Boost on/off
+          this.$.toggleBoost.addEventListener("change", (evt) => {
+            var state = {};
+            evt.target.value == 1 ? state.checked = false : state.checked = true;
+            this.boostOnOff(state);
+          });
+        })
+      }
+
+      changeDemoSample(event) {
+        this.audioPlayer.src = this.demoSampleURLs[event.target.value];
+        this.audioPlayer.play();
+      }
+      toggleGuitarInput(event) {
+        var button = this.$.toggleGuitarIn;
+        if (!this.guitarPluggedIn) {
+          this.guitarInput.connect(this.input);
+          button.innerHTML = "Guitar input: <span style='color:green;'>ACTIVATED</span>, click to toggle on/off!";
+          button.classList.remove("pulse");
+        } else {
+          this.guitarInput.disconnect();
+          button.innerHTML = "Guitar input: <span style='color:red;'>NOT ACTIVATED</span>, click to toggle on/off!";
+          button.classList.add("pulse");
+        }
+        this.guitarPluggedIn = !this.guitarPluggedIn;
+      }
+      initVisualizations() {
+        this.inputVisualization = new Visualization();
+        this.inputVisualization.configure(this.$.inputSignalCanvas, this.analyzerAtInput);
+        this.outputVisualization = new Visualization();
+        this.outputVisualization.configure(this.$.outputSignalCanvas, this.analyzerAtOutput);
+        // start updating the visualizations
+        requestAnimationFrame(() => {
+          this.visualize()
+        })
+      }
+      visualize() {
+        this.inputVisualization.update();
+        this.outputVisualization.update();
+        requestAnimationFrame(() => {
+          this.visualize()
+        })
+      }
+      // END OF AMP STAGES
+      // -------------------
+      convertToMono(input) {
+        var splitter = this.audioContext.createChannelSplitter(2);
+        var merger = this.audioContext.createChannelMerger(2);
+        input.connect(splitter);
+        splitter.connect(merger, 0, 0);
+        splitter.connect(merger, 0, 1);
+        return merger;
+      }
+      doAllConnections() {
+        // called only after reverb and cabinet sim could load and
+        // decode impulses
+        // Build web audio graph, set default preset
+        this.buildGraph();
+        this.changeRoom(7.5); // TO REMOVE ONCE PRESETS MANAGER WORKS
+        this.setDefaultPreset();
+        console.log("running");
+      }
+      buildGraph() {
+        this.input.connect(this.inputGain);
+        this.input.connect(this.byPass);
+        // boost is not activated, it's just a sort of disto at 
+        // the very beginning of the ampli route
+        this.inputGain.connect(this.boost.input);
+        // JCM 800 like...
+        this.boost.output.connect(this.lowShelf1);
+        this.lowShelf1.connect(this.lowShelf2);
+        this.lowShelf2.connect(this.preampStage1Gain);
+        this.preampStage1Gain.connect(this.od[0]);
+        this.od[0].connect(this.highPass1);
+        this.highPass1.connect(this.lowShelf3);
+        this.lowShelf3.connect(this.preampStage2Gain);
+        this.preampStage2Gain.connect(this.od[1])
+        // end of preamp
+        this.od[1].connect(this.outputGain);
+        // tonestack
+        this.outputGain.connect(this.trebleFilter);
+        this.trebleFilter.connect(this.bassFilter);
+        this.bassFilter.connect(this.midFilter);
+        this.midFilter.connect(this.presenceFilter);
+        // lo and hicuts
+        this.presenceFilter.connect(this.eqlocut);
+        this.eqlocut.connect(this.eqhicut);
+        // post process
+        this.eqhicut.connect(this.inputEQ);
+        // bypass eq route
+        this.eqhicut.connect(this.bypassEQg);
+        this.bypassEQg.connect(this.masterVolume);
+        // normal route
+        this.inputEQ.connect(this.eq.input);
+        this.eq.output.connect(this.masterVolume);
+        this.masterVolume.connect(this.reverb.input);
+        this.reverb.output.connect(this.cabinetSim.input);
+        this.cabinetSim.output.connect(this.output);
+        //this.eq.output.connect(output);
+        //reverb.output.connect(output);
+        // byPass route
+        this.byPass.connect(this.output);
+      }
+
+      boostOnOff(cb) {
+        // called when we click the switch on the GUI      
+        this.boost.toggle();
+        this.adjustOutputGainIfBoostActivated();
+        this.updateBoostLedButtonState(this.boost.isActivated());
+      }
+
+      changeBoost(state) {
+        console.log("changeBoost, boost before: " + this.boost.isActivated() + " output gain=" + this.output.gain.value);
+        if (this.boost.isActivated() !== state) {
+          // we need to adjust the output gain
+          console.log("changeBoost: we change boost state");
+          this.boost.onOff(state);
+          this.adjustOutputGainIfBoostActivated();
+          this.updateBoostLedButtonState(this.boost.isActivated());
+        } else {
+          console.log("changeBoost: we do not change boost state");
+        }
+        console.log("changeBoost, boost after: " + this.boost.isActivated());
+      }
+      // first parameter = curveDrawer to use, second = curve to draw 
+      drawCurve(cd, c) {
+        cd.setCurve(c);
+        cd.drawAxis();
+        cd.drawCurve('lightGreen', 2);
+      }
+
+      adjustOutputGainIfBoostActivated() {
+        console.log("adjustOutputGainIfBoostActivated: output gain value before = " + this.output.gain.value)
+        if (this.boost.isActivated()) {
+          this.output.gain.value /= 2;
+        } else {
+          this.output.gain.value *= 2;
+        }
+        console.log("adjustOutputGainIfBoostActivated: output gain value after = " + this.output.gain.value)
+      }
+
+      updateBoostLedButtonState(activated) {
+        // update buttons states
+        if (this.boost.isActivated()) {
+          this.$.toggleBoost.setValue(1, false);
+        } else {
+          this.$.toggleBoost.setValue(0, false);
+        }
+      }
+
+
+      changeInputGainValue(sliderVal) {
+        this.input.gain.value = parseFloat(sliderVal);
+        console.log("changeInputGainValue value = " + this.input.gain.value);
+      }
+
+      changeOutputGainValue(sliderVal) {
+        this.output.gain.value = parseFloat(sliderVal) / 10;
+        console.log("changeOutputGainValue value = " + this.output.gain.value);
+      }
+
+      // PREAMP
+      _changeLowShelf1FrequencyValue(evt) {
+        this.changeLowShelf1FrequencyValue(evt.target.value)
+      }
+      changeLowShelf1FrequencyValue
+        (sliderVal) {
+          var value = parseFloat(sliderVal);
+          this.lowShelf1.frequency.value = value;
+          // update output labels
+          this.$.lowShelf1Freq.value = value.toFixed(
+            1) + " Hz";
+          // refresh slider state
+          this.$.lowShelf1FreqSlider.value = value.toFixed(1);
+        }
+      _changeLowShelf1GainValue(evt) {
+        this.changeLowShelf1GainValue(evt.target.value)
+      }
+      changeLowShelf1GainValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.lowShelf1.gain.value = value;
+        // update output labels
+        this.$.lowShelf1Gain.value = value.toFixed(1) + " dB";
+        // refresh slider state
+        this.$.lowShelf1GainSlider.value = value.toFixed(1);
+      }
+      _changeLowShelf2FrequencyValue(evt) {
+        this.changeLowShelf2FrequencyValue(evt.target.value)
+      }
+      changeLowShelf2FrequencyValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.lowShelf2.frequency.value = value;
+        // update output labels
+        this.$.lowShelf2Freq.value = value.toFixed(1) + " Hz";
+        // refresh slider state
+        this.$.lowShelf2FreqSlider.value = value.toFixed(1);
+      }
+      _changeLowShelf2GainValue(evt) {
+        this.changeLowShelf2GainValue(evt.target.value)
+      }
+      changeLowShelf2GainValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.lowShelf2.gain.value = value;
+        console.log("lowshelf 2 gain = " + value);
+        // update output labels
+        this.$.lowShelf2Gain.value = value.toFixed(1) + " dB";
+        // refresh slider state
+        this.$.lowShelf2GainSlider.value = value.toFixed(1);
+      }
+      _changePreampStage1GainValue(evt) {
+        this.changePreampStage1GainValue(evt.target.value)
+      }
+      changePreampStage1GainValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.preampStage1Gain.gain.value = value;
+        // update output labels
+        this.$.preampStage1Gain.value = value.toFixed(2);
+        // refresh slider state
+        this.$.preampStage1GainSlider.value = value.toFixed(2);
+      }
+      _changeHighPass1FrequencyValue(evt) {
+        this.changeHighPass1FrequencyValue(evt.target.value)
+      }
+      changeHighPass1FrequencyValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.highPass1.frequency.value = value;
+        // update output labels
+        this.$.highPass1Freq.value = value.toFixed(1) + " Hz";
+        // refresh slider state
+        this.$.highPass1FreqSlider.value = value.toFixed(1);
+      }
+      _changeHighPass1QValue(evt) {
+        this.changeHighPass1QValue(evt.target.value)
+      }
+      changeHighPass1QValue
+        (sliderVal) {
+          var value = parseFloat(sliderVal);
+          this.highPass1.Q.value = value;
+          // update output labels
+          this.$.highPass1Q.value = value.toFixed(4);
+          // refresh slider state
+          this.$.highPass1QSlider.value = value.toFixed(4);
+        }
+      _changeLowShelf3FrequencyValue(evt) {
+        this.changeLowShelf3FrequencyValue(evt.target.value)
+      }
+      changeLowShelf3FrequencyValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.lowShelf3.frequency.value = value;
+        // update output labels
+        this.$.lowShelf3Freq.value = value.toFixed(1) + " Hz";
+        // refresh slider state
+        this.$.lowShelf3FreqSlider.value = value.toFixed(1);
+      }
+      _changeLowShelf3GainValue(evt) {
+        this.changeLowShelf3GainValue(evt.target.value)
+      }
+      changeLowShelf3GainValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.lowShelf3.gain.value = value;
+        // update output labels
+        this.$.lowShelf3Gain.value = value.toFixed(1) + " dB";
+        // refresh slider state
+        this.$.lowShelf3GainSlider.value = value.toFixed(1);
+      }
+      _changePreampStage2GainValue(evt) {
+        this.changePreampStage2GainValue(evt.target.value)
+      }
+      changePreampStage2GainValue(sliderVal) {
+        var value = parseFloat(sliderVal);
+        this.preampStage2Gain.gain.value = value;
+        // update output labels
+        this.$.preampStage2Gain.value = value.toFixed(2);
+        // refresh slider state
+        this.$.preampStage2GainSlider.value = value.toFixed(2);
+      }
+
+      //-------------------------------------------------END OF PREAMP-------------------------------------------------
+      //fabrice : never used
+      // changeHicutFreqValue(sliderVal) {
+      //     var value = parseFloat(sliderVal);
+      //     for (var i = 0; i < 4; i++) {
+      //         hiCutFilters[i].frequency.value = value;
+      //     }
+      //     // update output labels
+      //     var output = this.$.hiCutFreq;
+      //     output.value = parseFloat(sliderVal).toFixed(1) + " Hz";
+      //     // refresh slider state
+      //     var slider = this.$.hiCutFreqSlider;
+      //     slider.value = parseFloat(sliderVal).toFixed(1);
+      // }
+
+      changeBassFilterValue(sliderVal) {
+        // sliderVal is in [0, 10]
+        this.bassFilter.gain.value = (parseFloat(sliderVal) - 10) * 7;
+        console.log("bass gain set to " + this.bassFilter.gain.value);
+        // update output labels
+        //var output = this.$.bassFreq;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.bassFreqSlider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        //sliderVal = value / 7 + 10;
+        this.$.Knob4.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changeMidFilterValue(sliderVal) {
+        // sliderVal is in [0, 10]
+        this.midFilter.gain.value = (parseFloat(sliderVal) - 5) * 4;
+        // update output labels
+        //var output = this.$.midFreq;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.midFreqSlider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        //sliderVal = value /4 + 5;
+        this.$.Knob5.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changeTrebleFilterValue(sliderVal) {
+        // sliderVal is in [0, 10]
+        this.trebleFilter.gain.value = (parseFloat(sliderVal) - 10) * 10;
+        // update output labels
+        //var output = this.$.trebleFreq;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.trebleFreqSlider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        //sliderVal = value /10 + 10;
+        this.$.Knob6.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changePresenceFilterValue(sliderVal) {
+        // sliderVal is in [0, 10]
+        this.presenceFilter.gain.value = (parseFloat(sliderVal) - 5) * 2;
+        //console.log("set presence freq to " + this.presenceFilter.frequency.value)
+        // update output labels
+        //var output = this.$.presenceFreq;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.presenceFreqSlider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        this.$.Knob8.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+      changeDistoType1() {
+        console.log("Changing disto1 to : " + this.menuDisto1.value);
+        this.currentDistoName = this.menuDisto1.value;
+        this.distoTypes[0] = this.currentDistoName;
+        this.changeDrive(this.currentK);
+      }
+
+      changeDistoType2() {
+        console.log("Changing disto2 to : " + this.menuDisto2.value);
+        this.currentDistoName = this.menuDisto2.value;
+        this.distoTypes[1] = this.currentDistoName;
+        this.changeDrive(this.currentK);
+      }
+
+      changeDisto1TypeFromPreset(name) {
+        this.currentDistoName = name;
+        this.menuDisto1.value = name;
+        this.distoTypes[0] = this.currentDistoName;
+        //this.changeDrive(this.currentK);
+      }
+
+      changeDisto2TypeFromPreset(name) {
+        this.currentDistoName = name;
+        this.menuDisto2.value = name;
+        this.distoTypes[1] = this.currentDistoName;
+        //this.changeDrive(this.currentK);
+      }
+
+      changeDrive(sliderValue) {
+        // sliderValue in [0,10]
+        // We can imagine having some "profiles here" -> generate
+        // different K values from one single sliderValue for the
+        // drive.
+        // other values i.e [0.5, 0.5, 0.8, 1] -> less distorsion
+        // on bass frequencies and top high frequency
+        for (var i = 0; i < 2; i++) {
+          this.changeDistorsionValues(sliderValue, i);
+        }
+      }
+      _changeDistorsionValues(evt) {
+        this.changeDistorsionValues(evt.target.value, evt.target.dataset.disto);
+      }
+      changeDistorsionValues(sliderValue, numDisto) {
+        // sliderValue is in [0, 10] range, adjust to [0, 1500] range  
+        var value = 150 * parseFloat(sliderValue);
+        var numDisto = Number(numDisto);
+        var minp = 0;
+        var maxp = 1500;
+        // The result should be between 10 an 1500
+        var minv = Math.log(10);
+        var maxv = Math.log(1500);
+        // calculate adjustment factor
+        var scale = (maxv - minv) / (maxp - minp);
+        value = Math.exp(minv + scale * (value - minp));
+        // end of logarithmic adjustment
+        this.k[numDisto] = value;
+        //console.log("this.k = " + value + " pos = " + this.logToPos(value));
+        //console.log("distoTypes = " + this.distoTypes[numDisto]);
+        this.od[numDisto].curve = this.wsFactory.distorsionCurves[this.distoTypes[numDisto]](this.k[numDisto]); //makeDistortionCurve(k[numDisto]);
+        this.currentWSCurve = this.od[numDisto].curve;
+        //this.od[numDisto].curve = this.makeDistortionCurve(sliderValue);
+        //this.makeDistortionCurve(this.k[numDisto]);
+        //this.od[numDisto].curve = this.makeDistortionCurve(sliderValue);
+        // update output labels
+        var output = this.$["k" + numDisto];
+        output.value = parseFloat(sliderValue).toFixed(1);
+        // update sliders
+        var numSlider = numDisto + 1;
+        this.$["K" + numSlider + "slider"].value = parseFloat(sliderValue).toFixed(1);
+        // refresh knob state
+        var maxPosVal1 = Math.max(this.logToPos(this.k[2]), this.logToPos(this.k[3]));
+        var maxPosVal2 = Math.max(this.logToPos(this.k[0]), this.logToPos(this.k[1]));
+        var maxPosVal = Math.max(maxPosVal1, maxPosVal2);
+        //var maxPosVal = Math.max(this.logToPos(this.k[2]), this.logToPos(this.k[3]));
+        var linearValue = parseFloat(maxPosVal).toFixed(1);
+        this.$.Knob3.setValue(linearValue, false);
+        // in [0, 10]
+        this.currentK = linearValue;
+        // redraw curves
+        this.drawCurrentDistos();
+      }
+
+      logToPos(logValue) {
+        var minp = 0;
+        var maxp = 1500;
+        // The result should be between 10 an 1500
+        var minv = Math.log(10);
+        var maxv = Math.log(1500);
+        // calculate adjustment factor
+        var scale = (maxv - minv) / (maxp - minp);
+        return (minp + (Math.log(logValue) - minv) / scale) / 150;
+      }
+
+      _changeOversampling(evt) {
+        for (var i = 0; i < 2; i++) {
+          if (evt.target.checked) {
+            // Oversampling generates some (small) latency
+            this.od[i].oversample = '4x';
+            this.boost.setOversampling('4x');
+            console.log("set oversampling to 4x");
+          } else {
+            this.od[i].oversample = 'none';
+            this.boost.setOversampling('none');
+            console.log("set oversampling to none");
+          }
+        }
+        // Not sure if this is necessary... My ears can't hear the difference
+        // between oversampling=node and 4x ? Maybe we should re-init the
+        // waveshaper curves ?
+        //changeDistoType1();
+        //changeDistoType2();
+      }
+
+      // Returns an array of distorsions values in [0, 10] range
+      getDistorsionValue(numChannel) {
+        var pos = this.logToPos(this.k[numChannel]);
+        return parseFloat(pos).toFixed(1);
+      }
+
+      drawCurrentDistos() {
+        // draws both the transfer function and a sinusoidal
+        // signal transformed, for each distorsion stage
+        this.drawDistoCurves(this.distoDrawer1, this.signalDrawer1, this.od[0].curve);
+        this.drawDistoCurves(this.distoDrawer2, this.signalDrawer2, this.od[1].curve);
+      }
+
+      drawDistoCurves(distoDrawer, signalDrawer, curve) {
+        var c = curve;
+        distoDrawer.clear();
+        this.drawCurve(distoDrawer, c);
+        // draw signal
+        signalDrawer.clear();
+        signalDrawer.drawAxis();
+        signalDrawer.makeCurve(Math.sin, 0, Math.PI * 2);
+        signalDrawer.drawCurve('red', 2);
+        //signalDrawer.makeCurve(distord, 0, Math.PI*2);
+        var cTransformed = this.distord(c);
+        this.drawCurve(signalDrawer, cTransformed);
+      }
+
+      distord(c) {
+        // return the curve of sin(x) transformed by the current wave shaper
+        // function
+        // x is in [0, 2*Math.PI]
+        // sin(x) in [-1, 1]
+        // current distorsion curve
+        var curveLength = c.length;
+        var c2 = new Float32Array(this.DRAWER_CANVAS_SIZE);
+        // sin(x) -> ?
+        // [-1, 1] -> [0, length -1]
+        // 100 is the canvas size.
+        var incX = 2 * Math.PI / this.DRAWER_CANVAS_SIZE;
+        var x = 0;
+        for (var i = 0; i < this.DRAWER_CANVAS_SIZE; i++) {
+          var index = Utils.map(Math.sin(x), -1, 1, 0, curveLength - 1);
+          c2[i] = c[Math.round(index)];
+          x += incX;
+        }
+        return c2;
+      }
+
+      //fabrice: Never used
+      changeQValues(sliderVal, numQ) {
+        var value = parseFloat(sliderVal);
+        this.eq.filters[numQ].Q.value = value;
+        // update output labels
+        var output = this.$["q" + numQ];
+        output.value = value.toFixed(1);
+        // update sliders
+        var numSlider = numQ + 1;
+        var slider = this.$["Q" + numSlider + "slider"];
+        slider.value = value;
+      }
+      //fabrice: Never used
+      changeFreqValues(sliderVal, numF) {
+        var value = parseFloat(sliderVal);
+        this.eq.filters[numF].frequency.value = value;
+        // update output labels
+        var output = this.$["freq" + numF];
+        output.value = value + " Hz";
+        // refresh slider state
+        var numSlider = numF + 1;
+        var slider = this.$["F" + numSlider + "slider"];
+        slider.value = value;
+      }
+
+      // volume aka preamp output volume
+      changeOutputGain(sliderVal) {
+        // sliderVal is in [0, 10]
+        // Adjust to [0, 1]
+        this.outputGain.gain.value = parseFloat(sliderVal / 10);
+        // update output labels
+        //var output = this.$.outputGain;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.OGslider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        this.$.Knob1.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+      //fabrice: Never used
+      // volume aka preamp output volume
+      changeInputGain(sliderVal) {
+        // sliderVal is in [0, 10]
+        // Adjust to [0, 1]
+        this.inputGain.gain.value = parseFloat(sliderVal / 10);
+        // update output labels
+        //var output = this.$.outputGain;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.OGslider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        this.$.Knob1.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changeMasterVolume(sliderVal) {
+        // sliderVal is in [0, 10]
+        this.masterVolume.gain.value = parseFloat(sliderVal);;
+        // update output labels
+        //var output = this.$.MVOutputGain;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.MVslider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        this.$.Knob2.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changeReverbGain(sliderVal) {
+        // slider val in [0, 10] range
+        // adjust to [0, 1]
+        this.reverb.setGain(parseFloat(sliderVal) / 10);
+        // update output labels
+        //var output = this.$.reverbGainOutput;
+        //output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        //var slider = this.$.convolverSlider;
+        //slider.value = parseFloat(sliderVal).toFixed(1);
+        // refresh knob state
+        this.$.Knob7.setValue(parseFloat(sliderVal).toFixed(1), false);
+      }
+
+      changeReverbImpulse(name) {
+        this.reverb.loadImpulseByName(name);
+      }
+      _changeRoom(evt) {
+        this.changeRoom(evt.target.value);
+      }
+      changeRoom(sliderVal) {
+        // slider val in [0, 10] range
+        // adjust to [0, 1]
+        console.log('change room');
+        var value = parseFloat(sliderVal) / 10;
+        this.cabinetSim.setGain(value);
+        // update output labels
+        var output = this.$.cabinetGainOutput;
+        output.value = parseFloat(sliderVal).toFixed(1);
+        // refresh slider state
+        var slider = this.$.convolverCabinetSlider;
+        slider.value = parseFloat(sliderVal).toFixed(1);
+      }
+
+      changeCabinetSimImpulse(name) {
+        this.cabinetSim.loadImpulseByName(name);
+      }
+
+      changeEQValues(eqValues) {
+        this.eq.setValues(eqValues);
+      }
+
+      makeDistortionCurve(k) {
+        // compute a new ws curve for current disto name and current k
+        this.currentWSCurve = this.wsFactory.distorsionCurves[this.currentDistoName](this.k);
+        return this.currentWSCurve;
+      }
+
+      changePreset() {
+        this.setPreset(this.presets[this.menuPresets.value]);
+      }
+
+      setPreset(p) {
+        if (p.distoName1 === undefined) p.distoName1 = "standard";
+        if (p.distoName2 === undefined) p.distoName2 = "standard";
+        if (p.boost === undefined) p.boost = false;
+        this.changeBoost(p.boost);
+        // stage 1
+        this.changeLowShelf1FrequencyValue(p.LS1Freq);
+        this.changeLowShelf1GainValue(p.LS1Gain);
+        this.changeLowShelf2FrequencyValue(p.LS2Freq);
+        this.changeLowShelf2GainValue(p.LS2Gain);
+        this.changePreampStage1GainValue(p.gain1);
+        this.changeDisto1TypeFromPreset(p.distoName1);
+        this.changeDistorsionValues(p.K1, 0);
+        // stage 2
+        this.changeLowShelf3FrequencyValue(p.LS3Freq);
+        this.changeLowShelf3GainValue(p.LS3Gain);
+        this.changePreampStage2GainValue(p.gain2);
+        this.changeDisto2TypeFromPreset(p.distoName2);
+        this.changeDistorsionValues(p.K2, 1);
+        this.changeOutputGain(p.OG);
+        this.changeBassFilterValue(p.BF);
+        this.changeMidFilterValue(p.MF);
+        this.changeTrebleFilterValue(p.TF);
+        this.changePresenceFilterValue(p.PF);
+        this.changeMasterVolume(p.MV);
+        this.changeReverbGain(p.RG);
+        this.changeReverbImpulse(p.RN);
+        this.changeRoom(p.CG);
+        this.changeCabinetSimImpulse(p.CN);
+        this.changeEQValues(p.EQ);
+      }
+
+      getPresets() {
+        return this.presets;
+      }
+
+      setDefaultPreset() {
+        this.setPreset(this.presets[0]);
+      }
+
+      printCurrentAmpValues() {
+        var currentPresetValue = {
+          name: 'current',
+          boost: this.boost.isActivated(),
+          LS1Freq: this.lowShelf1.frequency.value,
+          LS1Gain: this.lowShelf1.gain.value,
+          LS2Freq: this.lowShelf2.frequency.value,
+          LS2Gain: this.lowShelf2.gain.value,
+          gain1: this.preampStage1Gain.gain.value,
+          distoName1: this.menuDisto1.value,
+          K1: this.getDistorsionValue(0),
+          HP1Freq: this.highPass1.frequency.value,
+          HP1Q: this.highPass1.Q.value,
+          LS3Freq: this.lowShelf3.frequency.value,
+          LS3Gain: this.lowShelf3.gain.value,
+          gain2: this.preampStage2Gain.gain.value,
+          distoName2: this.menuDisto2.value,
+          K2: this.getDistorsionValue(1),
+          OG: (this.output.gain.value * 10).toFixed(1),
+          BF: ((this.bassFilter.gain.value / 7) + 10).toFixed(1), // bassFilter.gain.value = (value-5) * 3;
+          MF: ((this.midFilter.gain.value / 4) + 5).toFixed(1), // midFilter.gain.value = (value-5) * 2;
+          TF: ((this.trebleFilter.gain.value / 10) + 10).toFixed(1), // trebleFilter.gain.value = (value-5) * 5;
+          PF: ((this.presenceFilt.gain.value / 2) + 5).toFixed(1), // presenceFilter.gain.value = (value-5) * 2;
+          EQ: this.eq.getValues(),
+          MV: this.masterVolume.gain.value.toFixed(1),
+          RN: this.reverb.getName(),
+          RG: (this.reverb.getGain() * 10).toFixed(1),
+          CN: this.cabinetSim.getName(),
+          CG: (this.cabinetSim.getGain() * 10).toFixed(1)
+        };
+        console.log(JSON.stringify(currentPresetValue));
+      }
+      // END PRESETS
+      bypass(cb) {
+        console.log("byPass : " + cb.checked);
+        if (cb.checked) {
+          // byPass mode
+          this.inputGain.gain.value = 1;
+          this.byPass.gain.value = 0;
+        } else {
+          // normal ampli running mode
+          this.inputGain.gain.value = 0;
+          this.byPass.gain.value = 1;
+        }
+        // update buttons states
+        //var onOffButton = this.$.myonoffswitch;
+        //onOffButton.checked = cb.checked;
+        var onOffSwitch = this.$.switch1;
+        if (cb.checked) {
+          onOffSwitch.setValue(0, false);
+          this.$.led.setValue(1, false);
+        } else {
+          onOffSwitch.setValue(1, false);
+          this.$.led.setValue(0, false);
+        }
+      }
+
+      bypassEQ(cb) {
+        console.log("EQ byPass : " + cb.checked);
+        if (cb.checked) {
+          // byPass mode
+          this.inputEQ.gain.value = 1;
+          this.bypassEQg.gain.value = 0;
+        } else {
+          // normal ampli running mode
+          this.inputEQ.gain.value = 0;
+          this.bypassEQg.gain.value = 1;
+        }
+        // update buttons states
+        //var onOffButton = this.$.myonoffswitch;
+        //onOffButton.checked = cb.checked;
+        var eqOnOffSwitch = this.$.switch2;
+        if (cb.checked) {
+          eqOnOffSwitch.setValue(0, false);
+        } else {
+          eqOnOffSwitch.setValue(1, false);
+        }
+      }
+      _toArray(obj) {
+        return Object.keys(obj.distorsionCurves).map(function (key) {
+          return key;
+        });
+      }
+    }
+    window.customElements.define(AmpSim.is, AmpSim);
+  </script>
+</dom-module>

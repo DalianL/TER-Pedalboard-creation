@@ -1,0 +1,109 @@
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="./js/pedal-behavior.html">
+
+
+<dom-module id="pedal-lowpass">
+  <template>
+
+    <style include="shared-styles">
+      :host{
+        background-color: #fff600;
+        background: linear-gradient(yellow, orange);
+      }
+    </style>
+
+    <div class="laPedale">
+      <div class="elements">
+
+        <div class="row">
+          <div class="column">
+            <webaudio-knob id="knob1" class="knob" midilearn="true" sprites="99" value="0" step="1" width="40" height="40" src="./img/knobs/nux_white_black_stripe.png" data-role="frequency"></webaudio-knob>
+            <span class="knob-label" id="knob1-label">FREQ</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <webaudio-switch id="switch1" class="switch" midilearn="true" src="./img/switches/switch_1.png" width="40" height="25"></webaudio-switch>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <span class="pedalLabel">LOW PASS</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </template>
+
+  <script>
+    class PedalLowpass extends MyMixin(Polymer.Element){
+
+      static get is(){ return 'pedal-lowpass'; }
+
+      static get properties() {
+        return {
+          dataWidth:{
+            type:Number,
+            value:120
+          },
+          dataHeight:{
+            type:Number,
+            value:150
+          }
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        this.createAllInternNodes();
+        this.connectInternNodes();
+        this.resetKnobs();
+        this.setKnobsListeners();
+        this.setValuesToKnobs();
+        this.setPedalActive();
+        this.setSwitchListener();
+      }
+
+      createAllInternNodes(){
+        this.lowPassFilter = Pizzicato.context.createBiquadFilter();
+        this.lowPassFilter.type = "lowshelf";
+        this.lowPassFilter.gain.value = 25;
+        this.dryGainNode = Pizzicato.context.createGain();
+        this.wetGainNode = Pizzicato.context.createGain();
+      }
+
+      connectInternNodes()  {
+        this.soundNodeIn.connect(this.wetGainNode);
+        this.wetGainNode.connect(this.lowPassFilter)
+        this.lowPassFilter.connect(this.soundNodeOut);
+        this.soundNodeIn.connect(this.dryGainNode);
+        this.dryGainNode.connect(this.soundNodeOut);
+      }
+
+      setKnobsListeners(){
+        this.$.knob1.addEventListener('change',(e)=>{ this.lowPassFilter.frequency.value = 440+((e.target.value)*50);});
+      }
+
+
+      getDefaultButtonsValues() {
+        return { frequency : 10 };
+      }
+
+      bypass() {
+        this.wetGainNode.gain.value = 0;
+        this.dryGainNode.gain.value = 1;
+      }
+
+      reactivate() {
+        this.wetGainNode.gain.value = 1;
+        this.dryGainNode.gain.value = 0;
+      }
+    }
+    // Register the x-custom element with the browser
+    customElements.define(PedalLowpass.is, PedalLowpass);
+  </script>
+</dom-module>

@@ -1,0 +1,108 @@
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="./js/pedal-behavior.html">
+
+<dom-module id="pedal-delay">
+  <template>
+    <style include="shared-styles">
+       :host {
+        background-color: #5aaa60;
+        background: linear-gradient(#009688, #004d40);
+      }
+    </style>
+
+    <div class="laPedale">
+      <div class="elements">
+
+        <div class="row">
+          <div class="column">
+            <webaudio-knob id="knob1" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_yellow_not_stripped.png"
+              width="40" height="40" data-role="feedback"></webaudio-knob>
+            <span class="knob-label" id="knob1-label">FEEDBACK</span>
+          </div>
+          <div class="column">
+            <webaudio-knob id="knob2" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_yellow_not_stripped.png"
+              width="40" height="40" data-role="time"></webaudio-knob>
+            <span class="knob-label" id="knob2-label">TIME</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <webaudio-knob id="knob3" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_yellow_not_stripped.png"
+              width="40" height="40" data-role="mix"></webaudio-knob>
+            <span class="knob-label" id="knob3-label">MIX</span>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <webaudio-switch id="switch1" class="switch" midilearn="true" src="./img/switches/switch_1.png" width="40" height="25"></webaudio-switch>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="column">
+            <span class="pedalLabel">DELAY</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </template>
+  <script>
+    class PedalDelay extends MyMixin(Polymer.Element) {
+      static get is() {
+        return 'pedal-delay';
+      }
+      static get properties() {
+        return {
+          dataWidth: {
+            type: Number,
+            value: 120
+          },
+          dataHeight: {
+            type: Number,
+            value: 180
+          }
+        };
+      }
+      ready() {
+        super.ready();
+        this.createAllInternNodes();
+        this.connectInternNodes();
+        this.resetKnobs();
+        this.setKnobsListeners();
+        this.setValuesToKnobs();
+        this.setPedalActive();
+        this.setSwitchListener();
+      }
+      createAllInternNodes() {
+        this.effect = new Pizzicato.Effects.Delay();
+      }
+      connectInternNodes() {
+        this.soundNodeIn.connect(this.effect);
+        this.effect.connect(this.soundNodeOut);
+      }
+      setKnobsListeners() {
+        this.$.knob1.addEventListener('change', (e) => this.effect.feedback = e.target.value / 100);
+        this.$.knob2.addEventListener('change', (e) => this.effect.time = e.target.value / 100);
+        this.$.knob3.addEventListener('change', (e) => this.effect.mix = e.target.value / 100);
+      }
+      getDefaultButtonsValues() {
+        return {
+          feedback: 50,
+          time: 30,
+          mix: 50
+        };
+      }
+      bypass() {
+        this.effect.bypass();
+      }
+      reactivate() {
+        this.effect.reactivate();
+      }
+    }
+    // Register the x-custom element with the browser
+    customElements.define(PedalDelay.is, PedalDelay);
+  </script>
+</dom-module>

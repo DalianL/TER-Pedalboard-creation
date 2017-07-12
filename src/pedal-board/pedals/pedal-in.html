@@ -1,0 +1,31 @@
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="./js/pedal-behavior.html">
+
+<dom-module id="pedal-in">
+  <template>
+    <style include="shared-styles"></style>
+    <div class="laPedale"></div>
+  </template>
+  <script>
+    class PedalIn extends MyMixin(Polymer.Element){
+      static get is(){ return 'pedal-in'; }
+      static get properties() {
+        return {
+          dataWidth:{
+            type:Number,
+            value:20
+          },
+          dataHeight:{
+            type:Number,
+            value:20
+          }
+        };
+      }
+      ready() {
+        super.ready();
+      }
+    }
+    // Register the x-custom element with the browser
+    customElements.define(PedalIn.is, PedalIn);
+  </script>
+</dom-module>

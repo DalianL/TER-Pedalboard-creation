@@ -1,0 +1,1183 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="./pedals/css/shared-styles.html">
+<link rel="import" href="./pedals/js/Pizzicato_2.html">
+
+<link rel="import" href="./pedals/pedal-in.html">
+<link rel="import" href="./pedals/pedal-out.html">
+<link rel="import" href="./pedals/pedal-delay.html">
+<link rel="import" href="./pedals/pedal-flanger.html">
+<link rel="import" href="./pedals/pedal-lowpass.html">
+<link rel="import" href="./pedals/pedal-quadrafuzz.html">
+<link rel="import" href="./amp-sim/amp-sim.html">
+
+<dom-module id="pedal-board">
+  <template>
+    <style>
+       :host {
+        background-color: maroon;
+        background-image: url('../../img/background-pedalboard.jpg');
+
+        transform: scale(1, 1);
+        position: absolute;
+        top: 0px;
+        right: 0%;
+        left: 0px;
+        bottom: 0%;
+
+        width: 100%;
+        height: 100%;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        user-select: none;
+        overflow: hidden
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        background-image: url('../img/background.jpg');
+      }
+      /***** header *****/
+
+      header {
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+        box-shadow: inset 0px 1px 10px 0px #111;
+
+        z-index: 1;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+      }
+
+      header span,
+      header a {
+        color: #ccc;
+        text-shadow: 0px -1px 0px #000;
+
+        font-size: 20px;
+
+        font-family: 'Quicksand', cursive;
+        text-decoration: none;
+      }
+
+      header div {
+        flex: 1;
+        padding: 10px;
+
+        text-align: center;
+      }
+      /*
+      header div:nth-child(2){
+        background: #111;
+      }
+      /**/
+
+      header div audio {
+        width: 100%;
+      }
+      /***** https://stackoverflow.com/questions/4126708/is-it-possible-to-style-html5-audio-tag *****/
+
+      audio::-webkit-media-controls-panel,
+      audio::-webkit-media-controls-current-time-display,
+      audio::-webkit-media-controls-time-remaining-display {
+        background: transparent;
+        color: #888;
+      }
+
+      .pedals:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .pedals {
+        padding: 10px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+
+      .pedals .pedal {
+        height: 160px;
+      }
+
+      .pedals span {
+        color: #eee;
+
+        font-size: 14px;
+        padding-top: 10px;
+
+        font-family: 'Quicksand', cursive;
+      }
+
+      #delay {
+        width: 109px;
+        height: 159px;
+        background-image: url("../../img/delay.png");
+        margin-left: 5%;
+      }
+
+      #quadrafuzz {
+        width: 90px;
+        height: 160px;
+        background-image: url("../../img/quadra_fuzz.png");
+        margin-left: 5%;
+      }
+
+      #lowpass {
+        width: 85px;
+        height: 162px;
+        background-image: url("../../img/low_pass.png");
+        margin-left: 5%;
+      }
+
+      #flanger {
+        width: 150px;
+        height: 162px;
+        background-image: url("../../img/flanger.png");
+        margin-left: 5%;
+      }
+
+
+      #ampsim {
+        width: 150px;
+        height: 50px;
+        margin-left: 5%;
+      }
+
+      #ampsim img {
+        width: 100%;
+      }
+      /***** div_app_tabs *****/
+
+      .div_app_tabs {
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+
+        position: absolute;
+        bottom: 0px;
+        left: 0px;
+        right: 0px;
+        z-index: 1;
+        margin: 1px;
+      }
+
+      .div_app_tabs input[type=radio] {
+        display: none;
+      }
+
+      .div_app_tabs input:hover+label {
+        background: #222;
+        border-top: 3px solid orange;
+      }
+
+      .div_app_tabs input:checked+label {
+        background: #111;
+        border-top: 3px solid purple;
+      }
+
+      .div_app_tabs label:hover {
+        background: #222;
+      }
+
+      .div_app_tabs label {
+        background: #444;
+        color: #eee;
+        border-top: 3px solid #222;
+
+        padding: 5px;
+
+        font-family: 'Quicksand', cursive;
+        display: inline-block;
+        cursor: pointer;
+      }
+
+      .div_app_tabs .div_container {
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.06), 0 1px 10px 0 rgba(0, 0, 0, 0.08);
+
+        height: 210px;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+      }
+
+      .div_app_tabs [id^="content-"] {
+        display: none;
+      }
+
+      .div_app_tabs #tab-1:checked~.div_container #content-1,
+      .div_app_tabs #tab-2:checked~.div_container #content-2,
+      .div_app_tabs #tab-3:checked~.div_container #content-3,
+      .div_app_tabs #tab-4:checked~.div_container #content-4,
+      .div_app_tabs #tab-5:checked~.div_container #content-5 {
+        display: flex;
+      }
+    </style>
+
+    <header>
+      <div><a href="https://github.com/dl100463/TER-Pedalboard-creation/tree/newBranchEK">PedalBoard 2017</a></div>
+      <div>
+        <audio src="./audio/test.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio>
+      </div>
+      <div>
+        <span>MICRO</span>
+        <webaudio-switch src="img/switch_toggle.png" class="id" id="mic" height="28" width="50" alt="Press to record" title="Press to record"></webaudio-switch>
+      </div>
+    </header>
+
+    <pedal-in id="pedalIn"></pedal-in>
+    <pedal-out id="pedalOut"></pedal-out>
+
+    <!-- appel des méthodes de la classe -->
+    <slot id="slot" on-dragover="dragPedalHandler" on-drop="dropPedalHandler"></slot>
+    <!-- autre façon d'appeler des méthodes de la classe -->
+    <!--
+    <slot id="slot" ondragover="[[dragPedalHandler]]" ondrop="[[dropPedalHandler]]"></slot>
+    -->
+
+    <div class="div_app_tabs">
+      <div class="div_tabs" id="div_tabs">
+        <input id="tab-1" type="radio" name="input-tab" checked><label for="tab-1">delay</label>
+        <input id="tab-2" type="radio" name="input-tab"><label for="tab-2">lowpass</label>
+        <input id="tab-3" type="radio" name="input-tab"><label for="tab-3">quadrafuzz</label>
+        <input id="tab-4" type="radio" name="input-tab"><label for="tab-4">flanger</label>
+        <input id="tab-5" type="radio" name="input-tab"><label for="tab-5">ampsim</label>
+
+        <div class="div_container">
+
+          <div id="content-1">
+            <div class="pedals">
+              <div id="delay" class="pedal" draggable="true"></div>
+              <span>delay</span>
+            </div>
+          </div>
+
+          <div id="content-2">
+            <div class="pedals">
+              <div id="lowpass" class="pedal" draggable="true"></div>
+              <span>lowpass</span>
+            </div>
+          </div>
+
+          <div id="content-3">
+            <div class="pedals">
+              <div id="quadrafuzz" class="pedal" draggable="true"></div>
+              <span>quadrafuzz</span>
+            </div>
+          </div>
+
+          <div id="content-4">
+            <div class="pedals">
+              <div id="flanger" class="pedal" draggable="true"></div>
+              <span>flanger</span>
+            </div>
+          </div>
+
+          <div id="content-5">
+            <div class="pedals">
+              <div id="ampsim" class="pedal" draggable="true">
+              </div>
+              <span>ampsim</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <div>
+      <nav id="context-menuJack" class="context-menu">
+        <ul id="menu-container" class="context-menu__items">
+        </ul>
+      </nav>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class PedalBoard extends Polymer.Element {
+
+      static get is() {
+        return 'pedal-board';
+      }
+
+      // 2 propriétés : width et height de la pedalboard
+      static get properties() {
+        return {
+          dataWidth: {
+            type: Number,
+            value: 0
+          },
+          dataHeight: {
+            type: Number,
+            value: 0
+          },
+          soundSample: {
+            type: Object,
+            value: ""
+          }
+        };
+      }
+
+      constructor() {
+        super();
+
+        this.pedals = [];
+        this.elem = document.querySelector("pedal-board");
+        this.pIn;
+        this.pOut;
+
+        this.svgcanvas = undefined;
+
+        this.currentState = "none";
+        this.oldMousePosX = 0;
+        this.oldMousePosY = 0;
+        this.zoom = 0;
+        this.currentDraggablePedal = "";
+        this.pedalboardOrigin = [];
+
+        this.nbPedalsAdded = 0;
+
+        this.w = 0;
+        this.h = 0;
+        this.wO = 0;
+        this.hO = 0;
+
+        // ===== ===== SOUND ===== ===== 
+        this.sound = {
+          pzContext: null,
+          mediaSource: null,
+          audioDestination: null,
+          mediaSourceM: null,
+          mediaSRC: null,
+          state: null
+        }
+      }
+      connectedCallback() {
+        super.connectedCallback();
+      }
+
+      ready() {
+        super.ready();
+
+        this.soundSample = this.$.soundSample;
+        this.w = this.offsetWidth;
+        this.wO = this.w;
+
+        this.h = this.offsetHeight;
+        this.hO = this.h;
+
+
+        this.pIn = this.$["pedalIn"];
+        this.pOut = this.$["pedalOut"];
+
+        // create SVG canvas
+        this.svgcanvas = PedalBoard.createSVGcanvas(this.w, this.h);
+
+        // ajout des sources IN/OUT dans le pedalBoard
+        this.pIn.setPosition(-20, (this.h / 2));
+        this.pOut.setPosition(this.w, (this.h / 2));
+
+        this.addPedal(this.pIn);
+        this.addPedal(this.pOut);
+
+        // Handles the WebAudio graph initialization
+        this.soundHandler();
+
+        // For pedals to be draggable
+        this.addDraggableListeners();
+
+        // For new pedals to be added
+        this.addNewPedalListeners();
+
+        // For mouse zooming 
+        this.addZoomListener();
+
+        // For the jack menu to appear
+        this.addMenuListeners();
+
+
+        this.resizeListener();
+
+        // ADD NEW PEDAL TO PEDALBOARD
+
+        /*
+        let p1 = document.createElement("amp-sim");
+        p1.setPosition(150, 400);
+        this.addPedal(p1);
+
+        let p2 = document.createElement("pedal-flanger");
+        p2.setPosition(400, 400);
+        this.addPedal(p2);
+
+        let p3 = document.createElement("pedal-lowpass");
+        p3.setPosition(700, 400);
+        this.addPedal(p3);
+
+        let p4 = document.createElement("pedal-quadrafuzz");
+        p4.setPosition(150, 50);
+        this.addPedal(p4);
+        */
+
+        // CONNECT PEDALS
+
+        // this.connect(this.pIn, p1);
+        // this.connect(p1,this.pOut);
+
+      }
+
+      addPedal(p) {
+        this.pedals.push(p);
+        if (p.id != "pedalIn" && p.id != "pedalOut") {
+          p.className = "draggable";
+          p.id = "p" + this.nbPedalsAdded;
+          this.nbPedalsAdded++;
+        }
+        p.pedalboard = this;
+        this.appendChild(p);
+      }
+
+      removePedal(p) {
+        if (confirm("Souhaitez-vous vraiment supprimer cette pédale ?")) {
+
+          console.log("remove");
+          console.log(p);
+          let jacksIn = p.inputJacks;
+          let jacksOut = p.outputJacks;
+
+          jacksIn.forEach((j, i) => {
+            console.log(j);
+            //this.disconnect(j.p1,j.p2);
+          })
+
+          /*
+            for (let i = 0; i < jacksInLen; i++) {
+              // Delete the input jacks from the list starting from the last one
+              self.disconnect(jacksIn[jacksInLen - i - 1].p1, jacksIn[jacksInLen - i - 1].p2);
+            }
+
+            for (let i = 0; i < jacksOutLen; i++) {
+              // Delete the output jacks from the list starting from the last one
+              self.disconnect(jacksOut[jacksOutLen - i - 1].p1, jacksOut[jacksOutLen - i - 1].p2);
+            }
+
+            this.pedals.splice(p, 1);
+
+            for (i = p; i < this.pedals.length; i++) {
+              this.pedals[i].number -= 1;
+              this.pedals[i].delete.innerHTML = "<a href='#' onclick=\"pedalboard.removePedal(" + this.pedals[i].number +
+                ", '" + this.pedals[i].id + "');\"><i class='fa fa-trash' title='Delete pedal'></i></a>";
+            }
+
+            this.updateTokenPedal();
+
+            let el = document.getElementById(type);
+            el.parentNode.removeChild(el);
+          }
+          p.pedalboard = this;
+          */
+        }
+      }
+
+      connect(p1, p2) {
+        let j = new Jack();
+        j.connexion(p1, p2);
+
+        p1.addJackAtOutput(j);
+        p2.addJackAtInput(j);
+        this.soundNodeConnection(p1, p2);
+      }
+
+      disconnect(p1, p2) {
+        let j;
+        for (j in p1.outputJacks) {
+          if (p1.outputJacks[j].p2 == p2) {
+            p1.removeJackAtOutput(p1.outputJacks[j]);
+          }
+        }
+        for (j in p2.inputJacks) {
+          if (p2.inputJacks[j].p1 == p1) {
+            p2.removeJackAtInput(p2.inputJacks[j]);
+          }
+        }
+
+        // removes all components of the SVG Jack, 
+        // here 3 drawings on top of each other
+        for (var i = 1; i <= 4; i++) {
+          var elem = document.getElementById("jack_" + p1.id + "_" + p2.id + "_" + i);
+          if (elem != null) elem.parentNode.removeChild(elem);
+        }
+
+        this.soundNodeDisconnection(p1, p2);
+      }
+
+      getPedalFromHtmlElem(elem) {
+        for (var i = 0; i < this.pedals.length; i++) {
+          var p = this.pedals[i];
+          if (p === elem) return p;
+        }
+        return undefined;
+      }
+
+      move(dx, dy) {
+        if (this.zoom == 1) {
+          this.style.transition = '';
+          this.pedalboardOrigin.x += dx / 50;
+          this.pedalboardOrigin.y += dy / 50;
+          this.style.transform = "scale(2,2) translate(" + this.pedalboardOrigin.x + "px," + this.pedalboardOrigin
+            .y +
+            "px)";
+        }
+
+      }
+
+      findClosestIO(x, y) {
+        this.pedals.forEach((p) => {
+          /*
+          be careful here this is not the pedalboard,
+          we're in a forEach callback, remind the trap
+          I talked into the course !!!! 
+          This is why we use self = this just before !
+          */
+          let iPos = p.getInputPos();
+          let oPos = p.getOutputPos();
+
+          let distInput;
+          let distMinToInputForHighlight = 20;
+
+          if (this.currentState === "drawingNewJack") {
+            /*
+            We must highlight the pedal input taking
+            into account the length of the jack ending (an image of 100px width)
+            */
+            distInput = this.distance(x, y, iPos.x - 100, iPos.y);
+            distMinToInputForHighlight = 100;
+          } else {
+            // regular case, we're just pointing the mouse around
+            distInput = this.distance(x, y, iPos.x, iPos.y);
+          }
+
+          let distOutput = this.distance(x, y, oPos.x, oPos.y);
+          // It depends if we're trying to plug a jack or not
+          if (distInput < distMinToInputForHighlight) {
+            if (!p.inputHighlighted) p.highLightInput(true);
+          } else {
+            if (p.inputHighlighted) p.highLightInput(false);
+          }
+
+          if (distOutput < 40) {
+            if (!p.outputHighlighted) p.highLightOutput(true);
+          } else {
+            if (p.outputHighlighted) p.highLightOutput(false);
+          }
+        });
+      }
+
+      findPedalWhoseOutputIsHighlighted() {
+        for (let i = 0; i < this.pedals.length; i++) {
+          let p = this.pedals[i];
+          if (p.outputHighlighted) return p;
+        }
+      }
+
+      findPedalWhoseInputIsHighlighted() {
+        for (var i = 0; i < this.pedals.length; i++) {
+          let p = this.pedals[i];
+          if (p.inputHighlighted) return p;
+        }
+      }
+
+      rescale(s) {
+        this.style = 'transform(' + s + ',' + s + ')';
+      }
+
+      mouseWheelHandler(e) {
+        e.preventDefault();
+
+        let board = document.querySelector('#pedalboard');
+        let boardC = document.querySelector('#pedalboard-container');
+        let boardWid = parseInt(window.getComputedStyle(board).width, 10);
+        let boardHei = parseInt(window.getComputedStyle(board).height, 10);
+
+        let delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+
+        if (delta == 1) {
+          this.zoom = 1;
+          board.style.transform = 'scale(2,2)';
+          board.style.transition = 'transform 0.5s ease-in';
+
+          if (e.clientY < boardHei / 3) {
+            if (e.clientX < boardWid / 3) {
+              board.style.transformOrigin = 'left top';
+            } else if (e.clientX < 2 * (boardWid / 3)) {
+              board.style.transformOrigin = 'center top';
+            } else {
+              board.style.transformOrigin = 'right top';
+            }
+          } else if (e.clientY < 2 * (boardHei / 3)) {
+            if (e.clientX < boardWid / 3) {
+              board.style.transformOrigin = 'left center';
+            } else if (e.clientX < 2 * (boardWid / 3)) {
+              board.style.transformOrigin = 'center center';
+            } else {
+              board.style.transformOrigin = 'right center';
+            }
+          } else {
+            if (e.clientX < boardWid / 3) {
+              board.style.transformOrigin = 'left bottom';
+            } else if (e.clientX < 2 * (boardWid / 3)) {
+              board.style.transformOrigin = 'center bottom';
+            } else {
+              board.style.transformOrigin = 'right bottom';
+            }
+          }
+        }
+
+        if (delta == -1) {
+          this.zoom = 0;
+          board.style.transform = 'scale(1,1)';
+          board.style.transition = 'transform 0.5s ease-in';
+          pedalboard.pedalboardOrigin.x = 0;
+          pedalboard.pedalboardOrigin.y = 0;
+        }
+      }
+
+      highlightInputsOutputs(e) {
+        let rect = this.getBoundingClientRect();
+        let mouseX = e.x - rect.left;
+        let mouseY = e.y - rect.top;
+        let closest = this.findClosestIO(mouseX, mouseY);
+      }
+
+      addMenuListeners() {
+        let menu = this.$["context-menuJack"];
+        let divs = document.querySelectorAll(".input");
+        let menuState = 0;
+
+        this.pedals.forEach((d) => {
+          this.handleJackMenu(d.inputP);
+          this.resizeListener(d.inputP);
+        })
+      }
+
+      handleJackMenu(elem) {
+        console.log("click");
+        console.log(elem);
+        elem.addEventListener("click", (e) => {
+          console.log("rer");
+          //e.preventDefault();
+
+          // if (pedalMenu.inputJacks.length > 1) {
+          //   createMenuItems(pedalMenu.inputJacks);
+          //   toggleMenuOn();
+          //   positionMenu(e, pedalMenu);
+          // }
+        });
+      }
+
+      addZoomListener() {
+        // IE9, Chrome, Safari, Opera
+        this.addEventListener("mousewheel", this.mouseWheelHandler, false);
+        // Firefox
+        this.addEventListener("DOMMouseScroll", this.mouseWheelHandler, false);
+      }
+
+      static createSVGcanvas(w, h) {
+        let svg = document.getElementById("svg-canvas");
+        if (null == svg) {
+          svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+          svg.setAttribute("id", "svg-canvas");
+          svg.setAttribute('style', 'position:absolute;top:0px;left:0px');
+          // Should use here pedalboard
+          svg.setAttribute('width', w);
+          svg.setAttribute('height', h);
+          svg.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:xlink", "http://www.w3.org/1999/xlink");
+
+          pedalboard.prepend(svg);
+        }
+        return svg;
+      }
+
+      updateSVGcanvas(w, h) {
+        let svg = document.getElementById("svg-canvas");
+        svg.setAttribute('width', w);
+        svg.setAttribute('height', h);
+      }
+
+      distance(x1, y1, x2, y2) {
+        var dx = x1 - x2;
+        var dy = y1 - y2;
+
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      /************* DRAGGABLE ********************/
+      addDraggableListeners() {
+        window.addEventListener('mousedown', this.mouseDownDraggable.bind(this), false);
+        window.addEventListener('mouseup', this.mouseUpDraggable.bind(this), false);
+        // celui-là pour detecter si on est au voisinage des inputs et outputs des pédales
+        this.addEventListener('mousemove', this.highlightInputsOutputs.bind(this), false);
+
+      }
+
+      cursorPoint(evt) {
+        let svg = document.querySelector('#svg-canvas');
+        let pt = svg.createSVGPoint();
+        pt.x = evt.clientX;
+        pt.y = evt.clientY;
+        return pt.matrixTransform(svg.getScreenCTM().inverse());
+      }
+
+      mouseDownDraggable(e) {
+        // Computes the location of the mouse in the SVG canvas
+        var loc = this.cursorPoint(e);
+
+        // Quand on clique on mémorise : 1) l'ancienne position
+        // de l'objet qu'on draggue et 2) l'ancienne position de
+        // la souris (la position cliquee) et 3) on ajoute un 
+        // mousemove listener
+        let p;
+        window.addEventListener('mousemove', this.mouseMoveDraggable.bind(this), true);
+
+        if ((p = this.findPedalWhoseOutputIsHighlighted()) !== undefined) {
+          // an output of a pedal is selected, if we drag the mouse
+          // we're in the process of dragging a new cable/jack
+          this.currentState = "drawingNewJack";
+          let x1 = p.getOutputPos().x;
+          let y1 = p.getOutputPos().y;
+          let _pos = {
+            x1: x1,
+            y1: y1,
+            x2: loc.x,
+            y2: loc.y
+          }
+
+          let j = new Jack();
+          this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
+          this.currentDraggableJack.sourcePedal = p;
+          this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+          this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
+          this.currentDraggableJack.x1 = x1;
+          this.currentDraggableJack.y1 = y1;
+
+        } else if ((p = this.findPedalWhoseInputIsHighlighted()) !== undefined) {
+          //pedalMenu = p;
+          if (p.inputJacks.length == 1) {
+            let sourcePedal = p.inputJacks[0].p1;
+            // first we disconnect the jack before immediatly creating
+            // a new one to drag
+            this.disconnect(sourcePedal, p);
+            this.currentState = "drawingNewJack";
+            let x1 = sourcePedal.getOutputPos().x;
+            let y1 = sourcePedal.getOutputPos().y;
+            let _pos = {
+              x1: x1,
+              y1: y1,
+              x2: loc.x,
+              y2: loc.y
+            }
+
+            let j = new Jack();
+            this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
+            this.currentDraggableJack.sourcePedal = sourcePedal;
+            this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+            this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
+            this.currentDraggableJack.x1 = x1;
+            this.currentDraggableJack.y1 = y1;
+          }
+        } else if (this.clickInPedal(e)) {
+          // dragging a pedal
+          this.currentState = "draggingPedal";
+
+          let draggableElementClicked = e.target;
+          this.currentDraggablePedal = this.getPedalFromHtmlElem(draggableElementClicked);
+          let p = this.currentDraggablePedal;
+
+          if (p === undefined) return;
+
+          p.beforeDragPosX = draggableElementClicked.offsetLeft;
+          p.beforeDragPosY = draggableElementClicked.offsetTop;
+
+        } else if (loc.x < parseInt(window.getComputedStyle(this).width, 10) &&
+          loc.y < parseInt(window.getComputedStyle(this).height, 10)) {
+          // dragging the pedalboard
+          this.currentState = "draggingPedalboard";
+        }
+        // Keep track of mouse clicked pos (source position)
+        this.oldMousePosX = loc.x;
+        this.oldMousePosY = loc.y;
+      }
+
+      clickInPedal(e) {
+        let loc = this.cursorPoint(e);
+        let result = false;
+        let pedal;
+
+        this.pedals.forEach((pedal) => {
+          //pedal = _p.getPedalFromHtmlElem(d);
+          if (loc.x > pedal.x && loc.x < pedal.x + pedal.w * 1.25 && loc.y > pedal.y && loc.y < pedal.y +
+            pedal
+            .h * 1.25) {
+            result = true;
+          }
+        });
+        return result;
+      }
+
+      mouseUpDraggable() {
+        // Une fois que la souris est relachée, on a plus besoin de l'évènement "mousemove", on le supprime
+        window.removeEventListener('mousemove', this.mouseMoveDraggable.bind(this), true);
+        let p;
+        switch (this.currentState) {
+          // on vient de déplacer un jack
+          case "drawingNewJack":
+            {
+              // Remove current tmp jack
+              for (var i = 1; i <= 4; i++) {
+                var elem = document.querySelector("#tmpJack_" + i);
+                elem.parentNode.removeChild(elem);
+              }
+
+              if ((p = this.findPedalWhoseInputIsHighlighted()) !== undefined) {
+                // we are dragging a new Jack and we have the mouse pointer
+                // close to a pedal input: let's connect the Jack !
+                let already = false;
+                for (var i = 0; i < p.inputJacks.length; i++) {
+                  // checks if the jack is already plugged in by checking if the source
+                  // pepdal already is in the inputJack list of the destination pedal                
+                  if (p.inputJacks[i].p1 == this.currentDraggableJack.sourcePedal) {
+                    already = true;
+                  }
+                }
+                if (!already) this.connect(this.currentDraggableJack.sourcePedal, p);
+              }
+              delete this.currentDraggableJack;
+            }
+            break;
+            // on vient de déplacer une pédale
+          case "draggingPedal":
+            break;
+          case "draggingPedalboard":
+            break;
+        }
+        // set back pedalboard state to "none", we finished a drag
+        this.currentState = "none";
+      }
+
+      mouseMoveDraggable(e) {
+        // Computes the location of the mouse in the SVG canvas
+        var loc = this.cursorPoint(e);
+        // deplacement souris incrémental
+        let dx = (e.clientX - this.oldMousePosX);
+        let dy = (e.clientY - this.oldMousePosY);
+        switch (this.currentState) {
+          case "drawingNewJack":
+            {
+              let jackWeAreDragging = this.currentDraggableJack;
+              let _pos = {
+                x1: jackWeAreDragging.x1,
+                y1: jackWeAreDragging.y1,
+                x2: loc.x,
+                y2: loc.y
+              };
+              jackWeAreDragging.reviewSVGJack(_pos);
+            }
+            break;
+          case "draggingPedal":
+            {
+              // test obligatoire car on pourrait cliquer
+              // sur les input ou output ou boutons rotatifs etc.*
+              if (this.currentDraggablePedal !== undefined && this.currentDraggablePedal.classList.contains(
+                  'draggable')) {
+                let p = this.currentDraggablePedal;
+                p.move(p.beforeDragPosX + dx, p.beforeDragPosY + dy);
+              }
+            }
+            break;
+          case "draggingPedalboard":
+            {
+              this.move(dx, dy);
+            }
+            break;
+        }
+      }
+
+      addNewPedalListeners() {
+        var newPedals = this.root.querySelectorAll(".pedal");
+        console.log(newPedals);
+
+        newPedals.forEach((p) => {
+          console.log(p);
+          p.addEventListener('dragstart', this.pedalDragStart, false);
+        });
+      }
+
+      pedalDragStart(event) {
+        event.dataTransfer.setData("pedalId", event.target.id);
+      }
+
+      resizeListener() {
+        let dx, dy;
+        window.onresize = (e) => {
+          // Hide menu if the window is resized
+          //toggleMenuOff();
+
+          // Repositions the pedal located on the right 
+          // according to the new width
+
+          /*
+          let pdbW = parseInt(window.getComputedStyle(pdb).width, 10);
+          let pdbH = parseInt(window.getComputedStyle(pdb).height, 10);
+          this.pedals[1].move(pdbW, -20 + (pdbH / 2));
+          */
+          this.w = this.offsetWidth;
+          this.h = this.offsetHeight;
+          this.pOut.setPosition(this.w, (this.h / 2));
+
+          // produit en croix
+          this.pedals.forEach((p, i) => {
+            if (i > 1) {
+              dx = ((p.offsetLeft) * (this.w)) / (this.wO);
+              dy = ((p.offsetTop) * (this.h)) / (this.hO);
+              p.move(dx, dy);
+              /*
+              p.inputJacks.forEach((j, k) => {
+                j.update();
+              });
+              */
+            }
+          });
+
+          this.wO = this.w;
+          this.hO = this.h;
+
+          this.updateSVGcanvas(this.w, this.h);
+        }
+      }
+
+
+      /***** SOUND *****/
+      soundHandler() {
+        this.sound.pzContext = Pizzicato.context;
+        //this.sound.pzContext = new AudioContext();
+        this.sound.mediaSource = this.sound.pzContext.createMediaElementSource(this.soundSample);
+        console.log("this.sound.mediaSource");
+        console.log(this.sound.mediaSource);
+        this.sound.audioDestination = this.sound.pzContext.destination;
+      }
+
+      soundNodeConnection(p1, p2) {
+        if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+          this.sound.mediaSource.connect(this.sound.audioDestination);
+        } else if (p1.id == "pedalIn") {
+          this.sound.mediaSource.connect(p2.elem.soundNodeIn);
+        } else if (p2.id == "pedalOut") {
+          p1.elem.soundNodeOut.connect(this.sound.audioDestination);
+        } else {
+          p1.elem.soundNodeOut.connect(p2.elem.soundNodeIn);
+        }
+      }
+
+      soundNodeDisconnection(p1, p2) {
+        if (p1.id == "pedalIn" && p2.id == "pedalOut") {
+          this.sound.mediaSource.disconnect(this.sound.audioDestination);
+        } else if (p1.id == "pedalIn") {
+          this.sound.mediaSource.disconnect(p2.elem.soundNodeIn);
+        } else if (p2.id == "pedalOut") {
+          p1.elem.soundNodeOut.disconnect(this.sound.audioDestination);
+        } else {
+          p1.elem.soundNodeOut.disconnect(p2.elem.soundNodeIn);
+        }
+      }
+
+      dragPedalHandler(e) {
+        e.preventDefault();
+        return false;
+      }
+
+      dropPedalHandler(e) {
+        let id = e.dataTransfer.getData("pedalId");
+        let _id;
+        //console.log("pedal dropped id = " + id + "x = " + event.clientX);
+        // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
+        // de la même pédale
+        if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadrafuzz") {
+          _id = "pedal-" + id;
+        } else if (id == "ampsim") {
+          _id = "amp-sim";
+        }
+        let p = document.createElement(_id);
+        // if (id == "ampsim") p.showEqualizer = true;
+
+        p.setPosition(e.clientX - 30 - (p.dataWidth / 2), event.clientY - 10 - (p.dataHeight / 2));
+        this.addPedal(p);
+      }
+    }
+
+    class Jack {
+      constructor() {
+
+      }
+      connexion(pedal1, pedal2) {
+        this.p1 = pedal1;
+        this.p2 = pedal2;
+
+        // Compute the svg for this jack
+        let oPos = pedal1.getOutputPos();
+        let x1 = oPos.x,
+          y1 = oPos.y;
+
+        let iPos = pedal2.getInputPos();
+        let x2 = iPos.x,
+          y2 = iPos.y;
+
+        this.id = "jack_" + pedal1.elem.id + "_" + pedal2.elem.id;
+
+        this.shape1 = "";
+        this.shape2 = "";
+        this.shape3 = "";
+        this.end = "";
+
+        let _pos = {
+          x1: x1,
+          y1: y1,
+          x2: x2,
+          y2: y2
+        }
+        this.reviewSVGJack(_pos, this.id);
+
+        /*
+                // Compute the svg for this jack
+                // position des cables à partir des input/output + rayon de l'input/ouput = 10px
+                let oPosP1=p1.getOutputPos();
+                let oPosP2=p2.getOutputPos();
+        
+                let x1 = oPosP1.x, y1 = oPosP1.y+10;
+                let x2 = oPosP2.x-20, y2 = oPosP2.y+10;
+                let jackSVG = this.createBezierSVGJack(this.svgCanvas,"jack_" + p1.id+"-"+ p2.id+"_", x1, y1, x2, y2);
+                */
+      }
+
+      update() {
+        let oPos = this.p1.getOutputPos();
+        let x1 = oPos.x,
+          y1 = oPos.y;
+        let iPos = this.p2.getInputPos();
+        let x2 = iPos.x,
+          y2 = iPos.y;
+        let _pos = {
+          x1: x1,
+          y1: y1,
+          x2: x2,
+          y2: y2
+        }
+
+        this.reviewSVGJack(_pos);
+      }
+
+      /*
+      From: http://stackoverflow.com/questions/6701705/programmatically-creating-an-svg-image-element-with-javascript
+      I've been using the function bellow to create SVG elements and it was failing on create 
+      images because of the xlink:href.
+
+      The code bellow is corrected to do that (create any svg element on the fly)
+
+      makeSVG('#map-tiles', 'image', { class:'map-tile', 'xlink:href':'map/xxx.jpg', width:'512px', height: '512px', x:'0', y:'0'});
+      */
+      // pour créer l'embout du cable
+      makeSVG(tag, attrs) {
+        var el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs) {
+          if (k == "xlink:href") el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+          else el.setAttribute(k, attrs[k]);
+        }
+        return el;
+      }
+
+      /*
+       * Si _id est définie alors on créer un nouveau câble, sinon on met à jour seulement
+       */
+      reviewSVGJack(_pos, _id) {
+        let tension = 1;
+        // if pedal 2 on the left of pedal 1
+        if (_pos.x2 < _pos.x1) tension = -tension;
+
+        let delta = (_pos.x2 - _pos.x1) * tension;
+
+        let hx1 = _pos.x1 + delta;
+        let hy1 = _pos.y1;
+        let hx2 = _pos.x2 - delta;
+        let hy2 = _pos.y2;
+
+        let path = "M " + _pos.x1 + " " + _pos.y1 + " C " + hx1 + " " + hy1 + " " + hx2 + " " + hy2 +
+          " " + _pos.x2 + " " + _pos.y2;
+        let svg = PedalBoard.createSVGcanvas(this.w, this.h);
+        if (_id) {
+          this.shape1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          this.shape2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          this.shape3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+
+          // External wire
+          this.shape1.setAttributeNS(null, "fill", "none");
+          this.shape1.setAttributeNS(null, "stroke", "#471221");
+          this.shape1.setAttributeNS(null, "stroke-width", 10);
+          this.shape1.setAttributeNS(null, "class", "wire");
+          this.shape1.setAttributeNS(null, "id", _id + "_1");
+
+          // Main colored mid wire
+          this.shape2.setAttributeNS(null, "fill", "none");
+          this.shape2.setAttributeNS(null, "stroke", "#8e457d");
+          this.shape2.setAttributeNS(null, "stroke-width", 6);
+          this.shape2.setAttributeNS(null, "class", "wire");
+          this.shape2.setAttributeNS(null, "id", _id + "_2");
+
+          // Specular color in the middle
+          this.shape3.setAttributeNS(null, "fill", "none");
+          this.shape3.setAttributeNS(null, "stroke", "#b87595");
+          this.shape3.setAttributeNS(null, "stroke-width", 2);
+          this.shape3.setAttributeNS(null, "class", "wire");
+          this.shape3.setAttributeNS(null, "id", _id + "_3");
+
+          // Jack ends are images  (embout) 
+          this.end = this.makeSVG('image', {
+            class: 'map-tile',
+            'xlink:href': 'http://img4.hostingpics.net/pics/146380rightJack.png',
+            width: '100px',
+            height: '20px',
+            id: _id + "_4"
+          });
+
+          svg.appendChild(this.shape1);
+          svg.appendChild(this.shape3);
+          svg.appendChild(this.shape2);
+          svg.appendChild(this.end);
+        }
+
+        this.shape1.setAttribute("d", path);
+        this.shape2.setAttribute("d", path);
+        this.shape3.setAttribute("d", path);
+        this.end.setAttribute("x", _pos.x2 - 10);
+        this.end.setAttribute("y", _pos.y2 - 10);
+        return this;
+      }
+    }
+    window.customElements.define(PedalBoard.is, PedalBoard);
+  </script>
+</dom-module>

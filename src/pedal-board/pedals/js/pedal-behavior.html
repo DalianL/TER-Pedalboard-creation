@@ -1,0 +1,310 @@
+<script>
+  /** A behavior defining the functions and properties every pedal must have **/
+  MyMixin = function(superClass) {
+    return class extends superClass{
+
+      constructor() {
+        super();
+
+        this.elem = this;
+
+        this.inputP ="";
+        this.outputP="";
+        this.inputJacks = [];
+        this.outputJacks = [];
+
+        this.x = 0;
+        this.y = 0;
+
+        this.w= this.dataWidth;
+        this.h=this.dataHeight;
+        // relative position of input and output
+        this.IOsize = 15;
+        this.inputOffsetX = -this.IOsize/2;
+        this.inputOffsetY = this.IOsize-4;
+        //this.outputOffsetX = 2*this.IOsize-2;
+        this.outputOffsetX = this.w+2*this.IOsize-2;
+        this.outputOffsetY = this.IOsize;
+      }
+
+      static get properties() {
+        return {
+          soundNodeIn : {
+            type:Object,
+            value: function() {return Pizzicato.context.createGain();  }
+          },
+          soundNodeOut : {
+            type:Object,
+            value: function () {return Pizzicato.context.createGain(); }
+          },
+          isOn: {
+            type:Boolean,
+            value: function() { return false; }
+          }
+        }
+      }
+
+      ready(){
+        super.ready();
+        /*
+        une fois que tout est chargé, on créer les élements en commun (pédale - ampli) suivants :
+        - bouton delete
+        - bouton menu
+        - input
+        - output
+        */
+        // - input
+        this.inputP = document.createElement("div");
+        this.inputP.classList.add("input");
+
+        // - output
+        this.outputP = document.createElement("div");
+        this.outputP.classList.add("output");
+
+        // - output
+        let elem=this.shadowRoot.querySelector(".laPedale");
+        elem.appendChild(this.inputP);
+        elem.appendChild(this.outputP);
+
+        if (this.elem.classList.contains("draggable")){
+          // - bouton delete
+          this.delete = document.createElement("button");
+          this.delete.title += 'delete';
+          this.delete.className+='delete';
+          this.delete.innerHTML+='<iron-icon icon="icons:close"></iron-icon>';
+          this.delete.addEventListener("click",(e)=>{
+            this.pedalboard.removePedal(this);
+          });
+          // - bouton menu
+          this.optionMenu = document.createElement("div");
+          this.optionMenu.title += 'option menu';
+          this.optionMenu.className+='optionMenu';
+          this.optionMenu.innerHTML+='<iron-icon icon="icons:more-vert"></iron-icon>';
+          this.optionMenu.addEventListener("click",(e)=>{
+            this.showEqualizer=(true);
+          });
+
+
+          this.menuLabel=document.createElement("div");
+          this.menuLabel.className="div_menuPanel";
+
+          this.menuLabel.appendChild(this.delete);
+          this.menuLabel.appendChild(this.optionMenu);
+          elem.appendChild(this.menuLabel);
+        }
+      }
+
+      setPosition(x,y){
+        this.x = x;
+        this.y = y;
+
+        this.style.left = x+ "px";
+        this.style.top = y+ "px";
+      }
+
+      /** The abstract functions every pedal must override **/
+      createAllInternNodes(){}
+
+      connectInternNodes(){}
+
+      setKnobsListeners(){}
+
+      //setRolesToKnobs() {}
+
+      getDefaultButtonsValues(){}
+
+      bypass(){}
+
+      reactivate(){}
+
+      /**Some function common to every pedal **/
+
+      /** Link the pedal to a src audioNode and a destination audioNode
+      It is the equivalent of connectIn(src); connectOut(destination);
+      @param src : the source audioNode
+      @param destination : the destination audioNode
+      **/
+      connect(src,destination) {
+        this.connectIn(src);
+        this.connectOut(destination);
+      }
+
+      /**
+      Set a listener to the switch to bypass/reactivate the pedal when it is clicked
+      **/
+      setSwitchListener() {
+        this.$.switch1.addEventListener('change',(e)=>{
+          if (this.isOn) this.bypass();
+          else this.reactivate();
+
+          this.isOn = !this.isOn;
+        });
+      }
+
+      /**
+      *  Set the pedal to an active or bypassed state
+      *  @param active : a Boolean indicating whether the pedal sould be active or not
+      *  if active if undefined, it is considered false
+      **/
+      setPedalActive(active) {
+        if (active == undefined || active == false) {
+          this.isOn = false;
+          this.bypass();
+          this.$.switch1.value = 0;
+        } else if (active) {
+          this.isOn = true;
+          this.reactivate();
+          this.$.switch1.value = 1;
+        }
+      }
+      
+      /**
+      * Set values to the knobs
+      * @param options : the values that must be set, if it undefined the default values are used
+      **/
+      setValuesToKnobs(options) {
+        var defaultValues = options ==undefined ? this.getDefaultButtonsValues() : options;
+        for (var key in defaultValues) {
+          this.shadowRoot.querySelector("[data-role='"+key+"']").value = defaultValues[key];
+        }
+      }
+
+      /**
+      * Retrieves the current knob values of the pedal
+      * @return an object containing a list of label : value , the label are the roles of the knobs
+      * defined in setRolesToKnobs
+      **/
+      getCurrentKnobsValues() {
+        var values = {};
+        var knobs = this.getElementsByTagName("webaudio-knob");
+        var i , l = knobs.length;
+        for (i=0;i< l;i++) {
+          if (knobs[i].dataset.role)
+            values[knobs[i].dataset.role] = knobs[i].value;
+        }
+        return values;
+      }
+
+      /**
+      * Reset all the knobs values, giving them the NaN value
+      **/
+      resetKnobs() {
+        var knobs = this.getElementsByTagName("webaudio-knob");
+        for (var i = 0;i< knobs.length;i++)
+          knobs[i].value = NaN;
+      }
+
+      /**
+      * Disconnect the out node of the pedal
+      **/
+      disconnectOut() {
+        this.soundNodeOut.disconnect();
+      }
+
+      /**
+      * Connect the out node of the pedal
+      * Updates the new destination of the pedal
+      **/
+      connectOut(audioNode) {
+        this.destination = audioNode;
+        this.soundNodeOut.connect(audioNode);
+      }
+
+      /**
+      * Disconnect the in node of the pedal
+      **/
+      disconnectIn() {
+        this.src.disconnect(this.soundNodeIn);
+      }
+
+      /**
+      * Cconnect the in node of the pedal
+      * Updates the new source of the pedal
+      **/
+      connectIn(audioNode) {
+        audioNode.connect(this.soundNodeIn);
+        this.src = audioNode;
+      }
+
+      getNodeIn() {
+        return this.soundNodeIn;
+      }
+
+      getNodeOut() {
+        return this.soundNodeOut;
+      }
+
+      getWidth(){
+        return this.offsetWidth;
+      }
+      
+      getInputPos() {
+        return {
+          x: this.x + this.IOsize/2 + this.inputOffsetX,
+          y: this.y + this.IOsize/2 + this.inputOffsetY + 12
+        }
+      }
+      
+      getOutputPos() {
+        return {
+          x: this.x + this.IOsize/2 +  this.outputOffsetX,
+          y: this.y + this.IOsize/2 +  this.outputOffsetY + 8
+        }
+      }
+
+      // ---------------------- JACK ---------------------------------
+      addJackAtInput(jack) {
+        this.inputJacks.push(jack);
+      }
+
+      addJackAtOutput(jack) {
+        this.outputJacks.push(jack);
+      }
+      // ---------------------- PEDAL ---------------------------------
+      move(x, y) {
+        this.x = x;
+        this.y = y;
+        this.style.left = x + "px";
+        this.style.top = y + "px";
+        
+        // Update jacks
+        this.inputJacks.forEach((j)=>j.update());
+        this.outputJacks.forEach((j)=>j.update());
+      }
+
+      highLightInput(flag) {
+        if(flag) this.inputP.style.backgroundColor = "rgba(255,255,255,0.4)";
+        else this.inputP.style.backgroundColor = null;
+        this.inputHighlighted = flag;
+      }
+
+      highLightOutput(flag) {
+        // if(flag) this.output.style.backgroundColor = "rgba(255,255,255,0.4)";
+        // else this.output.style.backgroundColor = null;
+        this.outputHighlighted = flag;
+      }
+
+
+      removeJackAtInput(jack) {
+        let index = -1;
+        for (let j in this.inputJacks) {
+          if (this.inputJacks[j].p1 == jack.p1) {
+            index = j;
+          }
+        }
+        this.inputJacks.splice(index,1);
+      }
+
+      removeJackAtOutput(jack) {
+        let index = -1;
+        let j;
+        for (j in this.outputJacks) {
+          if (this.outputJacks[j].p2 == jack.p2) {
+            index = j;
+          }
+        }
+        this.outputJacks.splice(index,1);
+      }
+    }
+  }
+</script>

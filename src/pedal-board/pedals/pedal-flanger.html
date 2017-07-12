@@ -1,0 +1,117 @@
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="./js/pedal-behavior.html">
+
+<dom-module id="pedal-flanger">
+  <template>
+    <style include="shared-styles">
+        :host{
+            background-color: #f02cff;
+            background: linear-gradient(pink, purple);
+        }
+    </style>
+    <div class="laPedale">
+        <div class="elements">
+
+            <div class="row">
+                <div class="column">
+                    <webaudio-knob id="knob1" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_black_white_stripe.png" data-role="time"></webaudio-knob>
+                    <span class="knob-label" id="knob1-label">TIME</span>
+                </div>
+                <div class="column">
+                    <webaudio-knob id="knob2" class="knob" sprites="99" value="0" step="1" midilearn="true"  src="./img/knobs/nux_black_white_stripe.png" data-role="speed"></webaudio-knob>
+                    <span class="knob-label" id="knob2-label">SPEED</span>
+                </div>
+                <div class="column">
+                    <webaudio-knob id="knob3" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_black_white_stripe.png" data-role="depth"></webaudio-knob>
+                    <span class="knob-label" id="knob3-label">DEPTH</span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <webaudio-knob id="knob4" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_black_white_stripe.png" data-role="feedback"></webaudio-knob>
+                    <span class="knob-label" id="knob4-label">FEEDBACK</span>
+                </div>
+                <div class="column">
+                    <webaudio-knob id="knob5" class="knob" sprites="99" value="0" step="1" midilearn="true" src="./img/knobs/nux_black_white_stripe.png" data-role="mix"></webaudio-knob>
+                    <span class="knob-label" id="knob5-label">MIX</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="column">
+                    <webaudio-switch midilearn="true" src="./img/switches/switch_1.png" class="switch" id="switch1" width="40" height="25"></webaudio-switch>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="column">
+                    <span class="pedalLabel">FLANGER</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    class PedalFlanger extends MyMixin(Polymer.Element){
+
+        static get is(){ return 'pedal-flanger'; }
+
+        static get properties() {
+            return {
+                dataWidth:{
+                    type:Number,
+                    value:250
+                },
+                dataHeight:{
+                    type:Number,
+                    value:230
+                }
+            };
+        }
+
+        ready() {
+            super.ready();
+
+            this.createAllInternNodes();
+            this.connectInternNodes();
+            this.resetKnobs();
+            this.setKnobsListeners();
+            this.setValuesToKnobs();
+            this.setPedalActive();
+            this.setSwitchListener();
+        }
+
+        createAllInternNodes(){
+            this.effect = new Pizzicato.Effects.Flanger();
+        }
+
+        connectInternNodes()  {
+            this.soundNodeIn.connect(this.effect);
+            this.effect.connect(this.soundNodeOut);
+        }
+
+        setKnobsListeners(){
+            this.$.knob1.addEventListener('change',(e)=>{ this.effect.time = e.target.value/100;});
+            this.$.knob2.addEventListener('change',(e)=>{ this.effect.speed = e.target.value/100;});
+            this.$.knob3.addEventListener('change',(e)=>{ this.effect.depth = e.target.value/100;});
+            this.$.knob4.addEventListener('change',(e)=>{ this.effect.feedback = e.target.value/100;});
+            this.$.knob5.addEventListener('change',(e)=>{ this.effect.mix = e.target.value/100;});
+        }
+
+
+        getDefaultButtonsValues() {
+            return { time : 45 , speed : 20 , depth: 10 ,feedback: 10, mix : 50};
+        }
+
+        bypass() {
+            this.effect.bypass();
+        }
+
+        reactivate() {
+            this.effect.reactivate();
+        }
+    }
+    // Register the x-custom element with the browser
+    customElements.define(PedalFlanger.is, PedalFlanger);
+</script>
+</dom-module>

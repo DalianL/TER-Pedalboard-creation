@@ -1,0 +1,113 @@
+<link rel="import" href="../../../bower_components/webaudio-controls/webaudio-controls.html">
+<link rel="import" href="./js/pedal-behavior.html">
+
+<dom-module id="pedal-quadrafuzz">
+    <template>
+        <style include="shared-styles">
+            :host{
+                background-color: #f91a18;
+                background: linear-gradient(tomato, crimson);
+            }
+        </style>
+
+        <div class="laPedale">
+            <div class="elements">
+
+                <div class="row">
+                    <div class="column">
+                        <webaudio-knob id="knob1" class="knob" midilearn="true" sprites="99" value="0" step="1" src="./img/knobs/nux_black_white_stripe.png" data-role="lowGain" width="40" height="40"></webaudio-knob>
+                        <span class="knob-label" id="knob1-label">LOWGAIN</span>
+                    </div>
+                    <div class="column">
+                        <webaudio-knob id="knob2" class="knob" midilearn="true" sprites="99" value="0" step="1" src="./img/knobs/nux_black_white_stripe.png" data-role="midLowGain" width="40" height="40"></webaudio-knob>
+                        <span class="knob-label" id="knob2-label">MIDLOW<br>GAIN</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                        <webaudio-knob id="knob3" class="knob" midilearn="true" sprites="99" value="0" step="1" src="./img/knobs/nux_black_white_stripe.png" data-role="midHighGain" width="40" height="40"></webaudio-knob>
+                        <span class="knob-label" id="knob3-label">MIDHIGH<br>GAIN</span>
+                    </div>
+                    <div class="column">
+                        <webaudio-knob id="knob4" class="knob" midilearn="true" sprites="99" value="0" step="1" src="./img/knobs/nux_black_white_stripe.png" data-role="highGain" width="40" height="40"></webaudio-knob>
+                        <span class="knob-label" id="knob4-label">HIGHGAIN</span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                        <webaudio-switch id="switch1" class="switch" midilearn="true" src="./img/switches/switch_1.png" width="40" height="25"></webaudio-switch>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="column">
+                        <span class="pedalLabel">QUADRA FUZZ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        class PedalQuadrafuzz extends MyMixin(Polymer.Element){
+
+            static get is(){ return 'pedal-quadrafuzz'; }
+
+            static get properties() {
+                return {
+                    dataWidth:{
+                        type:Number,
+                        value:170
+                    },
+                    dataHeight:{
+                        type:Number,
+                        value:210
+                    }
+                };
+            }
+
+            ready() {
+                super.ready();
+
+                this.createAllInternNodes();
+                this.connectInternNodes();
+                this.resetKnobs();
+                this.setKnobsListeners();
+                this.setValuesToKnobs();
+                this.setPedalActive();
+                this.setSwitchListener();
+            }
+
+            createAllInternNodes(){
+                this.effect = new Pizzicato.Effects.Quadrafuzz();
+            }
+
+            connectInternNodes()  {
+                this.soundNodeIn.connect(this.effect);
+                this.effect.connect(this.soundNodeOut);
+            }
+
+            setKnobsListeners(){
+                this.$.knob1.addEventListener('change',(e)=>{ this.effect.lowGain = e.target.value/100;});
+                this.$.knob2.addEventListener('change',(e)=>{ this.effect.midLowGain = e.target.value/100;});
+                this.$.knob3.addEventListener('change',(e)=>{ this.effect.midHighGain = e.target.value/100;});
+                this.$.knob4.addEventListener('change',(e)=>{ this.effect.highGain = e.target.value/100;});
+            }
+
+            getDefaultButtonsValues() {
+                return { lowGain : 60 , midLowGain : 80 , midHighGain: 50 ,highGain: 60};
+            }
+
+            bypass() {
+                this.effect.bypass();
+            }
+
+            reactivate() {
+                this.effect.reactivate();
+            }
+        }
+        // Register the x-custom element with the browser
+        customElements.define(PedalQuadrafuzz.is, PedalQuadrafuzz);
+    </script>
+</dom-module>

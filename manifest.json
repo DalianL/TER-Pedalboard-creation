@@ -1,0 +1,7 @@
+{
+  "name": "SimplePedalBoard",
+  "short_name": "SimplePedalBoard",
+  "description": "an html pedalboard",
+  "start_url": "/",
+  "display": "standalone"
+}
