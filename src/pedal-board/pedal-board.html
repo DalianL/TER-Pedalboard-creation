@@ -126,35 +126,32 @@
         width: 109px;
         height: 159px;
         background-image: url("../../img/delay.png");
-        margin-left: 5%;
       }
 
       #quadrafuzz {
         width: 90px;
         height: 160px;
         background-image: url("../../img/quadra_fuzz.png");
-        margin-left: 5%;
       }
 
       #lowpass {
         width: 85px;
         height: 162px;
         background-image: url("../../img/low_pass.png");
-        margin-left: 5%;
       }
 
       #flanger {
         width: 150px;
         height: 162px;
         background-image: url("../../img/flanger.png");
-        margin-left: 5%;
       }
 
 
       #ampsim {
-        width: 150px;
-        height: 50px;
-        margin-left: 5%;
+        width: 420px;
+        height: 100px;
+        background-image: url("../../img/ampsim.png");
+        background-size: cover;
       }
 
       #ampsim img {
@@ -417,11 +414,14 @@
         this.resizeListener();
 
         // ADD NEW PEDAL TO PEDALBOARD
-        let p1 = document.createElement("amp-sim");
-        p1.setPosition(150, 400);
-        this.addPedal(p1);
+        let p5 = document.createElement("amp-sim");
+        p5.setPosition(150, 400);
+        this.addPedal(p5);
 
         /*
+        let p1 = document.createElement("pedal-delay");
+        p1.setPosition(150, 400);
+        this.addPedal(p1);
 
         let p2 = document.createElement("pedal-flanger");
         p2.setPosition(400, 400);
@@ -437,8 +437,8 @@
         */
 
         // CONNECT PEDALS
-        this.connect(this.pIn, p1);
-        this.connect(p1,this.pOut);
+        this.connect(this.pIn, p5);
+        this.connect(p5, this.pOut);
       }
 
       addPedal(p) {
@@ -976,8 +976,6 @@
         this.sound.pzContext = Pizzicato.context;
         //this.sound.pzContext = new AudioContext();
         this.sound.mediaSource = this.sound.pzContext.createMediaElementSource(this.soundSample);
-        console.log("this.sound.mediaSource");
-        console.log(this.sound.mediaSource);
         this.sound.audioDestination = this.sound.pzContext.destination;
       }
 
