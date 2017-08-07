@@ -222,6 +222,34 @@
       .div_app_tabs #tab-5:checked~.div_container #content-5 {
         display: flex;
       }
+
+      @keyframes zoomeffect {
+        0% {
+          filter: blur(0px);
+          transform: scale(1, 1);
+        }
+        50% {
+          filter: blur(3px);
+        }
+        100% {
+          filter: blur(0px);
+          transform: scale(2, 2);
+        }
+      }
+
+      @keyframes dezoomeffect {
+        0% {
+          filter: blur(0px);
+          transform: scale(2, 2);
+        }
+        50% {
+          filter: blur(3px);
+        }
+        100% {
+          filter: blur(0px);
+          transform: scale(1, 1);
+        }
+      }
     </style>
 
     <header>
@@ -346,7 +374,7 @@
         this.currentState = "none";
         this.oldMousePosX = 0;
         this.oldMousePosY = 0;
-        this.zoom = 0;
+        this.zoom = false;
         this.currentDraggablePedal = "";
         this.pedalboardOrigin = [];
 
@@ -535,7 +563,7 @@
       }
 
       move(dx, dy) {
-        if (this.zoom == 1) {
+        if (this.zoom == true) {
           this.style.transition = '';
           this.pedalboardOrigin.x += dx / 50;
           this.pedalboardOrigin.y += dy / 50;
@@ -605,6 +633,35 @@
       rescale(s) {
         this.style = 'transform(' + s + ',' + s + ')';
       }
+
+      dblclickHandler(e) {
+        e.preventDefault();
+        let boardWid = parseInt(window.getComputedStyle(this).width, 10);
+        let boardHei = parseInt(window.getComputedStyle(this).height, 10);
+        let zoomPosH = "bottom";
+        let zoomPosW = "right";
+        let animationName="dezoomeffect";
+        if (!this.zoom) {
+          if (e.clientX <= (boardWid / 3)) {
+            zoomPosW = "left";
+          } else if (e.clientX > (boardWid / 3) && e.clientX < ((2 * boardWid) / 3)) {
+            zoomPosW = "center";
+          }
+
+          if (e.clientY <= (boardHei / 3)) {
+            zoomPosH = "top";
+          } else if (e.clientY > (boardHei / 3) && e.clientY < ((2 * boardHei) / 3)) {
+            zoomPosH = "center";
+          }
+
+          this.style.transformOrigin = zoomPosW + " " + zoomPosH;
+          animationName ="zoomeffect";
+        }
+        this.style.animation = animationName+' 0.1s ease-out';
+        this.style.animationFillMode = 'forwards';
+        this.zoom = !this.zoom;
+      }
+
 
       mouseWheelHandler(e) {
         e.preventDefault();
@@ -692,9 +749,11 @@
 
       addZoomListener() {
         // IE9, Chrome, Safari, Opera
-        this.addEventListener("mousewheel", this.mouseWheelHandler, false);
+        //this.addEventListener("mousewheel", this.mouseWheelHandler, false);
         // Firefox
-        this.addEventListener("DOMMouseScroll", this.mouseWheelHandler, false);
+        //this.addEventListener("DOMMouseScroll", this.mouseWheelHandler, false);
+
+        this.addEventListener("dblclick", this.dblclickHandler, false);
       }
 
       static createSVGcanvas(w, h) {
@@ -732,7 +791,6 @@
         window.addEventListener('mouseup', this.mouseUpDraggable.bind(this), false);
         // celui-là pour detecter si on est au voisinage des inputs et outputs des pédales
         this.addEventListener('mousemove', this.highlightInputsOutputs.bind(this), false);
-
       }
 
       cursorPoint(evt) {
