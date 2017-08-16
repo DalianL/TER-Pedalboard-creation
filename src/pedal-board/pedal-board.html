@@ -250,12 +250,73 @@
           transform: scale(1, 1);
         }
       }
+
+
+      .context-menu {
+        display: none;
+        position: absolute;
+        margin-top: 38px;
+        margin-left: -15px;
+        z-index: 10;
+        padding: 12px 0;
+        width: 70px;
+        background: rgba(0, 0, 0, 0.3);
+        border: solid 1px #dfdfdf;
+        box-shadow: 1px 1px 2px #cfcfcf;
+      }
+
+      .context-menu--active {
+        display: block;
+      }
+
+      .context-menu__items {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .context-menu__item1 {
+        display: block;
+        margin-left: 5px;
+        padding: 0px 12px;
+        width: 40px;
+        height: 14px;
+        background-repeat: no-repeat;
+      }
+
+      .context-menu__item1:last-child {
+        margin-bottom: 0;
+      }
+
+      .context-menu__item1:hover {
+        color: #fff;
+        margin-left: 5px;
+        background-image: url("../img/RightJackHover.png");
+      }
+
+      .context-menu__item2 {
+        display: block;
+        margin-left: 5px;
+        padding: 0px 12px;
+        width: 110px;
+        height: 28px;
+        background-repeat: no-repeat;
+      }
+
+      .context-menu__item2:last-child {
+        margin-bottom: 0;
+      }
+
+      .context-menu__item2:hover {
+        color: #fff;
+        background-image: url("../img/RightJackHoverL.png");
+      }
     </style>
 
     <header>
       <div><a href="https://github.com/dl100463/TER-Pedalboard-creation/tree/newBranchEK">PedalBoard 2017</a></div>
       <div>
-        <audio src="./audio/test.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio>
+        <audio src="./audio/BasketCase Greenday riff DI.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio>
       </div>
       <div>
         <span>MICRO</span>
@@ -374,8 +435,10 @@
         this.currentState = "none";
         this.oldMousePosX = 0;
         this.oldMousePosY = 0;
-        this.zoom = false;
+        this.zoom = 0;
+        this.menuState = 0;
         this.currentDraggablePedal = "";
+        this.currentPedalOppened = "";
         this.pedalboardOrigin = [];
 
         this.nbPedalsAdded = 0;
@@ -395,6 +458,7 @@
           state: null
         }
       }
+
       connectedCallback() {
         super.connectedCallback();
       }
@@ -416,6 +480,10 @@
         // create SVG canvas
         this.svgcanvas = PedalBoard.createSVGcanvas(this.w, this.h);
 
+        // Handles the WebAudio graph initialization
+        this.soundHandler();
+
+
         // ajout des sources IN/OUT dans le pedalBoard
         this.pIn.setPosition(-20, (this.h / 2));
         this.pOut.setPosition(this.w, (this.h / 2));
@@ -423,34 +491,16 @@
         this.addPedal(this.pIn);
         this.addPedal(this.pOut);
 
-        // Handles the WebAudio graph initialization
-        this.soundHandler();
-
-        // For pedals to be draggable
-        this.addDraggableListeners();
-
-        // For new pedals to be added
-        this.addNewPedalListeners();
-
-        // For mouse zooming 
-        this.addZoomListener();
-
-        // For the jack menu to appear
-        this.addMenuListeners();
-
-
-        this.resizeListener();
-
         // ADD NEW PEDAL TO PEDALBOARD
         let p5 = document.createElement("amp-sim");
-        p5.setPosition(150, 400);
+        p5.setPosition(450, 200);
         this.addPedal(p5);
 
-        /*
         let p1 = document.createElement("pedal-delay");
-        p1.setPosition(150, 400);
+        p1.setPosition(150, 600);
         this.addPedal(p1);
 
+        /*
         let p2 = document.createElement("pedal-flanger");
         p2.setPosition(400, 400);
         this.addPedal(p2);
@@ -464,9 +514,26 @@
         this.addPedal(p4);
         */
 
+
+
         // CONNECT PEDALS
         this.connect(this.pIn, p5);
+        this.connect(p1, p5);
         this.connect(p5, this.pOut);
+
+        // For pedals to be draggable
+        this.addDraggableListeners();
+
+        // For new pedals to be added
+        this.addNewPedalListeners();
+
+        // For mouse zooming 
+        this.addZoomListener();
+
+        this.resizeListener();
+
+        // For the jack menu to appear
+        this.addMenuListeners();
       }
 
       addPedal(p) {
@@ -478,47 +545,21 @@
         }
         p.pedalboard = this;
         this.appendChild(p);
+        // For the jack menu to appear
+        //this.addMenuListeners();
       }
 
       removePedal(p) {
         if (confirm("Souhaitez-vous vraiment supprimer cette pédale ?")) {
-
-          console.log("remove");
-          console.log(p);
           let jacksIn = p.inputJacks;
           let jacksOut = p.outputJacks;
 
-          jacksIn.forEach((j, i) => {
-            console.log(j);
-            //this.disconnect(j.p1,j.p2);
-          })
+          for (let i = jacksIn.length - 1; i >= 0; i--) this.disconnect(jacksIn[i].p1, jacksIn[i].p2);
+          for (let i = jacksOut.length - 1; i >= 0; i--) this.disconnect(jacksOut[i].p1, jacksOut[i].p2);
 
-          /*
-            for (let i = 0; i < jacksInLen; i++) {
-              // Delete the input jacks from the list starting from the last one
-              self.disconnect(jacksIn[jacksInLen - i - 1].p1, jacksIn[jacksInLen - i - 1].p2);
-            }
-
-            for (let i = 0; i < jacksOutLen; i++) {
-              // Delete the output jacks from the list starting from the last one
-              self.disconnect(jacksOut[jacksOutLen - i - 1].p1, jacksOut[jacksOutLen - i - 1].p2);
-            }
-
-            this.pedals.splice(p, 1);
-
-            for (i = p; i < this.pedals.length; i++) {
-              this.pedals[i].number -= 1;
-              this.pedals[i].delete.innerHTML = "<a href='#' onclick=\"pedalboard.removePedal(" + this.pedals[i].number +
-                ", '" + this.pedals[i].id + "');\"><i class='fa fa-trash' title='Delete pedal'></i></a>";
-            }
-
-            this.updateTokenPedal();
-
-            let el = document.getElementById(type);
-            el.parentNode.removeChild(el);
-          }
-          p.pedalboard = this;
-          */
+          var index = this.pedals.indexOf(p);
+          if (index > -1) this.pedals.splice(index, 1);
+          this.removeChild(p);
         }
       }
 
@@ -563,7 +604,7 @@
       }
 
       move(dx, dy) {
-        if (this.zoom == true) {
+        if (this.zoom == 1) {
           this.style.transition = '';
           this.pedalboardOrigin.x += dx / 50;
           this.pedalboardOrigin.y += dy / 50;
@@ -640,8 +681,8 @@
         let boardHei = parseInt(window.getComputedStyle(this).height, 10);
         let zoomPosH = "bottom";
         let zoomPosW = "right";
-        let animationName="dezoomeffect";
-        if (!this.zoom) {
+        let animationName = "dezoomeffect";
+        if (this.zoom == 0) {
           if (e.clientX <= (boardWid / 3)) {
             zoomPosW = "left";
           } else if (e.clientX > (boardWid / 3) && e.clientX < ((2 * boardWid) / 3)) {
@@ -655,11 +696,14 @@
           }
 
           this.style.transformOrigin = zoomPosW + " " + zoomPosH;
-          animationName ="zoomeffect";
+          animationName = "zoomeffect";
+          this.zoom = 1;
+        } else {
+          this.zoom = 0;
         }
-        this.style.animation = animationName+' 0.1s ease-out';
+        this.style.animation = animationName + ' 0.1s ease-out';
         this.style.animationFillMode = 'forwards';
-        this.zoom = !this.zoom;
+        //this.zoom = !this.zoom;
       }
 
 
@@ -724,28 +768,144 @@
       addMenuListeners() {
         let menu = this.$["context-menuJack"];
         let divs = document.querySelectorAll(".input");
-        let menuState = 0;
 
         this.pedals.forEach((d) => {
-          this.handleJackMenu(d.inputP);
+          this.handleJackMenu(d);
           this.resizeListener(d.inputP);
         })
       }
 
-      handleJackMenu(elem) {
-        console.log("click");
-        console.log(elem);
-        elem.addEventListener("click", (e) => {
-          console.log("rer");
-          //e.preventDefault();
+      handleJackMenu(p) {
+        // clique sur input
+        let input = "";
+        p.inputP.addEventListener("click", (e) => {
+          e.preventDefault();
+          input = p.inputP;
+          this.currentPedalOppened = p;
+          if (input.getAttribute("open") && (input.getAttribute("open") == 'true')) {
+            input.setAttribute("open", false);
+          } else {
+            input.setAttribute("open", true);
+            // si nombre de jacks > 1
+          }
+          if (p.inputJacks.length > 1) {
+            // création du menu items
+            this.createMenuItems(p.inputJacks, input.getAttribute("open") === 'true');
+            //this.toggleMenuOn();
+            //this.positionMenu(e, p);
+          }
+          console.log(this.currentPedalOppened.inputJacks);
 
-          // if (pedalMenu.inputJacks.length > 1) {
-          //   createMenuItems(pedalMenu.inputJacks);
-          //   toggleMenuOn();
-          //   positionMenu(e, pedalMenu);
-          // }
         });
       }
+
+      createMenuItems(jacks, open) {
+        let len = jacks.length;
+        let offsetY = 0;
+        /*
+        this.$["menu-container"].innerHTML = "";
+        let newMenuWid = 70 * (1 + this.zoom);
+        let menu = this.$["context-menuJack"];
+        menu.style.width = "" + newMenuWid + "px";
+        this.root.querySelector(".context-menu__items").style.width = "" + newMenuWid + "px";
+
+        // Approximatively adapts the Y position where the jacks in menu start
+        // according to the number of jacks plugged in the pedal, since the
+        // menu adapts its position according to the number of item
+
+        if (this.zoom == 1) {
+          if (board.style.transformOrigin == 'left top 0px' || board.style.transformOrigin == 'center top 0px' ||
+            board.style.transformOrigin == 'right top 0px') {
+            offsetY -= 2.5;
+          }
+          if (board.style.transformOrigin == 'left bottom 0px' || board.style.transformOrigin ==
+            'center bottom 0px' || board.style.transformOrigin == 'right bottom 0px') {
+            offsetY += 2.5;
+          }
+        }
+
+        */
+
+        jacks.forEach((j) => {
+          /*
+
+          // Adds a menu item for each jack in the pedal
+          let ul = this.$["menu-container"];
+          let li = document.createElement("li");
+          li.appendChild(document.createTextNode("")); //"Jack " + j.p1.id.substring(5,6)));
+          li.setAttribute("id", "jack" + j.p1.id.substring(5, 6));
+          this.zoom == 0 ? li.classList.add("context-menu__item1") : li.classList.add("context-menu__item2");
+            
+          // let menuItemWid = 40 * (1 + (zoom * 2));
+          // let menuItemHei = 14 * (zoom + 1);
+          // li.style = "width:"+ menuItemWid +"px; height: "+ menuItemHei +"px";
+
+          ul.appendChild(li);
+          */
+
+          // Repositions the current jack so that it feels like it's unplugged 
+          // while in the opened menu
+          j.repositionJack(offsetY, open);
+          if (open) offsetY += 20;
+          else offsetY -= 0;
+
+          /*
+          li.addEventListener("mousedown", function (e) {
+            // Computes the location of the mouse in the SVG canvas
+            var loc = cursorPoint(e);
+
+            e.preventDefault();
+            e.stopPropagation();
+            // first we disconnect the jack before immediatly creating
+            // a new one to drag
+            pedalboard.disconnect(j.p1, j.p2);
+            pedalboard.currentState = "drawingNewJack";
+            let x1 = j.p1.getOutputPos().x;
+            let y1 = j.p1.getOutputPos().y;
+            let x2 = j.p2.getInputPos().x;
+            let y2 = j.p2.getInputPos().y;
+
+            pedalboard.currentDraggableJack = createBezierSVGJack("tmpJack", x1, y1, loc.x, loc.y);
+            pedalboard.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+            pedalboard.currentDraggableJack.end.setAttribute("y", loc.y - 10);
+            pedalboard.currentDraggableJack.sourcePedal = j.p1;
+            pedalboard.currentDraggableJack.x1 = x1;
+            pedalboard.currentDraggableJack.y1 = y1;
+            toggleMenuOff();
+            // we update the position of the jack because the default toggle
+            // moved the jack back to the menu
+            window.addEventListener('mousemove', mouseMoveDraggable, true);
+          })
+            */
+        })
+
+      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       addZoomListener() {
         // IE9, Chrome, Safari, Opera
@@ -801,9 +961,37 @@
         return pt.matrixTransform(svg.getScreenCTM().inverse());
       }
 
+      removeJack(loc, sourcePedal) {
+
+        let x1 = sourcePedal.getOutputPos().x;
+        let y1 = sourcePedal.getOutputPos().y;
+        let _pos = {
+          x1: x1,
+          y1: y1,
+          x2: loc.x,
+          y2: loc.y
+        }
+        console.log(_pos);
+
+        let j = new Jack();
+
+        // currentDraggableJack
+        let cDJ = j.reviewSVGJack(_pos, "tmpJack");
+        cDJ.sourcePedal = sourcePedal;
+        cDJ.end.setAttribute("x", loc.x - 7);
+        cDJ.end.setAttribute("y", loc.y - 10);
+        cDJ.x1 = x1;
+        cDJ.y1 = y1;
+
+        return cDJ;
+      }
+
       mouseDownDraggable(e) {
         // Computes the location of the mouse in the SVG canvas
         var loc = this.cursorPoint(e);
+
+        // e.preventDefault();
+        // e.stopPropagation();
 
         // Quand on clique on mémorise : 1) l'ancienne position
         // de l'objet qu'on draggue et 2) l'ancienne position de
@@ -812,26 +1000,49 @@
         let p;
         window.addEventListener('mousemove', this.mouseMoveDraggable.bind(this), true);
 
-        if ((p = this.findPedalWhoseOutputIsHighlighted()) !== undefined) {
+
+        if (e.target.id.startsWith("jack_")) {
+
+          // pedale
+          p = this.currentPedalOppened;
+          let sourcePedal = "";
+          // id du img#end jack = e.target.id
+          for (var i = 0; i < p.inputJacks.length; i++) {
+            if (p.inputJacks[i].end.id == e.target.id) {
+              this.currentDraggableJack = p.inputJacks[i];
+              sourcePedal = p.inputJacks[i].p1;
+              break;
+            }
+          }
+          this.currentState = "drawingNewJack";
+          this.disconnect(sourcePedal, p);
+          this.currentDraggableJack = this.removeJack(loc, sourcePedal);
+
+
+        } else if ((p = this.findPedalWhoseOutputIsHighlighted()) !== undefined) {
+          console.log("findPedalWhoseOutputIsHighlighted");
           // an output of a pedal is selected, if we drag the mouse
           // we're in the process of dragging a new cable/jack
           this.currentState = "drawingNewJack";
-          let x1 = p.getOutputPos().x;
-          let y1 = p.getOutputPos().y;
-          let _pos = {
-            x1: x1,
-            y1: y1,
-            x2: loc.x,
-            y2: loc.y
-          }
+          this.currentDraggableJack = this.removeJack(loc, p);
 
-          let j = new Jack();
-          this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
-          this.currentDraggableJack.sourcePedal = p;
-          this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
-          this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
-          this.currentDraggableJack.x1 = x1;
-          this.currentDraggableJack.y1 = y1;
+
+          // let x1 = p.getOutputPos().x;
+          // let y1 = p.getOutputPos().y;
+          // let _pos = {
+          //   x1: x1,
+          //   y1: y1,
+          //   x2: loc.x,
+          //   y2: loc.y
+          // }
+
+          // let j = new Jack();
+          // this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
+          // this.currentDraggableJack.sourcePedal = p;
+          // this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
+          // this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
+          // this.currentDraggableJack.x1 = x1;
+          // this.currentDraggableJack.y1 = y1;
 
         } else if ((p = this.findPedalWhoseInputIsHighlighted()) !== undefined) {
           //pedalMenu = p;
@@ -839,25 +1050,12 @@
             let sourcePedal = p.inputJacks[0].p1;
             // first we disconnect the jack before immediatly creating
             // a new one to drag
-            this.disconnect(sourcePedal, p);
-            this.currentState = "drawingNewJack";
-            let x1 = sourcePedal.getOutputPos().x;
-            let y1 = sourcePedal.getOutputPos().y;
-            let _pos = {
-              x1: x1,
-              y1: y1,
-              x2: loc.x,
-              y2: loc.y
-            }
 
-            let j = new Jack();
-            this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
-            this.currentDraggableJack.sourcePedal = sourcePedal;
-            this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
-            this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
-            this.currentDraggableJack.x1 = x1;
-            this.currentDraggableJack.y1 = y1;
+            this.currentState = "drawingNewJack";
+            this.disconnect(sourcePedal, p);
+            this.currentDraggableJack = this.removeJack(loc, sourcePedal);
           }
+
         } else if (this.clickInPedal(e)) {
           // dragging a pedal
           this.currentState = "draggingPedal";
@@ -953,6 +1151,7 @@
                 x2: loc.x,
                 y2: loc.y
               };
+              //console.log(_pos);
               jackWeAreDragging.reviewSVGJack(_pos);
             }
             break;
@@ -977,10 +1176,8 @@
 
       addNewPedalListeners() {
         var newPedals = this.root.querySelectorAll(".pedal");
-        console.log(newPedals);
 
         newPedals.forEach((p) => {
-          console.log(p);
           p.addEventListener('dragstart', this.pedalDragStart, false);
         });
       }
@@ -1069,7 +1266,6 @@
       dropPedalHandler(e) {
         let id = e.dataTransfer.getData("pedalId");
         let _id;
-        //console.log("pedal dropped id = " + id + "x = " + event.clientX);
         // ICI GENERER UN ID UNIQUE !!! il peut y avoir plusieurs instances
         // de la même pédale
         if (id == "delay" || id == "flanger" || id == "lowpass" || id == "quadrafuzz") {
@@ -1087,7 +1283,7 @@
 
     class Jack {
       constructor() {
-
+        this.j = "";
       }
       connexion(pedal1, pedal2) {
         this.p1 = pedal1;
@@ -1118,15 +1314,15 @@
         this.reviewSVGJack(_pos, this.id);
 
         /*
-                // Compute the svg for this jack
-                // position des cables à partir des input/output + rayon de l'input/ouput = 10px
-                let oPosP1=p1.getOutputPos();
-                let oPosP2=p2.getOutputPos();
-        
-                let x1 = oPosP1.x, y1 = oPosP1.y+10;
-                let x2 = oPosP2.x-20, y2 = oPosP2.y+10;
-                let jackSVG = this.createBezierSVGJack(this.svgCanvas,"jack_" + p1.id+"-"+ p2.id+"_", x1, y1, x2, y2);
-                */
+        // Compute the svg for this jack
+        // position des cables à partir des input/output + rayon de l'input/ouput = 10px
+        let oPosP1=p1.getOutputPos();
+        let oPosP2=p2.getOutputPos();
+
+        let x1 = oPosP1.x, y1 = oPosP1.y+10;
+        let x2 = oPosP2.x-20, y2 = oPosP2.y+10;
+        let jackSVG = this.createBezierSVGJack(this.svgCanvas,"jack_" + p1.id+"-"+ p2.id+"_", x1, y1, x2, y2);
+        */
       }
 
       update() {
@@ -1145,6 +1341,24 @@
 
         this.reviewSVGJack(_pos);
       }
+
+      repositionJack(offsetY, open) {
+        let pedalboard = this.p1.pedalboard;
+        let posPedal1 = this.p1.getOutputPos();
+        let posPedal2 = this.p2.getInputPos();
+        // let wid = parseInt(pedalboard.$['context-menuJack'].style.width, 10);
+        let wid = 0;
+        if (open) wid = 70;
+        let offestX = -(wid / (pedalboard.zoom + 1));
+        let _pos = {
+          x1: posPedal1.x,
+          y1: posPedal1.y,
+          x2: (posPedal2.x + offestX),
+          y2: (posPedal2.y + offsetY)
+        }
+        this.reviewSVGJack(_pos);
+      }
+
 
       /*
       From: http://stackoverflow.com/questions/6701705/programmatically-creating-an-svg-image-element-with-javascript
