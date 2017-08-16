@@ -455,7 +455,7 @@
           audioDestination: null,
           mediaSourceM: null,
           mediaSRC: null,
-          state: null
+          state: 0
         }
       }
 
@@ -1232,13 +1232,60 @@
         //this.sound.pzContext = new AudioContext();
         this.sound.mediaSource = this.sound.pzContext.createMediaElementSource(this.soundSample);
         this.sound.audioDestination = this.sound.pzContext.destination;
+
+        if (navigator.mediaDevices.getUserMedia) {
+          navigator.mediaDevices.getUserMedia({
+            audio: true
+          }).then((stream) => {
+            this.sound.mediaSourceM = this.sound.pzContext.createMediaStreamSource(stream);
+          }).catch(function (err) {
+            // handle the error
+            console.log(err.name + ": " + err.message);
+          });
+        }
+
+        // CHANGE STATE MIC(1) -> DEMO SOUND (0)
+        var mic = this.$.mic;
+        mic.addEventListener("change", (e) => {
+          if (this.sound.state == 0) {
+            if (this.pedals[0].outputJacks.length != 0) {
+              this.pedals[0].outputJacks.forEach((j) => {
+                this.soundNodeDisconnection(j.p1, j.p2);
+                this.sound.state = 1;
+                this.soundNodeConnection(j.p1, j.p2);
+                // this.sound.state goes back to 0 for the next disconnect
+                this.sound.state = 0;
+              })
+            }
+            this.sound.state = 1;
+          } else {
+            if (this.pedals[0].outputJacks.length != 0) {
+              this.pedals[0].outputJacks.forEach((j) => {
+                this.soundNodeDisconnection(j.p1, j.p2);
+                this.sound.state = 0;
+                this.soundNodeConnection(j.p1, j.p2);
+                // this.sound.state goes back to 1 for the next disconnect
+                this.sound.state = 1;
+              })
+            }
+            this.sound.state = 0;
+          }
+        })
       }
 
       soundNodeConnection(p1, p2) {
         if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-          this.sound.mediaSource.connect(this.sound.audioDestination);
+          if (this.sound.state == 0) {
+            this.sound.mediaSource.connect(this.sound.audioDestination);
+          } else {
+            this.sound.mediaSourceM.connect(this.sound.audioDestination);
+          }
         } else if (p1.id == "pedalIn") {
-          this.sound.mediaSource.connect(p2.elem.soundNodeIn);
+          if (this.sound.state == 0) {
+            this.sound.mediaSource.connect(p2.elem.soundNodeIn);
+          } else {
+            this.sound.mediaSourceM.connect(p2.elem.soundNodeIn);
+          }
         } else if (p2.id == "pedalOut") {
           p1.elem.soundNodeOut.connect(this.sound.audioDestination);
         } else {
@@ -1248,9 +1295,17 @@
 
       soundNodeDisconnection(p1, p2) {
         if (p1.id == "pedalIn" && p2.id == "pedalOut") {
-          this.sound.mediaSource.disconnect(this.sound.audioDestination);
+          if (this.sound.state == 0) {
+            this.sound.mediaSource.disconnect(this.sound.audioDestination);
+          } else {
+            this.sound.mediaSourceM.disconnect(this.sound.audioDestination);
+          }
         } else if (p1.id == "pedalIn") {
-          this.sound.mediaSource.disconnect(p2.elem.soundNodeIn);
+          if (this.sound.state == 0) {
+            this.sound.mediaSource.disconnect(p2.elem.soundNodeIn);
+          } else {
+            this.sound.mediaSourceM.disconnect(p2.elem.soundNodeIn);
+          }
         } else if (p2.id == "pedalOut") {
           p1.elem.soundNodeOut.disconnect(this.sound.audioDestination);
         } else {
