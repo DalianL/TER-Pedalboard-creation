@@ -513,7 +513,6 @@
         // Handles the WebAudio graph initialization
         this.soundHandler();
 
-
         // ajout des sources IN/OUT dans le pedalBoard
         this.pIn.setPosition(-20, (this.h / 2));
         this.pOut.setPosition(this.w, (this.h / 2));
@@ -521,15 +520,15 @@
         this.addPedal(this.pIn);
         this.addPedal(this.pOut);
 
-        let p5 = document.createElement("amp-sim");
-        p5.setPosition(450, 200);
-        this.addPedal(p5);
+        /*
+        // ADD NEW PEDAL TO PEDALBOARD
+        let p0 = document.createElement("amp-sim");
+        p0.setPosition(450, 200);
+        this.addPedal(p0);
 
         let p1 = document.createElement("pedal-delay");
         p1.setPosition(150, 600);
         this.addPedal(p1);
-        // ADD NEW PEDAL TO PEDALBOARD
-        /*
 
         let p2 = document.createElement("pedal-flanger");
         p2.setPosition(400, 400);
@@ -542,15 +541,14 @@
         let p4 = document.createElement("pedal-quadrafuzz");
         p4.setPosition(150, 50);
         this.addPedal(p4);
-        */
-
 
 
         // CONNECT PEDALS
-        this.connect(this.pIn, p5);
-        this.connect(p1, p5);
-        this.connect(p5, this.pOut);
-      
+        this.connect(this.pIn, p0);
+        this.connect(p1, p0);
+        this.connect(p0, this.pOut);
+        */
+
 
         // For pedals to be draggable
         this.addDraggableListeners();
@@ -563,8 +561,6 @@
 
         this.resizeListener();
 
-        // For the jack menu to appear
-        this.addMenuListeners();
 
         this.addTabsListeners();
       }
@@ -578,8 +574,9 @@
         }
         p.pedalboard = this;
         this.appendChild(p);
+
         // For the jack menu to appear
-        //this.addMenuListeners();
+        this.handleJackMenu(p);
       }
 
       removePedal(p) {
@@ -716,17 +713,11 @@
         let zoomPosW = "right";
         let animationName = "dezoomeffect";
         if (this.zoom == 0) {
-          if (e.clientX <= (boardWid / 3)) {
-            zoomPosW = "left";
-          } else if (e.clientX > (boardWid / 3) && e.clientX < ((2 * boardWid) / 3)) {
-            zoomPosW = "center";
-          }
+          if (e.clientX <= (boardWid / 3)) zoomPosW = "left";
+          else if (e.clientX > (boardWid / 3) && e.clientX < ((2 * boardWid) / 3)) zoomPosW = "center";
 
-          if (e.clientY <= (boardHei / 3)) {
-            zoomPosH = "top";
-          } else if (e.clientY > (boardHei / 3) && e.clientY < ((2 * boardHei) / 3)) {
-            zoomPosH = "center";
-          }
+          if (e.clientY <= (boardHei / 3)) zoomPosH = "top";
+          else if (e.clientY > (boardHei / 3) && e.clientY < ((2 * boardHei) / 3)) zoomPosH = "center";
 
           this.style.transformOrigin = zoomPosW + " " + zoomPosH;
           animationName = "zoomeffect";
@@ -798,16 +789,6 @@
         let closest = this.findClosestIO(mouseX, mouseY);
       }
 
-      addMenuListeners() {
-        let menu = this.$["context-menuJack"];
-        let divs = document.querySelectorAll(".input");
-
-        this.pedals.forEach((d) => {
-          this.handleJackMenu(d);
-          this.resizeListener(d.inputP);
-        })
-      }
-
       addTabsListeners() {
         this.$.bt_hide_tabs.addEventListener("click", () => {
           if (this.$.div_app_tabs.classList.contains("bottomTabs")) {
@@ -839,8 +820,6 @@
             //this.toggleMenuOn();
             //this.positionMenu(e, p);
           }
-          console.log(this.currentPedalOppened.inputJacks);
-
         });
       }
 
@@ -926,32 +905,6 @@
 
       }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       addZoomListener() {
         // IE9, Chrome, Safari, Opera
         //this.addEventListener("mousewheel", this.mouseWheelHandler, false);
@@ -1007,7 +960,6 @@
       }
 
       removeJack(loc, sourcePedal) {
-
         let x1 = sourcePedal.getOutputPos().x;
         let y1 = sourcePedal.getOutputPos().y;
         let _pos = {
@@ -1016,7 +968,6 @@
           x2: loc.x,
           y2: loc.y
         }
-        console.log(_pos);
 
         let j = new Jack();
 
@@ -1045,9 +996,7 @@
         let p;
         window.addEventListener('mousemove', this.mouseMoveDraggable.bind(this), true);
 
-
         if (e.target.id.startsWith("jack_")) {
-
           // pedale
           p = this.currentPedalOppened;
           let sourcePedal = "";
@@ -1063,31 +1012,11 @@
           this.disconnect(sourcePedal, p);
           this.currentDraggableJack = this.removeJack(loc, sourcePedal);
 
-
         } else if ((p = this.findPedalWhoseOutputIsHighlighted()) !== undefined) {
-          console.log("findPedalWhoseOutputIsHighlighted");
           // an output of a pedal is selected, if we drag the mouse
           // we're in the process of dragging a new cable/jack
           this.currentState = "drawingNewJack";
           this.currentDraggableJack = this.removeJack(loc, p);
-
-
-          // let x1 = p.getOutputPos().x;
-          // let y1 = p.getOutputPos().y;
-          // let _pos = {
-          //   x1: x1,
-          //   y1: y1,
-          //   x2: loc.x,
-          //   y2: loc.y
-          // }
-
-          // let j = new Jack();
-          // this.currentDraggableJack = j.reviewSVGJack(_pos, "tmpJack");
-          // this.currentDraggableJack.sourcePedal = p;
-          // this.currentDraggableJack.end.setAttribute("x", loc.x - 7);
-          // this.currentDraggableJack.end.setAttribute("y", loc.y - 10);
-          // this.currentDraggableJack.x1 = x1;
-          // this.currentDraggableJack.y1 = y1;
 
         } else if ((p = this.findPedalWhoseInputIsHighlighted()) !== undefined) {
           //pedalMenu = p;
@@ -1095,12 +1024,10 @@
             let sourcePedal = p.inputJacks[0].p1;
             // first we disconnect the jack before immediatly creating
             // a new one to drag
-
             this.currentState = "drawingNewJack";
             this.disconnect(sourcePedal, p);
             this.currentDraggableJack = this.removeJack(loc, sourcePedal);
           }
-
         } else if (this.clickInPedal(e)) {
           // dragging a pedal
           this.currentState = "draggingPedal";
@@ -1196,7 +1123,6 @@
                 x2: loc.x,
                 y2: loc.y
               };
-              //console.log(_pos);
               jackWeAreDragging.reviewSVGJack(_pos);
             }
             break;
@@ -1523,7 +1449,7 @@
           this.shape3.setAttributeNS(null, "class", "wire");
           this.shape3.setAttributeNS(null, "id", _id + "_3");
 
-          // Jack ends are images  (embout) 
+          // Jack ends are images (embout) 
           this.end = this.makeSVG('image', {
             class: 'map-tile',
             'xlink:href': 'http://img4.hostingpics.net/pics/146380rightJack.png',
