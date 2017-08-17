@@ -18,7 +18,7 @@
        :host {
         background-color: maroon;
         background-image: url('../../img/background-pedalboard.jpg');
-
+        /* background-image: url('http://media.istockphoto.com/illustrations/seamless-texture-1-credits-brick-wall-noise-effect-black-background-illustration-id164486066?k=6&m=164486066&s=612x612&w=0&h=WC2gMzgGDJTF0b8edB6l_jFYlpNggSsb1-I6oCBZ_Qo='); */
         transform: scale(1, 1);
         position: absolute;
         top: 0px;
@@ -47,16 +47,21 @@
       }
       /***** header *****/
 
-      header {
-        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
+      header,
+      .div_app_tabs {
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.9));
+        background: url(https://media.fabfab.net/images/products/250/15_10007_080.jpg);
         box-shadow: inset 0px 1px 10px 0px #111;
+      }
+
+      header {
 
         z-index: 1;
 
         display: flex;
         flex-direction: row;
         justify-content: center;
-        align-items: stretch;
+        align-items: center;
       }
 
       header span,
@@ -72,7 +77,7 @@
 
       header div {
         flex: 1;
-        padding: 10px;
+        padding: 20px;
 
         text-align: center;
       }
@@ -99,14 +104,14 @@
       }
 
       .pedals {
-        padding: 10px;
-
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
         cursor: pointer;
-        border-radius: 10px;
+
+        padding: 10px;
+        border-radius: 4px;
       }
 
       .pedals .pedal {
@@ -114,6 +119,7 @@
       }
 
       .pedals span {
+        display: none;
         color: #eee;
 
         font-size: 14px;
@@ -160,14 +166,14 @@
       /***** div_app_tabs *****/
 
       .div_app_tabs {
-        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.4));
-
         position: absolute;
         bottom: 0px;
         left: 0px;
         right: 0px;
         z-index: 1;
-        margin: 1px;
+
+        padding: 10px;
+        transition: 0.2s;
       }
 
       .div_app_tabs input[type=radio] {
@@ -176,12 +182,12 @@
 
       .div_app_tabs input:hover+label {
         background: #222;
-        border-top: 3px solid orange;
+        border-top: 1px solid orange;
       }
 
       .div_app_tabs input:checked+label {
         background: #111;
-        border-top: 3px solid purple;
+        border-top: 1px solid purple;
       }
 
       .div_app_tabs label:hover {
@@ -189,11 +195,11 @@
       }
 
       .div_app_tabs label {
-        background: #444;
+        background: linear-gradient(#333, #111);
         color: #eee;
-        border-top: 3px solid #222;
+        border: 1px solid #111;
 
-        padding: 5px;
+        padding: 10px;
 
         font-family: 'Quicksand', cursive;
         display: inline-block;
@@ -204,11 +210,11 @@
         box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.06), 0 4px 5px 0 rgba(0, 0, 0, 0.06), 0 1px 10px 0 rgba(0, 0, 0, 0.08);
 
         height: 210px;
+        padding: 10px;
 
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        align-items: center;
       }
 
       .div_app_tabs [id^="content-"] {
@@ -221,6 +227,29 @@
       .div_app_tabs #tab-4:checked~.div_container #content-4,
       .div_app_tabs #tab-5:checked~.div_container #content-5 {
         display: flex;
+      }
+
+      .div_app_tabs #bt_hide_tabs:hover {
+        background: #222;
+      }
+
+      .div_app_tabs #bt_hide_tabs {
+        background: linear-gradient(#333, #111);
+        color: #eee;
+        border: 1px solid #111;
+
+        position: absolute;
+        top: 0px;
+        right: 0px;
+
+        padding: 10px;
+        margin: 10px;
+
+        cursor: pointer;
+      }
+
+      .bottomTabs {
+        bottom: -230px !important;
       }
 
       @keyframes zoomeffect {
@@ -334,7 +363,7 @@
     <slot id="slot" ondragover="[[dragPedalHandler]]" ondrop="[[dropPedalHandler]]"></slot>
     -->
 
-    <div class="div_app_tabs">
+    <div id="div_app_tabs" class="div_app_tabs">
       <div class="div_tabs" id="div_tabs">
         <input id="tab-1" type="radio" name="input-tab" checked><label for="tab-1">delay</label>
         <input id="tab-2" type="radio" name="input-tab"><label for="tab-2">lowpass</label>
@@ -342,6 +371,7 @@
         <input id="tab-4" type="radio" name="input-tab"><label for="tab-4">flanger</label>
         <input id="tab-5" type="radio" name="input-tab"><label for="tab-5">ampsim</label>
 
+        <button id="bt_hide_tabs"><iron-icon icon="expand-more"></iron-icon></button>
         <div class="div_container">
 
           <div id="content-1">
@@ -491,7 +521,6 @@
         this.addPedal(this.pIn);
         this.addPedal(this.pOut);
 
-        // ADD NEW PEDAL TO PEDALBOARD
         let p5 = document.createElement("amp-sim");
         p5.setPosition(450, 200);
         this.addPedal(p5);
@@ -499,8 +528,9 @@
         let p1 = document.createElement("pedal-delay");
         p1.setPosition(150, 600);
         this.addPedal(p1);
-
+        // ADD NEW PEDAL TO PEDALBOARD
         /*
+
         let p2 = document.createElement("pedal-flanger");
         p2.setPosition(400, 400);
         this.addPedal(p2);
@@ -520,6 +550,7 @@
         this.connect(this.pIn, p5);
         this.connect(p1, p5);
         this.connect(p5, this.pOut);
+      
 
         // For pedals to be draggable
         this.addDraggableListeners();
@@ -534,6 +565,8 @@
 
         // For the jack menu to appear
         this.addMenuListeners();
+
+        this.addTabsListeners();
       }
 
       addPedal(p) {
@@ -773,6 +806,18 @@
           this.handleJackMenu(d);
           this.resizeListener(d.inputP);
         })
+      }
+
+      addTabsListeners() {
+        this.$.bt_hide_tabs.addEventListener("click", () => {
+          if (this.$.div_app_tabs.classList.contains("bottomTabs")) {
+            this.$.bt_hide_tabs.querySelector("iron-icon").setAttribute("icon", "expand-more");
+            this.$.div_app_tabs.classList.remove("bottomTabs");
+          } else {
+            this.$.div_app_tabs.className += " bottomTabs";
+            this.$.bt_hide_tabs.querySelector("iron-icon").setAttribute("icon", "expand-less");
+          }
+        });
       }
 
       handleJackMenu(p) {
