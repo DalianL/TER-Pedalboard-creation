@@ -1206,7 +1206,12 @@
 
         if (navigator.mediaDevices.getUserMedia) {
           navigator.mediaDevices.getUserMedia({
-            audio: true
+            audio: {
+              latency: 0,
+              echoCancellation: false,
+              mozNoiseSuppression: false,
+              mozAutoGainControl: false
+            }
           }).then((stream) => {
             this.sound.mediaSourceM = this.sound.pzContext.createMediaStreamSource(stream);
           }).catch(function (err) {
@@ -1358,6 +1363,7 @@
         let iPos = this.p2.getInputPos();
         let x2 = iPos.x,
           y2 = iPos.y;
+
         let _pos = {
           x1: x1,
           y1: y1,
