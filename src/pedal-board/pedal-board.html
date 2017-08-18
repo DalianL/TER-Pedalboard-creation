@@ -81,6 +81,24 @@
 
         text-align: center;
       }
+      header .div_audio{
+        display: flex;
+        flex-direction:row;
+        justify-content: flex-start;
+        align-content: center;
+      }
+      header .div_audio select{
+        background:transparent;
+        color:#eee;
+        border:0px;
+
+        cursor: pointer;
+      }
+
+      header .div_audio select option{
+        background: #222;
+        color:#eee;
+      }
       /*
       header div:nth-child(2){
         background: #111;
@@ -247,7 +265,6 @@
 
         cursor: pointer;
       }
-
       .bottomTabs {
         bottom: -230px !important;
       }
@@ -344,7 +361,20 @@
 
     <header>
       <div><a href="https://github.com/dl100463/TER-Pedalboard-creation/tree/newBranchEK">PedalBoard 2017</a></div>
-      <div>
+      <div class="div_audio">
+        <select id="select_audio">
+          <option value="Guitar_DI_Track.mp3">Metal riff 1</option>
+          <option value="LasseMagoDI.mp3">Metal riff 2</option>
+          <option value="Di-Guitar.mp3">Cool rythm</option>
+          <option value="NarcosynthesisDI.mp3">Trash metal</option>
+          <option value="BlackSabbathNIB_rythmDI.mp3">Black Sabbath Rythm</option>
+          <option value="BlackSabbathNIBLead_DI.mp3">Black Sabbath Solo</option>
+          <option value="BasketCase Greenday riff DI.mp3">Basketcase Riff</option>
+          <option value="InBloomNirvanaRiff1DI.mp3">In Bloom riff</option>
+          <option value="Muse1Solo.mp3">Muse solo</option>
+          <option value="Muse2Rythm.mp3">Muse rythm</option>
+          <option value="11">Multi feeq sin wave</option>
+        </select>
         <audio src="./audio/BasketCase Greenday riff DI.mp3" id="soundSample" controls loop crossorigin="anonymous"></audio>
       </div>
       <div>
@@ -561,10 +591,21 @@
 
         this.resizeListener();
 
-
         this.addTabsListeners();
+
+        this.addChangeAudioListeners();
       }
 
+      addChangeAudioListeners() {
+        let selectAudio = this.$.select_audio;
+        selectAudio.addEventListener("change", (e) => {
+          //e.preventDefault();
+          this.soundSample.src = "./audio/" + e.target.value;
+          this.soundSample.load();
+          this.soundSample.play();
+          console.log(e.target.value);
+        })
+      }
       addPedal(p) {
         this.pedals.push(p);
         if (p.id != "pedalIn" && p.id != "pedalOut") {
@@ -1205,14 +1246,14 @@
         this.sound.audioDestination = this.sound.pzContext.destination;
 
         if (navigator.mediaDevices.getUserMedia) {
-          navigator.mediaDevices.getUserMedia({
+          var constraints = {
             audio: {
-              latency: 0,
               echoCancellation: false,
               mozNoiseSuppression: false,
               mozAutoGainControl: false
             }
-          }).then((stream) => {
+          };
+          navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
             this.sound.mediaSourceM = this.sound.pzContext.createMediaStreamSource(stream);
           }).catch(function (err) {
             // handle the error

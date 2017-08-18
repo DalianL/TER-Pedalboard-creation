@@ -987,6 +987,7 @@
         this.outputVisualization = new Visualization();
         this.outputVisualization.configure(this.$.outputSignalCanvas, this.analyzerAtOutput);
         // start updating the visualizations
+        
         requestAnimationFrame(() => {
           this.visualize()
         })
